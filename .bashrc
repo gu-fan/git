@@ -81,7 +81,7 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
-alias ax='axel -n 10 a'
+alias ax='axel -n 10 -a'
 alias le='less'
 alias wg='wget -c'
 alias cd..='cd ..'
