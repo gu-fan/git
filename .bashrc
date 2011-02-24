@@ -2,6 +2,7 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+# test bshrc
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
@@ -86,6 +87,7 @@ alias le='less'
 alias wg='wget -c'
 alias cd..='cd ..'
 alias na='nautilus $PWD'
+alias wgnc='wget -c --no-check-certificate'
 
 # Alias definitions.
 # You may want to put all your additions into a separate file like
