@@ -556,7 +556,7 @@ map <Leader>tt :call Split_if("") \| e /home/meofi/Documents/vimwiki/Todo/TodoTo
 
 map <Leader>tn :call Split_if("t")<cr>
 
-
+"{{{
 "diff mapping
 map <silent> <leader>df :call Toggle_diff()<cr>
 map <silent> <leader>DF :call Toggle_diff()<cr>
@@ -577,16 +577,17 @@ map <silent> <leader>do :DiffOrig<cr>
 command! DiffOrig win 140 100 | vert new | set bt=nofile | r # | 0d_ | diffthis
 	 	\ | wincmd p | diffthis
 
-
+"}}}
+"{{{
 "fold with space
 nnoremap <silent> <leader><leader> @=(foldlevel('.')?'za':'j')<CR>
 "vnoremap <leader><leader> zf
-nnoremap <leader>2 za
-vnoremap <leader>2 za
-nnoremap <leader>3 zR
-vnoremap <leader>3 zR
-nnoremap <leader>4 zM
-vnoremap <leader>4 zM
+nnoremap <leader>22 za
+vnoremap <leader>22 za
+nnoremap <leader>23 zR
+vnoremap <leader>23 zR
+nnoremap <leader>24 zM
+vnoremap <leader>24 zM
 map <silent><leader>ff :if &foldmethod == 'marker'  <Bar>
             \ set foldmethod=indent   <Bar>
             \ echo "set fdm=indent" <bar>
@@ -594,8 +595,7 @@ map <silent><leader>ff :if &foldmethod == 'marker'  <Bar>
             \ set foldmethod=marker  <Bar>
             \ echo "set fdm=marker" <BAR>
             \ endif <cr>
-
-
+"}}}
 
 "window mapping
 "fast delete buf
