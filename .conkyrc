@@ -1,0 +1,47 @@
+background no
+net_avg_samples 2
+cpu_avg_samples 1
+no_buffers yes
+double_buffer yes
+update_interval 1
+
+own_window no
+#own_window_transparent yes
+#own_window_type dock
+#own_window_hints below,undecorated, sticky, skip_taskbar, skip_pager 
+
+border_inner_margin 0
+border_outer_margin 0
+default_color  9f9f9f
+default_shade_color 000000
+own_window_colour 222222
+color1 99a663
+default_outline_color white
+default_shade_color black
+
+draw_borders no
+draw_graph_borders yes
+stippled_borders 0
+draw_outline no
+draw_shades no
+show_graph_scale no
+show_graph_range no
+default_bar_size 130 5
+
+use_xft yes
+xftfont WenQuanYi Micro Hei:pixelsize=18
+uppercase no
+xftalpha 0.5
+
+#minimum_size 180 283
+#use_spacer none
+alignment bottom_right
+gap_x 30
+gap_y 10
+
+#lua_load ./.text.lua
+#lua_draw_hook_pre load_text
+
+TEXT
+${voffset 10}
+${alignc}${goto 25}${font Verdana:size=32:bold}${time %k:%M:%S}${font}       ${time %b%d日}  ${time 星期%a} ${goto 500} CPU: ${cpu}%       Mem: ${memperc}%               D: ${downspeed eth0}    U: ${upspeed eth0}
