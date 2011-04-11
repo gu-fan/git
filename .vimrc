@@ -17,6 +17,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings
 """""""""""""""""""""""""""""""""""""""""""""""""
+
 call pathogen#runtime_append_all_bundles()
 "{{{ behavewin
 if has('gui_running')
