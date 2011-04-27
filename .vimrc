@@ -1,36 +1,86 @@
-" vim:tw=0 et sw=4 ts=4 sts=4 fdm=marker ff=unix fenc=utf8 fdls=0:
+" vim:tw=0 sw=4 ts=4 sts=4 fdm=marker ff=unix fenc=utf8 fdls=0 :
 """""""""""""""""""""""""""""""""""""""""""""""""
-"Index (Use # to go around )
+"Vimrc Setting Index "{{{
 "1.General_Settings
-"  1.1.fonts_color_and_folding
+"  1.1.guifonts_color_and_term
 "  1.2.Misc_Settings
 "2.AutoCmd_Group
 "3.Commands_And_Abbreviations
 "4.Key_Mapping_General
 "  4.1.Leader_Mapping
 "  4.2.Window_control_mapping
-"  4.3.moving_mapping
-"  4.4.win_behave_settings
-"  4.5.edit_and_format 
-"5.Plugins_And_Key_Mapping
+"  4.3.move_around_mapping
+"  4.4.Edit_and_formatting
+"  4.5.win_behave_settings
+"5.Plugins_settings
 "6.Function_And_Key_Mapping
 "  6.1.vimwiki_works
-"7.Other_Stuffs
-"
-"By: Rykka10(at)gmail.com
-"Last Change: 2011-04-23 22:15
-"
+"7.Other_Stuffs "}}}
+"  By: Rykka10(at)gmail.com
+"  Last Change: 2011-04-27 23:01
 " "Tough time Goes , Tough People Stay. "
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" 1.General_Settings
 """""""""""""""""""""""""""""""""""""""""""""""""
 
+" 1.General_Settings{{{1
+"""""""""""""""""""""""""""""""""""""""""""""""""
+"{{{ Vundle
+set nocompatible               " be iMproved
+filetype off                   " required!
+
+set rtp+=~/.vim/vundle.git/
+call vundle#rc()
+
+" My Bundles here:
+" original repos on github
+Bundle 'tpope/vim-fugitive'
+"Bundle 'lokaltog/vim-easymotion'
+"Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+Bundle 'Shougo/neocomplcache'
+Bundle 'Shougo/unite.vim'
+Bundle 'ujihisa/unite-colorscheme'
+Bundle 'mattn/zencoding-vim'
+Bundle 'mattn/calendar-vim'
+Bundle 'majutsushi/tagbar'
+Bundle 'scrooloose/nerdcommenter'
+"testing
+Bundle 'wincent/Command-T'
+Bundle 'sjl/gundo.vim'
+Bundle 'hrp/EnhancedCommentify'
+Bundle 'tomtom/checksyntax_vim'
+Bundle 'Lokaltog/vim-easymotion'
+Bundle 'tpope/vim-surround'
+let g:EasyMotion_leader_key = 'f'
+
+"" vim-scripts repos
+Bundle 'L9'
+Bundle 'FuzzyFinder'
+"Bundle 'rails.vim'
+"Bundle 'vimwiki'
+
+Bundle 'jQuery'
+
+Bundle 'css_color.vim'
+Bundle 'matchit.zip'
+
+"colorscheme
+Bundle 'molokai'
+Bundle 'pyte'
+"Bundle 'proton'
+Bundle 'twilight'
+"Bundle 'phd'
+Bundle 'nelstrom/vim-mac-classic-theme.git'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'git@github.com:gmarik/ingretu.git'
+
+"" non github repos
+"Bundle 'git://git.wincent.com/command-t.git'
+" ...
+
+filetype plugin indent on     " required!
+"}}}
 "load all bundles
 call pathogen#runtime_append_all_bundles()
-
-
-"Basic setting"{{{
+"Basic Setting"{{{
 set nocompatible
 syntax on
 filetype plugin indent on
@@ -38,20 +88,21 @@ filetype plugin indent on
 "history
 "the browse window's directory
 set browsedir=buffer
-set history=20 
+set history=255
 " Tell vim to remember certain things when we exit
 set viminfo='100,\"30,:30,s10,%
 "Set to auto read when a file is changed from the outside
 set autoread
-set autowriteall
+set autowrite
 "}}}
-
 "{{{multi_byte
 set encoding=utf-8
 set fileencoding=utf8
 set fileencodings=utf8,gb18030,cp936
 set termencoding=utf-8
-set formatoptions+=qr2
+set formatoptions+=q2
+set fo-=r         " Do not automatically insert a comment leader after an enter
+set fo-=t                      " Do no auto-wrap text using textwidth (does not apply to comments)
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
 
 if has("multi_byte")
@@ -61,28 +112,22 @@ if has("multi_byte")
     endif
 endif
 "}}}
-
-
 "{{{ui setting
 set ruler "column and line number even no status line
 set nonumber
 
 set modeline
-set cmdheight=1
 set laststatus=2
 set splitbelow splitright
 set winminwidth=0 winminheight=0
 " minimal screen line that always visible while working
+
 set scrolloff=3
 set scrolljump=1
-map <scrollwheelup> 3k
-map <scrollwheeldown> 3j
-map <s-scrollwheelup> 30k
-map <s-scrollwheeldown> 30j
+
 "Do not redraw, when running macros.. lazyredraw
 set nolz
 set display=lastline "show dialog not completely
-set showcmd " show current key in cmd line
 set guioptions=gt
 set guioptions-=m
 set guioptions-=T
@@ -104,101 +149,23 @@ set noconfirm
 
 set winaltkeys=no
 
+set showtabline=1
+set tabpagemax=15
+
 " Set cmd-mode
+set cmdheight=1
+set showcmd " show current key in cmd line
 if has('wildmenu')
 set wildchar=<Tab> wildmenu wildmode=full
     set wildignore=*.o,*.obj,*.bak,*.exe,*.swp
     set cpoptions-=<  "compatible-options"
     set wildcharm=<C-Z> "wildchar inside macro"
 endif
-
-set showtabline=1
-set tabpagemax=15
-" end of UI }}}
-
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" 1.1.fonts_color_and_folding
-"""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{ guifont and color
-if has("gui_running")
-    if has ("win32")
-        set guifont=Courier_New:h13:cANSI
-        "set gfw=Yahei_Mono:h12:cGB2312
-    endif
-        if has("gui_gtk2")
-            set guifont=DejaVu\ Sans\ Mono\ 13,Fixed\ 13
-            set gfw=Wenquanyi\ Micro\ Hei\ Mono\ 13,WenQuanYi\ Zen\ Hei\ 13
-    endif
-
+if has('arabic')
+  set noarabicshape
 endif
 
-"call after colorscheme and sourcecmd "{{{
-fun! Norm_hack()
-"molokai hack and add
-if g:colors_name=="molokai"
-    hi Normal          guifg=#d8d8d2 guibg=#111111
-    hi NonText         guifg=#AAAAAA guibg=#111111
-
-    hi StatusLine      guifg=#808070 guibg=#080808
-    hi StatusLineNC    guifg=#404040 guibg=#080808
-    hi VertSplit       guifg=#080808 guibg=#404040 gui=bold
-
-    hi tabline         guifg=#808070 guibg=#111111
-    hi tablinesel      guifg=#111111 guibg=#808070 gui=bold
-    hi tablinefill     guifg=#111111 guibg=#111111
-
-    hi SignColumn      guifg=#904040 guibg=#080808
-    hi FoldColumn      guifg=#555555 guibg=#111111
-    hi Folded          guifg=#665447 guibg=#000000
-    hi colorcolumn     guibg=#666666
-    
-    hi title           guifg=#883838 
-    hi search          guibg=#111111 guifg=#999999 gui=underline
-    hi incsearch       guibg=#111111 guifg=#999999 gui=underline
-endif
-endfun "}}}
-
-"guicolor
-if has("gui_running")
-    source $VIMRUNTIME/delmenu.vim
-    source $VIMRUNTIME/menu.vim
-    " Always show file types in menu
-    let do_syntax_sel_menu=1
-    "let $colorscheme_n="desert"
-    let $colorscheme_n="molokai"
-    colorscheme $colorscheme_n
-    call Norm_hack()
-else
-    let $colorscheme_n="desert"
-    colorscheme $colorscheme_n
-endif
-
-"set statusline=%<[%2*%n%*\>%P:%l,%c]%f\%=[%1*%M%R%*%W%Y,%{&enc}][%oB,%bA]
-set statusline=[%03l,%02c,%P]%<%F\%=[%1*%M%R%*%W%Y,%{&enc},%{&ff}][%oB,%bb]
-"set statusline=%<%f\ (%{&ft})%=%-19(%3l,%02c%03V%)
-  "hi StatusLine      guifg=#808070 guibg=#080808
-"hi User1 term=inverse,bold cterm=inverse,bold ctermfg=red guifg=red guibg=#111111 gui=bold,underline
-hi User1 ctermfg=red guibg=#111111 guifg=red gui=bold,underline
-"hi User2 guifg=gray guibg=black gui=bold
-
-"func! CapsLockStatus()
-  "let xs = system('xset q')
-  "let mask = matchstr(xs, 'LED mask:\s*\zs\d\+')
-  "return ((mask % 2) == 0) ? 'off' : 'on'
-"endfunction
-"fun! SetCapsLock()
-    "set statusline=%<[%2*%n%*:%l,%c]%f\%=%{CapsLockStatus()}[%1*%M%R%*%W%Y,%{&enc}][%oB,%LL,%P]
-"endfun
-
-"aug status
-    "au!
-    ""au! cursorholdI * exe "let &ro = &ro"
-    ""au! cursormoved * exe "let &ro = &ro"
-    ""au! cursormovedi * exe "let &ro = &ro"
-    ""au! InsertEnter * exe "let &ro = &ro"
-"aug END
-""}}}
-
+" }}}
 "folding "{{{
 set foldenable
 set foldmethod=marker
@@ -249,10 +216,125 @@ function! MyFoldMarker(type, ...) "{{{
   let &selection = sel_save
   let @@ = reg_save
 endfunction "}}}
-
 "}}}
 
+" 1.1.guifonts_color_and_term
 """""""""""""""""""""""""""""""""""""""""""""""""
+"{{{ Guifont And Color
+if has("gui_running")
+    if has ("win32")
+        set guifont=Courier_New:h13:cANSI
+        "set gfw=Yahei_Mono:h12:cGB2312
+    endif
+        if has("gui_gtk2")
+            set guifont=Droid\ Sans\ Mono\ 12,Fixed\ 12
+            set gfw=Wenquanyi\ Micro\ Hei\ Mono\ 12,WenQuanYi\ Zen\ Hei\ 12
+    endif
+
+endif
+"Call After Colorscheme And Sourcecmd "{{{
+fun! Color_Modify()
+    "all
+    hi search          gui=underline
+    hi incsearch       gui=underline
+    "hi comment          gui=italic
+    if g:colors_name=="molokai" "{{{
+        hi Normal          guifg=#b8b8b2 guibg=#111111
+        hi NonText         guifg=#AAAAAA guibg=#111111
+
+        hi StatusLine      guifg=#808070 guibg=#080808
+        hi StatusLineNC    guifg=#404040 guibg=#080808
+        hi VertSplit       guifg=#080808 guibg=#404040 gui=bold
+
+        hi tabline         guifg=#808070 guibg=#111111
+        hi tablinesel      guifg=#111111 guibg=#888870 gui=bold,underline
+        hi tablinefill     guifg=#111111 guibg=#111111
+
+        hi SignColumn      guifg=#904040 guibg=#080808
+        hi FoldColumn      guifg=#555555 guibg=#111111
+        hi Folded          guifg=#998775 guibg=#111111
+        hi colorcolumn     guibg=#222
+
+        hi title           guifg=#883838
+    endif "}}}
+    if g:colors_name=="pyte" "{{{
+        hi Normal           guibg=#cccccc
+        hi colorcolumn      guibg=#aaa
+        hi search           guifg=#111111 guibg=#999999 gui=underline
+        hi incsearch        guifg=#111111 guibg=#999999 gui=underline
+        hi Visual           guibg=#999999
+        hi comment          guifg=#778899
+        hi Error            guifg=#991111 guibg=#eeddcc
+        hi Todo             guifg=#555555               gui=bold
+        hi type             guifg=#aa6600
+        hi repeat           guifg=#117755
+
+        hi StatusLine       guifg=#111111               gui=bold
+        hi tabline          guifg=#808070
+        hi tablinesel       guifg=#111111 guibg=#aabbcc
+        hi Folded           guifg=#665447 guibg=#aaa
+        hi FoldColumn       guifg=#555555 guibg=#aaa
+    endif "}}}
+    if g:colors_name=="solarized" "{{{
+        hi normal           guifg=#626262 guibg=#CFCBC9
+        hi folded           guibg=#DEDAD8 gui=underline
+        hi colorcolumn      guibg=#DEDAD8
+        hi foldcolumn       guibg=#DEDAD8
+    endif "}}}
+endfun "}}}
+"colorscheme
+if has("gui_running") 
+    "let $colorscheme_n="desert"
+    "let $colorscheme_n="molokai"
+    "let $colorscheme_n="pyte"
+    let $colorscheme_n="solarized"
+    colorscheme $colorscheme_n
+    call Color_Modify()
+else
+    let $colorscheme_n="desert"
+    colorscheme $colorscheme_n
+endif
+
+"menu
+if has("gui_running")
+    source $VIMRUNTIME/delmenu.vim
+    source $VIMRUNTIME/menu.vim
+     "Always show file types in menu
+    let do_syntax_sel_menu=1
+endif
+"statusline
+set statusline=[%03l,%02c,%P]%<%F\%=[%1*%M%R%*%W%Y,%{&enc},%{&ff}][%oB,%bb]
+hi User1 ctermfg=red guibg=#111111 guifg=red gui=bold,underline
+"}}}
+"Term Color "{{{
+if has("gui_running")
+else
+  set ambiwidth=single
+  " 防止退出时终端乱码
+  " 这里两者都需要。只前者标题会重复，只后者会乱码
+  set t_fs=(B
+  set t_IE=(B
+  if &term =~ "256color"
+    " 在不同模式下使用不同颜色的光标
+    "set cursorline
+    "colorscheme pink_lily
+    if &term =~ "xterm"
+      silent !echo -ne "\e]12;HotPink\007"
+      let &t_SI="\e]12;RoyalBlue1\007"
+      let &t_EI="\e]12;HotPink\007"
+      autocmd VimLeave * :!echo -ne "\e]12;green\007"
+    endif
+  else
+    " 在Linux文本终端下非插入模式显示块状光标
+    if &term == "linux"
+       set t_ve+=[?6c
+       autocmd InsertEnter * set t_ve-=[?6c
+       autocmd InsertLeave * set t_ve+=[?6c
+       autocmd VimLeave * set t_ve-=[?6c
+    endif
+  endif
+endif "}}}
+
 " 1.2.Misc_Settings
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{"Misc Editing Options
@@ -263,11 +345,10 @@ set shiftround              " rounds indent to a multiple of shiftwidth
 
 set smartindent
 set autoindent
-set copyindent		" copy the previous indentation on autoindenting
+set copyindent              " copy the previous indentation on autoindenting
 
 set wrap
 set linebreak
-
 " backspace and cursor keys wrap to previous/next line
 set backspace=indent,eol,start whichwrap+=<,>,[,]
 
@@ -280,6 +361,7 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
+set wrapscan
 
 set comments=n:>,fb:-,fb:*
 set formatoptions+=1orn2mM
@@ -296,6 +378,7 @@ set virtualedit=block
 "Change buffer - without saving
 set hidden
 set bufhidden=hide
+"set switchbuf=useopen,usetab
 set switchbuf=useopen
 
 set spelllang=en
@@ -323,14 +406,14 @@ if !isdirectory(expand('~/.vim_backups'))
 endif
 set backup
 set backupdir=~/.vim_backups/
-set directory=~/.vim_backups/,.
+set directory=.,~/.vim_backups/
 
+set tags=./tags;$HOME
 "set showfulltag             " Show more information while completing tags.
-"set cscopetag               " When using :tag, <C-]>, or "vim -t", try cscope:
+set cscopetag               " When using :tag, <C-]>, or "vim -t", try cscope:
 "set cscopetagorder=0        " try ":cscope find g foo" and then ":tselect foo"
 
 ""}}}
-
 "VIM73 "{{{
 if v:version >= 703
     set colorcolumn=70
@@ -353,8 +436,7 @@ if v:version >= 703
     hi Conceal guifg=fg guibg=black
 endif "}}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" 2.AutoCmd_Group
+" 2.AutoCmd_Group{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
 aug vimrc_GuiEnter "{{{
     au! vimrc_GuiEnter
@@ -363,7 +445,7 @@ aug vimrc_GuiEnter "{{{
     "au GUIENTER *.vwk set filetype=vimwiki
     "au GUIEnter * VimwikiIndex
     au GuiEnter * set t_vb=
-    au GUIENTER * winpos 501 0
+    au GUIENTER * winpos 131 0
     au Guienter * winsize 80 100
 aug END
 
@@ -381,20 +463,17 @@ aug vimrc_Buffer
     "au BufRead,BufNewFile *.vwk source $MYVIMRC
     "auto go to last position when open file
 aug END "}}}
-
 aug vimrc_edit "{{{
     au! vimrc_edit
     "When .vimrc is edited, reload it
     autocmd! bufwritepost .vimrc source ~/.vimrc
     autocmd! bufwritepost $colorscheme_n source ~/.vimrc
 aug END "}}}
-
 aug Filetypes "{{{
     au! Filetypes
     "au FileType text,vimwiki setlocal tw=76
     "endif
 aug END "}}}
-
 aug htmls "{{{
     au! htmls
     " Autoclose tags on html, xml, etc
@@ -402,7 +481,6 @@ aug htmls "{{{
     au Filetype php,html,xhtml,xml set shiftwidth=2 softtabstop=2
     au Filetype php,html,xhtml,xml set foldmethod=indent
 aug END "}}}
-
 aug vimrc_auto_mkdir  " {{{
   autocmd! vimrc_auto_mkdir
   autocmd BufWritePre * call s:auto_mkdir(expand('<afile>:p:h'), v:cmdbang)
@@ -413,7 +491,6 @@ aug vimrc_auto_mkdir  " {{{
     endif
   endfunction  "
 augroup END  " }}}
-
 aug some_color "{{{
 au! some_color
 "au! FileType vimwiki call filetype detect
@@ -423,11 +500,12 @@ au! FileType vimwiki call Vimwiki_color()
 
 "au! SourceCmd,bufwritepost *.vimrc filetype detect
 "au! SourceCmd,bufwritepost *.vimrc syntax enable
-"au! SourceCmd,bufwritepost *.vimrc call Norm_hack()
-"au! colorscheme * call Norm_hack()
+"au! SourceCmd,bufwritepost *.vimrc call Color_Modify()
+"au! colorscheme * call Color_Modify()
 aug END
 
 fun! Vimwiki_color() "{{{
+if g:colors_name=="molokai"
 hi VimwikiHeader1 guifg=#D0D090 gui=bold
 hi VimwikiHeader2 guifg=#9BC97E gui=bold
 hi VimwikiHeader3 guifg=#4FB16F gui=bold
@@ -435,13 +513,17 @@ hi VimwikiHeader4 guifg=#4E83AE gui=bold
 hi VimwikiHeader5 guifg=#8889BA gui=bold
 hi VimwikiHeader6 guifg=#A365B7 gui=bold
 
+hi VimwikiLIst guifg=#bb9
+elseif g:colors_name=="solarized"
+
+endif
 syn match VimwikishortTimeStamp /<\d\d\d\d-\d\d\d\d>/
 syn match VimwikiminTimeStamp /\d\d\d\d_\d\d\d\d/
 syn match VimwikiTimeStamp /<\d\d\d\d-\d\d\d\d>/
 hi def link VimwikishortTimeStamp VimwikiTimeStamp
 hi def link VimwikiminTimeStamp VimwikiTimeStamp
 hi def link VimwikiTimeStamp SpecialComment
-hi VimwikiTimeStamp guifg=#777777 guibg=#111111 gui=bold
+hi VimwikiTimeStamp guifg=#777777 gui=bold
 
 let rxListBullet = '^\s*\zs\%(\*\|-\|#\)\ze\s'
 "let rxListNumber = '^\s*\zs\%(\d\+[\.)]\)\+\s'
@@ -449,19 +531,8 @@ execute 'syntax match VimwikiList /'.rxListBullet.'/'
 "execute 'syntax match VimwikiList /'.rxListNumber.'/'
 syn match vimwiki_rx_list_num /^\s*\%(\d\+\.\)\+\ze\s/
 "hi vimwiki_rx_list guifg=#8c8 gui=bold
-hi VimwikiLIst guifg=#bb9 
 hi default link vimwiki_rx_list_num VimwikiLIst
 
-"syn match Vimwiki_Prio9 /\[\*9\]/
-"syn match Vimwiki_Prio8 /\[\*8\]/
-"syn match Vimwiki_Prio7 /\[\*7\]/
-"syn match Vimwiki_Prio6 /\[\*6\]/
-"syn match Vimwiki_Prio5 /\[\*5\]/
-"syn match Vimwiki_Prio4 /\[\*4\]/
-"syn match Vimwiki_Prio3 /\[\*3\]/
-"syn match Vimwiki_Prio2 /\[\*2\]/
-"syn match Vimwiki_Prio1 /\[\*1\]/
-"syn match Vimwiki_Prio0 /.*\[\*0\].*/
 
 syn match Vimwiki_Prio9 /\[+9\]/
 syn match Vimwiki_Prio8 /\[+8\]/
@@ -474,19 +545,19 @@ syn match Vimwiki_Prio2 /\[+2\]/
 syn match Vimwiki_Prio1 /\[+1\]/
 syn match Vimwiki_Prio0 /.*\[+0\].*/
 
-"can't match because the list item used all the \s 
+"can't match because the list item used all the \s
 "so use \@<= instead
 "syn match Vimwiki_Prio9 /\s\zs=+9\ze\s/
 
 syn match Vimwiki_Prio9 /\s\@<=+9\s/
-syn match Vimwiki_Prio8 /\s\@<=+8\s/ 
-syn match Vimwiki_Prio7 /\s\@<=+7\s/ 
-syn match Vimwiki_Prio6 /\s\@<=+6\s/ 
-syn match Vimwiki_Prio5 /\s\@<=+5\s/ 
-syn match Vimwiki_Prio4 /\s\@<=+4\s/ 
-syn match Vimwiki_Prio3 /\s\@<=+3\s/ 
-syn match Vimwiki_Prio2 /\s\@<=+2\s/ 
-syn match Vimwiki_Prio1 /\s\@<=+1\s/ 
+syn match Vimwiki_Prio8 /\s\@<=+8\s/
+syn match Vimwiki_Prio7 /\s\@<=+7\s/
+syn match Vimwiki_Prio6 /\s\@<=+6\s/
+syn match Vimwiki_Prio5 /\s\@<=+5\s/
+syn match Vimwiki_Prio4 /\s\@<=+4\s/
+syn match Vimwiki_Prio3 /\s\@<=+3\s/
+syn match Vimwiki_Prio2 /\s\@<=+2\s/
+syn match Vimwiki_Prio1 /\s\@<=+1\s/
 syn match Vimwiki_Prio0 /.*\s+0\s.*/
 
 syn match Vimwiki_minus9 /\s\@<=-9\s/
@@ -536,18 +607,29 @@ endfun "}}}
 
 "}}}
 
+" 3.Commands_And_Abbreviations {{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
-" 3.Commands_And_Abbreviations (editing mapping)
-"""""""""""""""""""""""""""""""""""""""""""""""""
-"{{{help items
+"{{{ Commands
 "command! -nargs=* Htag helptags $VIMRUNTIME/doc <args>
-command! -nargs=* Htag call pathogen#helptags() <args>
-command! -nargs=* Papp call pathogen#runtime_append_all_bundles(<args>) <args>
+command! -nargs=* HTAG call pathogen#helptags() <args>
+command! -nargs=* PAPP call pathogen#runtime_append_all_bundles(<args>) <args>
 
-cabbrev H h
+
+command! -nargs=0 WSU exec "w !sudo tee % "
+command! -nargs=0 GSU exec "!gksu gvim % "
+
+command! Delete call delete(expand('%'))
+command! -range=% ClsXML <line1>,<line2>!tidy -utf8 -iq -xml
+command! -range=% ClsHTML <line1>,<line2>!tidy -utf8 -iq -omit -w 0
+command! -range=% THTML <line1>,<line2>!tidy -utf8 -iq -f 'errs.txt' -m
+
+command! CHMOD !chmod 777 %
+command! GCC !gcc `pkg-config --cflags --libs gtk+-2.0` %
+
+" The K stroke
 set keywordprg=":help"
+cabbrev H h
 "}}}
-
 "{{{ insert abbrevation
 iab teh the
 iab tihs this
@@ -569,51 +651,77 @@ inorea mdash &nbsp;&mdash;
 inorea nbsp &nbsp;
 inorea <<< &lt;
 inorea >>> &gt;
-
+inorea --> &rarr;
+inorea <-- &larr;
 iab stime <<C-R>=strftime("%y-%m-%d %H:%M:%S")<CR>>
+iab ttime <C-R>=strftime("%y%m%d_%H%M")<CR>
 iab dtime <C-R>=strftime("%y-%m-%d %H:%M:%S")<CR>
 iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 "}}}
-
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" 4_Key_Mapping_General
+" 4.Key_Mapping_General{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
 " F1-F12 "{{{
-map <F1> :call Split_if("")<cr><Plug>VimwikiIndex
-map <c-F1> :Vimwiki2HTML<cr>
-map <c-m-F1> :VimwikiAll2HTML<cr>
-map <s-F1> :VimwikiGenerateLinks<CR>
+" TODO make F1~F12 The plugin key which have cmd win 
+" F1 help / docs
+" F2 Search /replace
+" F3 Buffers 
+" F4 Filedir XXX dont use m-F4
+" F5 RUN /COMPILE
+" F6 TAGLIST
+" F7 UNDO 
+" F8 OPEN FOLDER / TERMINAL
+" F9 
+" F10
+" F11
+" F12 Save session
 
-map <F2> :Ack <C-R><C-W>
+nmap <F1> :h <C-R><C-W> <CR>
+"map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
+nmap <s-F1> :!man <C-R><C-W> <CR>
+nmap <c-f1> :FufHelp <c-r><c-w><CR>
+
+nmap <F2> :FufLine <c-r><c-w><CR>
+map <c-F2> :Ack <C-R><C-W>
+vnoremap <c-F2> "sy<esc><c-l>:Ack <c-r>s
 " replace word under cursor
 nmap <s-F2> :%s/<C-R><C-W>//gc<Left><Left><Left>
-" replace selection 
+" replace selection
 vnoremap <s-F2> "sy<esc><c-l>:%s/<c-r>s//g<Left><Left>
 "vnoremap <C-C> "+y
 
-map <silent> <F3> :Unite buffer<CR>
-noremap <F4> :NERDTreeToggle "expand('%:p:h')"<cr>
-"map <F4> :NERDTreeToggle<CR>
-"map <F4> :Unite file bookmark -vertical -winwidth=40 -no-quit <cr>
+map <silent> <F3> :FufBuffer<CR>
+map <s-F3> :Unite buffer<CR>
+"noremap <F4> :NERDTreeToggle "expand('%:p:h')"<CR>
+noremap <F4> :FufFile<CR>
+map <s-F4> :Unite file bookmark<CR>
 
-"command! -nargs=0 CHMOD call pathogen#helptags() <args>ommand 
-command! -nargs=0 CHMOD !chmod 777 %
-nnoremap <silent> <F5> :call Exe_cur_script("file","norm")<Cr>
-vnoremap <silent> <F5> :call Exe_cur_script("visual","norm")<Cr>
-nnoremap <silent> <c-F5> :call Exe_cur_script("file","sudo")<Cr>
-vnoremap <silent> <c-F5> :call Exe_cur_script("visual","sudo")<Cr>
-nnoremap <silent> <s-F5> :call Exe_cur_script("line","norm")<Cr>
-nnoremap <silent> <c-s-F5> :call Exe_cur_script("line","sudo")<Cr>
+
+"FIXME ugly: 
+" should be F5 -> run file
+" S-F5 -> sudo file /chmod /compile
+" v_F5 -> yank and run range 
+nmap <silent> <F5> :call Exe_cur_script("file","norm")<CR>
+vmap <silent> <F5> :call Exe_cur_script("visual","norm")<CR>
+nmap <silent> <c-F5> :call Exe_cur_script("file","sudo")<CR>
+vmap <silent> <c-F5> :call Exe_cur_script("visual","sudo")<CR>
+nmap <silent> <s-F5> :call Exe_cur_script("line","norm")<CR>
+nmap <silent> <c-s-F5> :call Exe_cur_script("line","sudo")<CR>
 function! Exe_cur_script(range,priv) "{{{
+   " TODO mac /win /linux check (kde,gnome ,)
+   " define the cmd by user
+   " TODO Pluginize: a cmd window to choose :sudo/norm
+   " choose visual/line , file
+   " debug mode 
+   " compile chmod make
     if expand("%") != ""
         "w!
-        if !exists("b:current_syntax")   "don't need the & prefix
-            echom "current file  % can not be executed"
-            return 0
-        endif
+        "FIXME wrong if no syntax
+        "if !exists("b:current_syntax")   "don't need the & prefix
+            "echom " can not  execute current file (%) "
+            "return 0
+        "endif
 
-        let syn=b:current_syntax
-        let browser = "google-chrome"
+        let browser = "firefox"
         "let pri=""
         "let rng=getline('.')
         if a:range=="file"
@@ -636,44 +744,57 @@ function! Exe_cur_script(range,priv) "{{{
             let pri=""
         endif
 
-        if syn=="python"
+        if exists("b:current_syntax")
+        let syn=b:current_syntax
+        if syn=="python" "{{{
             exec "!".pri."python -d ".rng." 2>&1 | tee /tmp/.runtmp"
             "exec "!".pri."python -d ".rng." 2 3 4 5"
         elsei syn=~'^\(vim\|vba\)$'
             if a:range=="file"
                 exec "so ".expand('%:p')
             elseif a:range=="line"
-                exec getline('.')
+                exec rng
             endif
         elsei syn=~'html'
             exec "!".browser.' "'.rng.'"'
         elsei syn =~'^\(sh\|expect\|bash\)$'
             if has("unix")
+
                 "exec "!".pri."gnome-terminal -e "."'".pri."sh -c ".rng."'"
                 if a:range=="file"
+                    if stridx(getfperm(rng), 'x') != 2
+                        call system("chmod +x ".shellescape(rng))
+                    endif
                     exec "!".pri."gnome-terminal -e "."'".pri."bash ".rng."'"
-                else 
+                else
                     "exec "!".pri."gnome-terminal -e "."'".pri."sh -c ".rng."'"
                     exec "!".pri."gnome-terminal -x ".rng
                 endif
             elseif has("win32") || has("win64")
                 exec "!".pri."cmd -e".rng
             endif
-        elsei
-            exec "!".pri.rng
+        else
+            "setl binary
+            if has("unix") | exec "!gnome-open ".pri.rng
+            else | exec "!".pri.rng | endif
+        endif "}}}
+        else
+            "setl binary
+               if has("unix") | exec "!gnome-open ".pri.rng
+               else | exec "!".pri.rng | endif
         endif
 
     endif
 endf "}}}
-"map <silent> <c-F5> :execute "split .tmp"<Cr>
+"map <silent> <c-F5> :execute "split .tmp"<CR>
 "run current line
 
 map <F6> :TagbarToggle<CR>
 
+map <F7> :GundoToggle<CR>
 
-map <F7> :!gnome-open <cfile><cr>
-
-map <silent> <F8> :call Start_File_explore()<cr>
+map <silent><F8> :call Start_File_explore()<CR>
+map <silent><s-F8> :call Start_terminal()<CR>
 fun! Start_File_explore()
     if expand("%:p:h") != ""
         if has("win32")
@@ -683,21 +804,15 @@ fun! Start_File_explore()
         endif
     endif
 endf
-
-map <c-F8> :call Start_terminal()<CR>
 fun! Start_terminal()
     if has("win32")
-    !start cmd '%'
+        exec "!start cmd '%:p:h'"
     else
-    !gnome-teminal -x '%'
+        exec "!gnome-terminal --working-directory='%:p:h'"
     endif
 endf
 
-map <F9> :set spell!<CR>
-    \<bar>:echo "Spell check: ".strpart("OFFON", 3 * &spell, 3)<CR>
-
-map <F10> :set wrap! wrap?<CR>
-
+"session save /load
 nmap <F12> :call SaveSession()<CR>
 nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
 set sessionoptions=buffers,curdir,help,tabpages,winsize,resize
@@ -714,10 +829,9 @@ endfunction
 
 "}}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""
 " 4.1.Leader_Mapping
 """""""""""""""""""""""""""""""""""""""""""""""""
-"mapleader "{{{
+"Mapleader "{{{
 let mapleader = " "
 let maplocalleader = ","
 "let maplocalleader = "\\"
@@ -726,59 +840,67 @@ nnoremap ; :
 noremap q: <nop>
 
 " Nop mapping
-nmap s <Nop>
-nmap S <Nop>
+nnoremap s z
+nnoremap S z
+nnoremap c <Nop>
+nnoremap C <Nop>
 
-command! -nargs=0 WSU exec "w !sudo tee % "
-command! -nargs=0 GSU exec "!gksu gvim % "
 "}}}
+"Edit .vimrc and other files <leader>XX"{{{
+map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
+map <leader>vd :e ~/.vim/ <CR>
+map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
+map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
 
-"Fast editing of .vimrc and other plugin"{{{
-map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<cr>
-map <silent><leader>VV :call Split_if("") \| e ~/.vimrc<cr>
-map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<cr>
-map <silent><leader>VB :call Split_if("") \| e ~/.bashrc<cr>
+"map <silent><leader>ww :call Split_if("") \| VimwikiIndex<CR>
+"map <silent><leader>WW :call Split_if("") \| VimwikiIndex<CR>
 
-map <silent><leader>ww :call Split_if("") \| VimwikiIndex<cr>
-map <silent><leader>WW :call Split_if("") \| VimwikiIndex<cr>
+"map <leader>vc :call Split_if("") \| e ~/$colorscheme_n.vim<CR>
+"map <leader>VC :call Split_if("") \| e ~/.vim/colors/$colorscheme_n.vim<CR>
 
-map <leader>vc :call Split_if("") \| e ~/.vim/colors/$colorscheme_n.vim<cr>
-map <leader>VC :call Split_if("") \| e ~/.vim/colors/$colorscheme_n.vim<cr>
+"map <leader>vs :call Split_if("") \| exec "VimShell" <CR>
+"map <leader>VS :call Split_if("") \| exec "VimShell" <CR>
 
-map <leader>vs :call Split_if("") \| exec "VimShell" <cr>
-map <leader>VS :call Split_if("") \| exec "VimShell" <cr>
-
-map <leader>vf :call Split_if("") \| exe "VimFiler" <cr><esc>
-map <leader>VF :call Split_if("") \| exe "VimFiler" <cr><esc>
-
-
-map <Leader>tt :call Split_if("") \| e ~/Documents/vimwiki/Todo/TodoToday.vwk<cr>
-
-map <Leader>tn :call Split_if("t")<cr>
+"map <leader>vf :call Split_if("") \| exe "VimFiler" <CR><esc>
+"map <leader>VF :Splif \| exe "VimFiler" <CR><esc>
 
 "reloading of the .vimrc
-map <leader>vr :so ~/.vimrc<cr>
-map <leader>vR :so ~/.vimrc<cr>
-map <leader>rr :so ~/.vimrc<cr>
-map <leader>RR :so ~/.vimrc<cr>
+map <leader>vr :so ~/.vimrc<CR>
+"map <leader>RR :so ~/.vimrc<CR>
+"map <leader>rr :so ~/.vimrc<CR>
+map <leader>rr :nohl \|redr<CR>
+
+map <Leader>tn :call Split_if("t")<CR>
+
+map <leader>rf :FufMruFile<CR>
+map <leader>re <c-^>
+"map <leader>
 "check current file to decide if split or not
-fun! Split_if(str)
-    if expand('%')!=""
-        if a:str =="v"
+command! -nargs=* Splif call Split_if(<q-args>)
+fun! Split_if(...) "{{{
+    if expand('%')==""
+        return
+    endif
+    if a:0
+        if a:1 =="v"
             exe "win 159 100"
             exe "vsplit"
-        elseif a:str=="t"
+        elseif a:1=="t"
             exe "tabnew"
-        else
+        elseif a:1=="s"
             exe "split"
+        elseif a:1==""
+            return
         endif
+    else
+        return
     endif
 endfun
 "}}}
-
-"diff mapping "{{{
-map <silent> <leader>dd :call Toggle_diff()<cr>
-map <silent> <leader>DD :call Toggle_diff()<cr>
+"}}}
+" Toggle Diff Mode "{{{
+map <silent> <leader>dd :call Toggle_diff()<CR>
+map <silent> <leader>DD :call Toggle_diff()<CR>
 "can't use it in the map due to some weird reason.
 fun! Toggle_diff()
     if &diff
@@ -794,23 +916,22 @@ endfun
 
 set diffopt=filler,vertical,foldcolumn:1
 
-map <silent> <leader>do :DiffOrig<cr>
+map <silent> <leader>do :DiffOrig<CR>
 command! DiffOrig win 151 100 | vert new | set bt=nofile | r # | 0d_ | diffthis
-	 	\ | wincmd p | diffthis
+                \ | wincmd p | diffthis
 
 "}}}
-
-"folding "{{{
+"Toggle Folding And Foldmethod "{{{
 "noremap <silent> <leader> zA
 nnoremap <silent> <leader><leader> @=(foldlevel('.')?'za':'')<CR>
-nnoremap <silent> <leader>zz @=(&foldlevel?'zM':'zR')<cr>
-nnoremap <silent> <leader>zz @=(&foldlevel?'zM':'zR')<cr>
-nnoremap <silent> <leader>aa @=(&foldlevel?'zM':'zR')<cr>
-nnoremap <silent> <leader>AA @=(&foldlevel?'zM':'zR')<cr>
-nnoremap f za
-nnoremap F zA
+nnoremap <silent> <leader>zz @=(&foldlevel?'zM':'zR')<CR>
+nnoremap <silent> <leader>ZZ @=(&foldlevel?'zM':'zR')<CR>
+nnoremap <silent> <leader>aa @=(&foldlevel?'zM':'zR')<CR>
+nnoremap <silent> <leader>AA @=(&foldlevel?'zM':'zR')<CR>
+"nnoremap f za
+"nnoremap F zA
 "vnoremap <leader><leader> zf
-map <silent><leader>ff :if &foldmethod == 'marker'  <bar>
+map <silent><leader>fm :if &foldmethod == 'marker'  <bar>
             \ set foldmethod=indent   <bar>
             \ echo "set fdm=indent" <bar>
             \ elseif &foldmethod=='indent'   <bar>
@@ -822,23 +943,32 @@ map <silent><leader>ff :if &foldmethod == 'marker'  <bar>
             \ elseif &foldmethod=='expr'   <bar>
             \ set foldmethod=marker  <bar>
             \ echo "set fdm=marker" <bar>
-            \ endif <cr>
+            \ endif <CR>
 "}}}
+"Misc Option Toggle "{{{
 
-"misc option toggle "{{{
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
 "set listchars=tab:\|-,trail:-,extends:>,precedes:<
 map <Leader>li :set list! list?<CR>
-map <leader>nn :set nu! nu?<cr>
-map <leader>nn :set nu! nu?<cr>
-map <leader>nr :set rnu! rnu?<cr>
+map <silent><leader>nn :if  &nu \| setl rnu \| elseif &rnu \| setl nornu
+            \ \| else \| setl nu\| endif <CR>
+map <leader>wr :set wrap! wrap?<CR>
+"map <leader>nn set nu! nu?<CR>
+"map <leader>nr :set rnu! rnu?<CR>
+map <leader>sp :set spell!<CR>
+    \<bar>:echo "Spell check: ".strpart("OFFON", 3 * &spell, 3)<CR>
 
 no <silent><m-1> :if &go=~#'m'\|se go-=m\|else\|se go+=m\|endif<CR>
 no <silent><m-2> :if &go=~#'r'\|se go-=r\|else\|se go+=r\|endif<CR>
 
+" copy filename
+map <silent> <leader>cl :let @+=expand('%').':'.line('.')<CR>
+map <silent> <leader>cf :let @+=expand('%:p')<CR>
+" copy path
+map <silent> <leader>cp :let @+=expand('%:p:h')<CR>
 
-"keymapping of gtd
-map<silent> <Leader>ttd :TinyTodo<cr>
+"Keymapping Of Gtd
+map<silent> <Leader>ntd :TinyTodo<CR>
 command! -nargs=* TinyTodo call TinyTodo()<args>
 fun! TinyTodo()
     if expand('%') != ""
@@ -850,95 +980,93 @@ fun! TinyTodo()
       exec "e ~/Documents/vimwiki/Todo/TodoTiny.vwk"
   endif
 endfun "}}}
-
-"syntax "{{{
+"Syntax Quick Set "{{{
 "Some nice mapping to switch syntax (useful if one mixes different languages in one file)
-nmap <leader>112 :set ft=vim<cr>
-nmap <leader>113 :set ft=vimwiki<cr>
-nmap <leader>114 :set ft=sh<cr>
+nmap <leader>111 :set ft=vim<CR>
+nmap <leader>112 :set ft=vimwiki<CR>
+nmap <leader>113 :set ft=sh<CR>
 
-nmap <leader>121 :set ft=html.php<cr>
-nmap <leader>122 :set ft=css<cr>
-nmap <leader>123 :set ft=javascript<cr>
-nmap <leader>124 :set ft=php.html<cr>
+nmap <leader>121 :set ft=html.php<CR>
+nmap <leader>122 :set ft=css<CR>
+nmap <leader>123 :set ft=javascript<CR>
+nmap <leader>124 :set ft=php.html<CR>
 
-nmap <leader>131 :set ft=cpp<cr>
-nmap <leader>132 :set ft=python<cr>
+nmap <leader>131 :set ft=cpp<CR>
+nmap <leader>132 :set ft=python<CR>
 
+nmap <leader>11 :filetype detect \| syntax enable \| call Color_Modify() <CR>
+"nmap <leader>`` :filetype detect \| syntax enable \| so $MYVIMRC<CR>
 
-nmap <leader>11 :filetype detect \| syntax enable \| so $MYVIMRC<cr>
-nmap <leader>`` :filetype detect \| syntax enable \| so $MYVIMRC<cr>
-
-nnoremap <silent> <leader>1 :nohl<CR>
+"use menu syntax
+nmap <leader>``  :emenu Syntax.
+"nnoremap <silent> <leader>1 :nohl<CR>
 nnoremap <silent> <C-l> :nohl<CR><C-l>
 "}}}
 
-"""""""""""""""""""""""""""""""""""""""""""""""""
 " 4.2.Window_control_mapping
 """""""""""""""""""""""""""""""""""""""""""""""""
-"window mapping "{{{
-"fast delete buf
+"Window Mapping  <C-W> "{{{
 nmap <c-w>1 <c-w>_
 nmap <c-w><c-a> <c-w>_
 nmap <c-w>2 <c-w>=
 nmap <c-w><c-e> <c-w>=
 "nmap <c-w><c-w> <c-w>=<c-w>w
 nmap <c-w><c-w> <c-w>w
-nmap <c-w>3 z0<cr>
-nmap <c-w><c-z> z0<cr>
+nmap <c-w>3 z0<CR>
+nmap <c-w><c-z> z0<CR>
 nmap <c-w><c-w> <c-w>w
+
+"buffer in current window
+nmap <c-w><c-d> :bd<CR>
+nnoremap <C-w><c-n> :bnext<CR>
+nnoremap <C-w>n :bnext<CR>
+nnoremap <C-w><c-p> :bprevious<CR>
+nnoremap <C-w>p :bprevious<CR>
 "}}}
+"Window Width(Columns) Configure"{{{
+nmap <silent> <c-w><c-v> :call Check_winnr(0)\|vne<CR>
+nmap <silent> <c-w><c-h> :call Check_winnr(2)<CR><c-w>H
+nmap <silent> <c-w><c-l> :call Check_winnr(2)<CR><c-w>L
 
-"window width(columns) configure"{{{
-nmap <silent> <c-w><c-v> :call Check_winnr(0,159)\|vne<cr>
-nmap <silent> <c-w><c-h> :call Check_winnr(2,159)<cr><c-w>H
-nmap <silent> <c-w><c-l> :call Check_winnr(2,159)<cr><c-w>L
+"nmap <silent> <c-w><c-s> :call Check_winnr(-1)\|new<CR>
+"nmap <silent> <c-w><c-s> :sp<CR>
+nmap <silent> <c-w><c-j> :call Check_winnr(-2)<CR><c-w>J
+nmap <silent> <c-w><c-k> :call Check_winnr(-2)<CR><c-w>K
 
-"nmap <silent> <c-w><c-s> :call Check_winnr(-1,75)\|new<cr>
-nmap <silent> <c-w><c-s> :sp<cr>
-nmap <silent> <c-w><c-j> :call Check_winnr(-2,78)<cr><c-w>J
-nmap <silent> <c-w><c-k> :call Check_winnr(-2,78)<cr><c-w>K
+nmap <silent> <c-w><c-q> :call Check_winnr(-2)\|q<CR>
+"nmap <silent> <leader>q  :call Check_winnr(-2)\|q<CR>
 
-nmap <silent> <c-w><c-q> :call Check_winnr(-2,78)\|q<cr>
-nmap <silent> <leader>q  :call Check_winnr(-2,78)\|q<cr>
+nmap <silent> <c-w><c-t> :call Check_winnr(-2)<CR><c-w>T
 
-nmap <silent> <c-w><c-t> :call Check_winnr(-2,78)<cr><c-w>T
-
-fun! Check_winnr(num,col)
-    " check the plus and minus sign
-    " if plus, set to >=
-    " if minus, set to <=
-    if a:num>0
+fun! Check_winnr(num) "{{{
+    let col =78
+    " if plus sign, set to >= if minus, set to <=
+    if a:num>=0
         " if winnr>= num set column
         if winnr("$")>=a:num
-            if &co!=a:col
-                let &co=a:col
-            endif
+            if &co!=col*2 | let &co=col*2 | endif
         endif
     elseif a:num<0
         " if winnr<= abs(num) set column
         if winnr("$")<=abs(a:num)
-            if &co!=a:col
-                let &co=a:col
-            endif
-        end
-    elseif a:num==0
-        " set column anyway
-    	if &co!=a:col
-            let &co=a:col
+            if &co!=col | let &co=col | endif
         endif
+    "elseif a:num==0
+        " set column anyway
+        "if &co!=col | let &co=col | endif
     endif
 endfun "}}}
+"}}}
 
-
+" 4.3.move_around_mapping
 """""""""""""""""""""""""""""""""""""""""""""""""
-" 4.3.moving_mapping
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" <m-x> moving "{{{
+" <M-X> Moving "{{{
 noremap <silent> <m-a> <home>
 noremap <silent> <m-z> <end>
 noremap <silent> <m-k> <up>
 noremap <silent> <m-j> <down>
+"noremap <silent> <m-s-k> 5<up>
+"noremap <silent> <m-s-j> 5<down>
 noremap <silent> <m-h> <left>
 noremap <silent> <m-l> <right>
 noremap <silent> <m-w> w
@@ -948,6 +1076,8 @@ inoremap <silent> <m-w> <c-right>
 inoremap <silent> <m-b> <c-left>
 inoremap <silent> <m-j> <down>
 inoremap <silent> <m-k> <up>
+"inoremap <silent> <m-s-k> 5<up>
+"inoremap <silent> <m-s-j> 5<down>
 inoremap <silent> <m-h> <left>
 inoremap <silent> <m-l> <right>
 inoremap <silent> <m-a> <Home>
@@ -963,46 +1093,218 @@ cnoremap <m-j> <up>
 cnoremap <m-k> <down>
 
 "}}}
+"Easy Moving Modify "{{{
 
-"quick and easy moving  "{{{
+" <s-j> <s-k>
+noremap J 5j
+noremap K 5k
+noremap <c-j> J
+noremap <c-k> K
+
+
 " just one space on the line, preserving indent
 "nmap <Up>   gk
-nmap k      gk
+nnoremap k      gk
 "vmap <Up>   gk
-vmap k      gk
+vnoremap k      gk
 "nmap <Down> gj
-nmap j      gj
+nnoremap j      gj
 "vmap <Down> gj
-vmap j      gj
+vnoremap j      gj
 
+" <s-h> <s-l>
+noremap H B
+noremap L W
+
+" i_c-h is <bs> , so:
+inoremap <c-l> <del>
 
 "quick move to last selection
-nmap `w `<
-nmap `e `>
+nnoremap `w `<
+nnoremap `e `>
 "move to last insert position
-nmap `i `^
+nnoremap `i `^
 "last change postion
-nmap `c `.
+nnoremap `c `.
 
 "jump to the match item
-nmap <leader>go %
-nmap <leader>gg %
+" ]] [[ goto define
+" } { goto paragraph
+" )( go to sentence
+nmap <leader>jj %
+"nmap <leader>jk %v%
+nmap <leader>jh [[
+nmap <leader>jl ]]
+nmap <leader>jn {
+nmap <leader>jp }
 
-map <c-Tab> gt
-map <C-S-Tab> gT
+nnoremap <C-Tab> gt
+nnoremap <C-S-Tab> gT
+
+nnoremap <C-cr> :bnext<CR>
+nnoremap <C-S-cr> :bprevious<CR>
+nnoremap <S-CR> A<CR><ESC>
+
+if v:version < 703
+    nmap <silent> <m-MouseDown> zhzhzh
+    nmap <silent> <m-MouseUp> zlzlzl
+    vmap <silent> <m-MouseDown> zhzhzh
+    vmap <silent> <m-MouseUp> zlzlzl
+    map <MouseUp> 3k
+    map <MouseDown> 3j
+    map <s-MouseUp> 30k
+    map <s-MouseDown> 30j
+else
+    map <m-ScrollWheelDown> <ScrollWheelRight>
+    map <m-ScrollWheelUp> <ScrollWheelLeft>
+    imap <m-ScrollWheelDown> <ScrollWheelRight>
+    imap <m-ScrollWheelUp> <ScrollWheelLeft>
+    map <scrollwheelup> 3k
+    map <scrollwheeldown> 3j
+    map <s-scrollwheelup> 30k
+    map <s-scrollwheeldown> 30j
+endif
+
 
 "}}}
 
+" 4.4.Edit_and_formatting
 """""""""""""""""""""""""""""""""""""""""""""""""
-" 4.4.win_behave_settings (yank and pasting)
+" Easy Editing Modify "{{{
+" make p in Visual mode replace the selected text with the yank register
+"vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
+
+nnoremap Y y$
+
+""Word Capitalize Hotkeys
+nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
+nmap <leader>ul :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
+" Capitalize inner word
+nmap <leader>uc guiw~w
+" UPPERCASE inner word
+nmap <leader>uu gUiww
+" lowercase inner word
+nmap <leader>uw guiww
+
+"trim whitespace
+nnoremap <leader>sc :%s/\s\+$//<CR>:let @/=''<CR>
+
+vnoremap > >gv
+vnoremap < <gv
+
+nnoremap <leader>31 yyPVr=jyypVr=
+nnoremap <leader>32 yyPVr*jyypVr*
+nnoremap <leader>33 yypVr=
+nnoremap <leader>34 yypVr-
+nnoremap <leader>35 yypVr^
+nnoremap <leader>36 yypVr"
+nnoremap __ "zyy"zp<c-v>$r-
+nnoremap ++ "zyy"zp<c-v>$r=
+"}}}
+"Quick Wrapping "{{{
+"visualize selection
+nnoremap <leader>sl ^v$
+"use the remaped % ^ 'matchit'
+nmap <leader>ss %%V%
+" viw can do it
+"nnoremap <leader>sw gewve
+" viW
+"nnoremap <leader>sW geWvE
+" Note: 
+" Action:   V/D 
+" Range:    I/A  
+" Object:   Wsp/][/()/'`"/<>/{}
+"#ffee00
+" Use vim-Surround instead
+" surrond do this as v_s + "surrond things"
+" Imporvement:
+" Normal Mode:
+"               ds -> delete 
+"               dst -> delete <>tag
+"               cs -> change
+"               cst -> change <>tag
+"               ys -> surrond visual select motion
+"               yss -> surrond current line without whitespace
+" Visual Mode:
+"               s
+" Visul_block: 
+"               s
+"TODO put it in a function or use bundles
+"  viw s"
+"nnoremap <Leader>e" ciw"<C-r>""<ESC>
+"vnoremap <Leader>e" c"<C-r>""<ESC>`[
+"nnoremap <Leader>e' ciw'<C-r>"'<ESC>
+"vnoremap <Leader>e' c'<C-r>"'<ESC>`[
+" viw s>
+"nnoremap <Leader>e< ciw<<C-r>"><ESC>
+"vnoremap <Leader>e< c<<C-r>"><ESC>`[
+
+"nnoremap <Leader>e` ciw`<C-r>"`<ESC>
+"vnoremap <Leader>e` c`<C-r>"`<ESC>`[
+"nnoremap <Leader>e8 ciw*<C-r>"*<ESC>
+"vnoremap <Leader>e8 c*<C-r>"*<ESC>`[
+"nnoremap <Leader>e9 ciw(<C-r>")<ESC>
+"vnoremap <Leader>e9 c(<C-r>")<ESC>`[
+"nnoremap <Leader>e- ciw_<C-r>"_<ESC>
+"vnoremap <Leader>e- c_<C-r>"_<ESC>`[
+
+"viw s]
+"nnoremap <Leader>e[ ciw[<C-r>"]<ESC>
+"vnoremap <Leader>e[ c[<C-r>"]<ESC>`[
+"nnoremap <Leader>e{ ciw{<C-r>"}<ESC>
+"vnoremap <Leader>e{ c{<C-r>"}<ESC>`[
+nnoremap <Leader>e} ciw{{{<C-r>"}}}<ESC>
+vnoremap <Leader>e} c{{{<C-r>"}}}<ESC>`[
+nnoremap <Leader>e] ciw[[<C-r>"]]<ESC>
+vnoremap <Leader>e] c[[<C-r>"]]<ESC>`[
+
+"viw s<div id=....
+"nnoremap <leader>ed ciw<div id=""><C-r>"</div><ESC>
+"vnoremap <Leader>ed c<div id=""><C-r>"</div><ESC>`[
+"nnoremap <leader>ea ciw<a href="" ><C-r>"</a><ESC>
+"vnoremap <Leader>ea c<a href="" ><C-r>"</a><ESC>`[
+"nnoremap <leader>ei ciw<img href="" ><C-r>"</img><ESC>
+"vnoremap <Leader>ei c<img href="" ><C-r>"</img><ESC>`[
+"php
+"nnoremap <leader>ep ciw<?php <C-r>" ?><ESC>
+"vnoremap <Leader>ep c<?php <C-r>" ?><ESC>`[
+"" html comment
+nnoremap <leader>e! ciw<!-- <C-r>" --><ESC>
+vnoremap <Leader>e! c<!-- <C-r>" --><ESC>`[
+"}}}
+"Formating "{{{
+"alignment of text
+nmap <leader>al :left<CR>
+nmap <leader>ar :right<CR>
+nmap <leader>ac :center<CR>
+
+"make vimwiki list
+nnoremap <leader>l1 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1* /&e\|nohl<CR>
+nnoremap <leader>l2 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1# /&e\|nohl<CR>
+nnoremap <leader>l3 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1- /&e\|nohl<CR>
+nnoremap <leader>l4 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\11. /&e\|nohl<CR>
+
+" Use Q for formatting the current paragraph (or visual selection)
+vmap Q gq
+nmap Q gqap
+
+"将当前行以下转换为文本
+map <M-r><M-r> <ESC>gqap
+"段落后添加空行
+map <M-r><M-q> <ESC>:.,$s/\([。！？”—）]\)$/\1\r/g<CR>
+"quick format current sentence
+map <M-r><M-f> <ESC>gqap
+
+"}}}
+
+" 4.5.win_behave_settings (yank and pasting)
 """""""""""""""""""""""""""""""""""""""""""""""""
-"win behave "{{{
-"{{{ behave win and menu 
+"{{{ Behave Win And Menu
 if has('gui_running')
     behave mswin
     source $VIMRUNTIME/mswin.vim
 endif "}}}
-
+"{{{ Win_behav Mapping
 vnoremap <c-d> "+x
 vmap <C-X> "+x  " often no cut contentat all
 vmap <C-m-X> "+x  " often no cut contentat all
@@ -1013,16 +1315,16 @@ vnoremap <C-Insert> "+y
 
 " CTRL-V and SHIFT-Insert are Paste
 map <c-v>       "+gp
-map <S-Insert>		"+gp
-imap <C-V>              "+gp
-imap <S-Insert>		"+gp
-cmap <C-V>		<C-R>+
-cmap <S-Insert>		<C-R>+
+map <S-Insert>  "+gp
+imap <C-v>      "+gp
+imap <S-Insert> "+gp
+cmap <C-v>      <C-R>+
+cmap <S-Insert> <C-R>+
 
 exe 'inoremap <script> <C-V>' paste#paste_cmd['i']
 exe 'vnoremap <script> <C-V>' paste#paste_cmd['v']
 " Use CTRL-Q to do what CTRL-V used to do
-noremap <C-Q>		<C-V>
+noremap <C-Q> <C-V>
 
 " CTRL-Z is Undo; not in cmdline though
 noremap <C-Z> u
@@ -1040,129 +1342,69 @@ onoremap <C-A> <C-C>gggH<C-O>G
 snoremap <C-A> <C-C>gggH<C-O>G
 xnoremap <C-A> <C-C>ggVG
 
-nmap <c-s> :update<cr>
-imap <c-s> <esc>:update<cr>a
+nmap <c-s> :update<CR>
+imap <c-s> <esc>:update<CR>a
 "}}}
 
+"5.Plugins_settings{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
-" 4.5.edit_and_format
-"""""""""""""""""""""""""""""""""""""""""""""""""
-" easy editing "{{{
-" make p in Visual mode replace the selected text with the yank register
-vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
-
-nmap Y y$
-
-""Word Capitalize Hotkeys
-nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g<cr>\.
-" Capitalize inner word
-nmap <M-c> guiw~w
-" UPPERCASE inner word
-nmap <M-u> gUiww
-" lowercase inner word
-nmap <M-l> guiww
-
-nnoremap <leader>sc :%s/\s\+$//<CR>:let @/=''<CR>
-
-
-vnoremap > >gv
-vnoremap < <gv
-
-nnoremap <leader>31 yyPVr=jyypVr=
-nnoremap <leader>32 yyPVr*jyypVr*
-nnoremap <leader>33 yypVr=
-nnoremap <leader>34 yypVr-
-nnoremap <leader>35 yypVr^
-nnoremap <leader>36 yypVr"
-nnoremap __ "zyy"zp<c-v>$r-
-nnoremap ++ "zyy"zp<c-v>$r=
+"{{{ Command-T
+nnoremap <leader>uu :GundoToggle<CR>
+"map <leader>ff :FufFile<CR>
+map <leader>ff :CommandT<CR>
+map <leader>tb :CommandTBuffer<CR>
+let g:CommandTMaxHeight=3
+"let g:CommandTMatchWindowAtTop=1
 "}}}
-
-"quick wrapping "{{{
-"
-nnoremap <leader>vl ^v$
-
-nnoremap <Leader>"" ciw"<C-r>""<ESC>
-vnoremap <Leader>"" c"<C-r>""<ESC>
-nnoremap <Leader>'' ciw'<C-r>"'<ESC>
-vnoremap <Leader>'' c'<C-r>"'<ESC>
-nnoremap <Leader>99 ciw(<C-r>")<ESC>
-vnoremap <Leader>99 c(<C-r>")<ESC>`[
-nnoremap <Leader><< ciw<<C-r>"><ESC>
-vnoremap <Leader><< c<<C-r>"><ESC>`[
-nnoremap <Leader>>> ciw<<C-r>"><ESC>
-vnoremap <Leader>>> c<<C-r>"><ESC>`[
-nnoremap <Leader>1` ciw`<C-r>"`<ESC>
-vnoremap <Leader>1` c`<C-r>"`<ESC>`[
-nnoremap <Leader>88 ciw*<C-r>"*<ESC>
-vnoremap <Leader>88 c*<C-r>"*<ESC>`[
-nnoremap <Leader>-- ciw_<C-r>"_<ESC>
-vnoremap <Leader>-- c_<C-r>"_<ESC>`[
-
-nnoremap <Leader>[[ ciw[[<C-r>"]]<ESC>
-vnoremap <Leader>[[ c[[<C-r>"]]<ESC>`[
-nnoremap <Leader>{{ ciw{{<C-r>"}}<ESC>
-vnoremap <Leader>{{ c{{<C-r>"}}<ESC>`[
-
-nnoremap <Leader>{} ciW{{{<C-r>"}}}<ESC>
-vnoremap <Leader>{} c{{{<C-r>"}}}<ESC>`[
-nnoremap <Leader>[] ciW[[<C-r>"]]<ESC>
-vnoremap <Leader>[] c[[<C-r>"]]<ESC>`[
-
-nnoremap <leader><b ciw<b><C-r>"</b><ESC>
-vnoremap <Leader><b c<b><C-r>"</b><ESC>`[
-nnoremap <leader><a ciw<a href="" ><C-r>"</a><ESC>
-vnoremap <Leader><a c<a href="" ><C-r>"</a><ESC>`[ "}}}
-
-"formating "{{{
-" Quick alignment of text 
-nmap <leader>al :left<CR>
-nmap <leader>ar :right<CR>
-nmap <leader>ac :center<CR>
-
-
-"make vim list
-nnoremap <leader>l1 :s/^\(\s*\)[*#-]\s/\1* /&e\|nohl<cr>
-nnoremap <leader>l2 :s/^\(\s*\)[*#-]\s/\1# /&e\|nohl<cr>
-nnoremap <leader>l3 :s/^\(\s*\)[*#-]\s/\1- /&e\|nohl<cr>>>
-
-"formatting
-" Use Q for formatting the current paragraph (or visual selection)
-vmap Q gq
-nmap Q gqap
-
-"将当前行以下转换为文本
-map <M-r><M-r> <ESC>gqap
-
-"段落后添加空行
-map <M-r><M-q> <ESC>:.,$s/\([。！？”—）]\)$/\1\r/g<cr>
-
-"quick format current sentence
-map <M-r><M-f> <ESC>gqap 
-
+"NERD Commenter" "{{{
+map CC <plug>NERDCommenterToggle
+map cc <plug>NERDCommenterToggle
+map ca <plug>NERDCommenterAltDelims
+map ci <plug>NERDCommenterInInsert
+map cp <plug>NERDCommenterAppend
+map cs <plug>NERDCommenterSexy
+let g:NERDCreateDefaultMappings=0
 "}}}
-"""""""""""""""""""""""""""""""""""""""""""""""""
-"5.Plugins_And_Key_Mapping
-"""""""""""""""""""""""""""""""""""""""""""""""""
-nmap <leader>al :CalendarH<cr>
+" Enhcommentify "{{{
+" use it because it have block syntax comment
+map <leader>ce  <Plug>Traditional
+map ce  <Plug>Traditional
+map cf  <Plug>FirstLine
+map cm  <Plug>Comment
+let g:EnhCommentifyUserBindings = 'yes'
+let g:EnhCommentifyFirstLineMode='Yes'
+let g:EnhCommentifyRespectIndent = 'Yes'
+let g:EnhCommentifyUseSyntax = 'Yes'
+let g:EnhCommentifyPretty = 'Yes'
+let g:EnhCommentifyBindInInsert = 'No'
+let g:EnhCommentifyMultiPartBlocks = 'Yes'
+let g:EnhCommentifyCommentsOp = 'Yes'
+let g:EnhCommentifyAlignRight = 'Yes'
+let g:EnhCommentifyUseBlockIndent = 'Yes'
+"}}}
+"{{{GUNDO
+let gundo_preview_bottom = 1
+let  g:gundo_width=30
+let g:gundo_right = 1
+"}}}
+"Unite Settings "{{{
+"noremap <leader>ww :Unite file bookmark<CR>
+noremap <m-w><m-w> :Unite file bookmark<CR>
+noremap <m-W><m-W> :Unite file bookmark<CR>
+noremap <m-w><m-t> :Unite tab window<CR>
+noremap <m-w><m-b> :Unite buffer<CR>
+noremap <m-w><m-r> :Unite file_mru directory_mru<CR>
+noremap <m-w><m-e> :Unite register<CR>
+noremap <m-w><m-s> :Unite source<CR>
+noremap <m-w><m-i> :Unite session<CR>
+noremap <m-w><m-c> :Unite colorscheme<CR>
 
-"let g:vimshell_prompt = $USER."> "
-let g:NERDTreeChDirMode=2
-"noremap <m-w><m-w> :NERDTreeToggle "expand('%:p:h')"<cr>
-"unite settins "{{{
-"noremap <leader>ww :Unite file bookmark<cr> 
-noremap <m-w><m-w> :Unite tab window<cr>
-noremap <m-w><m-f> :Unite file bookmark<cr>
-noremap <m-w><m-b> :Unite buffer<cr>
-noremap <m-w><m-r> :Unite file_mru directory_mru<cr>
-noremap <m-w><m-e> :Unite register<cr>
-noremap <m-w><m-s> :Unite source<cr>
-noremap <m-w><m-i> :Unite session<cr>
-noremap <m-w><m-c> :Unite colorscheme<cr>
+let g:unite_winheight=5
 
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = 'TabLineSel'
 let g:unite_abbr_highlight = 'TabLine'
+
 
 " For optimize.
 let g:unite_source_file_mru_filename_format = ''
@@ -1181,7 +1423,7 @@ aug vimrc_Unite "{{{
 autocmd FileType unite call s:unite_my_settings()
 aug END
 
-function! s:unite_my_settings() 
+function! s:unite_my_settings()
 " Overwrite settings.
 nmap <buffer> <ESC>                         <Plug>(unite_exit)
 imap <buffer> jj                            <Plug>(unite_insert_leave)
@@ -1193,15 +1435,14 @@ nmap <buffer> <CR>                          <Plug>(unite_do_default_action)
 endfunction "}}}
 
 "}}}
-
-"neocomplcache settings "{{{
-map <leader>nt :NeoComplCacheToggle<cr>
+"Neocomplcache Settings "{{{
+map <leader>nt :NeoComplCacheToggle<CR>
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 
-" Use smartcase. 
+" Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
 " Use camel case completion.
 let g:neocomplcache_enable_camel_case_completion = 1
@@ -1231,35 +1472,33 @@ smap <C-k>     <Plug>(neocomplcache_snippets_expand)
 imap <c-j>     <Plug>(neocomplcache_snippets_jump)
 smap <c-j>     <Plug>(neocomplcache_snippets_jump)
 inoremap <expr><C-g>     neocomplcache#undo_completion()
-inoremap <expr><C-l>     neocomplcache#complete_common_string()
-" SuperTab like snippets behavior.
-    "imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+"inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-    inoremap <expr><cr> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+inoremap <expr><CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 " <TAB>: completion.
-    "inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-    "<C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><s-TAB>  pumvisible() ? "\<C-p>" : "\<s-TAB>"
+"<C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-    inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> pumvisible() ? neocomplcache#smart_close_popup()."\<C-h>" : "\<C-h>"
 inoremap <expr><C-y>  neocomplcache#close_popup()
 inoremap <expr><C-e>  neocomplcache#cancel_popup()
 
-
-inoremap <expr><TAB> pumvisible() ? "\<c-n>" : <SID>check_back_space() ?
+" "use <c-q><tab> to insert tabs"
+"inoremap <expr><TAB> pumvisible() ? "\<c-n>" : <SID>check_back_space() ?
             \ "\<TAB>" : "\<C-x>\<c-u><c-p><c-n>"
 
-inoremap <expr><s-TAB> pumvisible() ? "\<c-p>" : <SID>check_back_space() ?
+"inoremap <expr><s-TAB> pumvisible() ? "\<c-p>" : <SID>check_back_space() ?
             \ "\<s-TAB>" : "\<C-x>\<c-u><c-p><c-n>"
+
 function! s:check_back_space()
 let col = col('.') - 1
 return !col || getline('.')[col - 1] =~ '\s'
 endfunction
 
-let g:neocomplcache_text_mode_filetypes = {"vimwiki":1,"vim":1}
-
-aug omni_compl
+aug omni_compl "{{{
   au! omni_compl
     " Enable omni completion.
     autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -1278,10 +1517,11 @@ aug END
     let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
     let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
     let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
-
 "}}}
-
-"zencoding settings "{{{ "{{{
+let g:neocomplcache_text_mode_filetypes = {"vimwiki":1,"vim":1}
+let g:neocomplcache_disable_caching_file_path_pattern="fuf"
+"}}}
+"Zencoding Settings  "{{{
 let g:user_zen_leader_key = '<c-e>'
 "let g:use_zen_complete_tag = 1
 let g:user_zen_settings = {
@@ -1300,17 +1540,9 @@ let g:user_zen_prev_key='<c-e>p'            "p
     "'user_zen_removetag_key'               "k
     "'user_zen_anchorizeurl_key'            "a
     "'user_zen_anchorizesummary_key'        "A
-"}}} "}}}
-
-"NERD Commenter" "{{{
-map CC <leader>c<space>
-map cc <leader>c<space>
-let NERDShutUp=1
-"}}}
-
-"vimwiki settings "{{{
-
-"map <Leader>ww <Plug>VimwikiIndex
+ "}}}
+"Vimwiki Settings "{{{
+map <Leader>ww <Plug>VimwikiIndex
 
 let wiki_1 = {}
     let wiki_1.path = '~/Documents/vimwiki'
@@ -1318,24 +1550,29 @@ let wiki_1 = {}
     let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
 let g:vimwiki_list = [wiki_1]
-let g:vimwiki_use_mouse =1
 
 let g:vimwiki_menu = ""
-let g:vimwiki_global_ext= 0
-let g:vimwiki_browsers=['google-chrome']
-let g:vimwiki_dir_link=''
+"let g:vimwiki_global_ext= 0
+let g:vimwiki_browsers=['firefox']
 "let g:vimwiki_html_header_numbering = 2
-let g:vimwiki_hl_cb_checked = 1
 let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
                         \,py,sh
                         \,js,css,html,php
                         \,vim,vba'
-
 let g:vimwiki_conceallevel=3
 
+
+let g:vimwiki_use_mouse =1
+let g:vimwiki_fold_lists=1
+let g:vimwiki_folding=0
+
+let g:vimwiki_hl_cb_checked = 1
+let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
+let g:vimwiki_rxListNumber = '^\s*\%(\d\+[\.)]\)\+\s'
 function! MyVimwikiFoldText() "{{{
-  let line = substitute(getline(v:foldstart), '\t', 
+  let line = substitute(getline(v:foldstart), '\t',
         \ repeat(' ', &tabstop), 'g')
+  " TODO add some g:variable to control the align width
   let line = strpart(line,0,19)
   if strlen(line) <19
       let line .= repeat(" ",19-strlen(line))
@@ -1343,29 +1580,31 @@ function! MyVimwikiFoldText() "{{{
   "echom v:foldstart
   "let sum = 0
   "echom "begin:".v:foldstart." end:".v:foldend
-  let lnum=v:foldstart+1 "igonre the firstline
+  let lnum = &foldmethod=="indent" ? v:foldstart : v:foldstart+1
+  "let lnum=v:foldstart+1 "igonre the firstline
   let total_range = v:foldend-v:foldstart
   let white_lines=0
   let sum = 0
   let u_sum=0  "unchecked_sum ,the checked item count as 0
-    while lnum <= v:foldend 
+    while lnum <= v:foldend
     let _line=getline(lnum)
     if _line=~ '\s[+-]\d\s'
-        "\%(\) doesn't use count as sub 
+        "\%(\) doesn't use count as sub
         let rx_bul_item = '^\s*\%(\*\|-\|#\)'
         let rx_num_list = '^\s*\%(\d\+[\.)]\)\+'
         let rx_lst_item = '\%('. rx_bul_item . '\|' . rx_num_list . '\)'
         let rx_checkbox = '\[.\?\]'
         let rx_list = rx_lst_item.'\%(\s*'.rx_checkbox.'\)\='.'\s*'
+        " FIXME the prio number should in rx form
         let _num = str2nr(substitute(_line,rx_list.'\([+-]\d\)\s.*$','\1',''))
         "let _num = str2nr(substitute(_line,'\s*\([+-]\d\)\s.*','\1',''))
-        "if _line =~ '\s\[X\]\s' 
+        "if _line =~ '\s\[X\]\s'
             "let _uncheck = 0
-        "else 
+        "else
             "let _uncheck = _num
-        "endif 
+        "endif
        let _uncheck= (_line=~'\s\[X\]\s') ? 0 : _num
-    else 
+    else
         if _line =~ '^\s*$' |  let white_lines +=1 |  endif
         let _num =0
         let _uncheck = 0
@@ -1375,7 +1614,7 @@ function! MyVimwikiFoldText() "{{{
     let sum += _num
     let u_sum+=_uncheck
     let lnum += 1
-    endwhile 
+    endwhile
 
 
     let range = total_range - white_lines
@@ -1386,44 +1625,14 @@ function! MyVimwikiFoldText() "{{{
     return line.'|A'.range.'|S'.sum."|U".u_sum."|"
 endfunction "}}}
 
-let g:vimwiki_fold_lists=0
-let g:vimwiki_folding=0
+fun! s:vimwiki_my_settings() "{{{
 
-aug vimwiki_myset "{{{
-au! vimwiki_myset
-"au winenter,bufenter,BufRead,bufNew *.vwk setlocal foldtext=MyVimwikiFoldText()
-"au FileType vimwiki setlocal foldtext=MyVimwikiFoldText()
-autocmd FileType vimwiki call s:vimwiki_my_settings()
-aug END
-
-"function! MyFoldText() "{{{
-  "let line = substitute(getline(v:foldstart), '\t', 
-        "\ repeat(' ', &tabstop), 'g')
-  "let lnum=v:foldstart
-  "let sum = 0
-  "echo v:foldstart
-  "while lnum <= v:foldend
-      ""let _line = getline(lnum)
-      "let _num = substitute(getline(lnum),'*\s\([+-]\d\)\s*','\1','')
-      "let sum +=str2nr(_num)
-      "lnum=lnum+1
-  "endwhile
-  "return line.' ['.(v:foldend - v:foldstart).']'.'[sum:'.sum.']'
-"endfunction "}}}
-
-"setlocal fdm=expr
-"setlocal foldexpr=VimwikiFoldLevel(v:lnum)
-"setlocal foldtext=MyFoldText()
-
-fun! s:vimwiki_my_settings()
-
-setlocal fdm=expr
-setlocal foldexpr=VimwikiFoldLevel(v:lnum)
-setlocal foldtext=MyVimwikiFoldText()
+    setlocal fdm=indent
+    "setlocal foldexpr=Myfoldlevel(v:lnum)
+    setlocal foldexpr=VimwikiFoldLevel(v:lnum)
+    setlocal foldtext=MyVimwikiFoldText()
     "will cause internal error with \zs duplicated
     "let g:vimwiki_rxListNumber = '^\s*\zs\%(\d\+[\.)]\)\+\ze\s'
-    let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
-    let g:vimwiki_rxListNumber = '^\s*\%(\d\+[\.)]\)\+\s'
     if g:vimwiki_hl_cb_checked
     execute 'syntax match VimwikiCheckBoxDone /'.
             \ g:vimwiki_rxListBullet.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
@@ -1433,12 +1642,16 @@ setlocal foldtext=MyVimwikiFoldText()
             \ ' contains=VimwikiNoExistsLink,VimwikiLink'
     endif
 
-    map <buffer><leader>er <Plug>VimwikiToggleListItem
-    map <buffer><leader>da <Plug>VimwikiTabMakeDiaryNote
-    map <buffer><leader>gl <Plug>VimwikiGenerateLinks
+    map <buffer><leader>wl <Plug>VimwikiToggleListItem
+    map <buffer><leader>wa <Plug>VimwikiTabMakeDiaryNote
+    map <buffer><leader>wg <Plug>VimwikiGenerateLinks
+    map <buffer><Leader>wr <Plug>VimwikiRenameLink
+    map <buffer><Leader>wd <Plug>VimwikiDeleteLink
+
     map <buffer><m-backspace> <Plug>VimwikiGoBackLink
-    map <Leader>wr <Plug>VimwikiRenameLink
-    "map <Leader>wd <Plug>VimwikiDeleteLink
+
+    map <buffer><Leader>w2  :Vimwiki2HTML<CR>
+    map <buffer><Leader>w2a :VimwikiAll2HTML<CR>
 
     "nnoremap <silent><buffer> <2-LeftMouse> :VimwikiFollowLink<CR>k
     nnoremap <silent><buffer> <S-2-LeftMouse> <LeftMouse>:VimwikiSplitLink<CR>
@@ -1452,14 +1665,19 @@ setlocal foldtext=MyVimwikiFoldText()
     noremap <buffer><expr> <m-End> "\<c-i>"
     "nmap <silent><buffer> <TAB> <Plug>VimwikiNextLink
     inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
-    
-    
-inoremap <expr><TAB> pumvisible() ? "\<c-n>" : <SID>check_back_space() ?
-            \ "\<TAB>" : "\<C-x>\<c-u><c-p><c-n>"
-    "tab with 2 space
-    "sts sw
+
+
+    inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
+    "tab with 2 space sts sw
     set shiftwidth=2 softtabstop=2
-endfun
+endfun "}}}
+
+aug vimwiki_myset "{{{
+au! vimwiki_myset
+"au winenter,bufenter,BufRead,bufNew *.vwk setlocal foldtext=MyVimwikiFoldText()
+"au FileType vimwiki setlocal foldtext=MyVimwikiFoldText()
+autocmd FileType vimwiki call s:vimwiki_my_settings()
+aug END
 
 "normal buffer mapping
 inoremap <expr> <rightmouse><leftmouse> "\<c-o><c-i>"
@@ -1471,29 +1689,43 @@ noremap <expr> <m-End> "\<c-i>"
 "}}}
 
 "}}}
+"Fuzzyfinder "{{{
+map <c-\> :FufLine<CR>
+map <silent> <C-]> :FufBufferTagWithCursorWord<CR>
+let g:fuf_modesDisable = [ 'mrucmd', ]
+map <leader>h :FufHelp<CR>
+"}}}
+"Misc Plugins Settings "{{{
+"   syntax/vim.vim 默认会高亮 s:[a-z] 这样的函数名为错误
+let g:vimsyn_noerror = 1
+nmap <leader>ca :CalendarH<CR>
 
-"map <silent><2-LeftMouse> :if &ft!="vimwiki" \|  exe "tag ". expand("<cword>")  \|  else \| VimwikiFollowLink \| endif <cr>
-"
-"""""""""""""""""""""""""""""""""""""""""""""""""
-"6.Function_And_Key_Mapping
+map <leader>tt :TagbarToggle<CR>
+let g:tagbar_compact = 1
+
+"let g:vimshell_prompt = $USER."> "
+"let g:NERDTreeChDirMode=2
+"noremap <m-w><m-w> :NERDTreeToggle "expand('%:p:h')"<CR>
+"}}}
+
+"6.Function_And_Key_Mapping{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
 "LastUpdate check "{{{
 " Check no more than 30 lines from start for 'Last Change:' and update it with
 " the current datetime.
-function! LastChangeUpdate() 
-    for linenr in range(1, min([30, line('$')]))
-        let line = getline(linenr)
-        if line =~ 'Last Change:'
-        let line = substitute(line, 'Last Change:.*$',
-                    \ 'Last Change: '.strftime("%Y-%m-%d %H:%M"), '')
-        call setline(linenr, line)
-        break
-        endif
-    endfor
-endfunction 
+function! LastChangeUpdate()
+  for linenr in range(1, min([30, line('$')]))
+    let line = getline(linenr)
+    if line =~ 'Last Change:'
+      let line = substitute(line, 'Last Change:.*$',
+                  \ 'Last Change: '.strftime("%Y-%m-%d %H:%M"), '')
+      call setline(linenr, line)
+      break
+    endif
+endfor
+endfunction
 command! -nargs=* LastChangeUpdate call LastChangeUpdate() <args>
 "}}}
-
 "ACK "{{{
 command! -nargs=* -complete=file Ack call Ack(<q-args>)
 function! Ack(args)
@@ -1504,13 +1736,12 @@ function! Ack(args)
   let &grepprg=grepprg_bak
 endfunction
 "}}}
-
 "{{{ # * visual search
 "Basically you press * or # to search for the current selection !! Really useful
 vnoremap <silent> * :call VisualSearch('f')<CR>
 vnoremap <silent> # :call VisualSearch('b')<CR>
 " From an idea by Michael Naumann
-function! VisualSearch(direction) range 
+function! VisualSearch(direction) range
     let l:saved_reg = @"
     execute "normal! vgvy"
     let l:pattern = escape(@", '\\/.*$^~[]')
@@ -1523,41 +1754,88 @@ function! VisualSearch(direction) range
     let @/ = l:pattern
     let @" = l:saved_reg
 endfun "}}}
-
 "{{{ ConditionalPairMap
-function! ConditionalPairMap(open, close) 
-  let line = getline('.')
-  let col = col('.')
-  if col < col('$') || stridx(line, a:close, col + 1) != -1
-    return a:open
-  else
-    return a:open . a:close . repeat("\<left>", len(a:close))
-  endif
-endf
+"function! ConditionalPairMap(open, close)
+  "let line = getline('.')
+  "let col = col('.')
+  "if col < col('$') || stridx(line, a:close, col + 1) != -1
+    "return a:open
+  "else
+    "return a:open . a:close . repeat("\<left>", len(a:close))
+  "endif
+"endf
 
-inoremap <expr> ( ConditionalPairMap('(', ')')
-inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
-inoremap <expr> { ConditionalPairMap('{', '}')
-inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
-inoremap <expr> [ ConditionalPairMap('[', ']')
-inoremap <expr> ]  strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]" 
+"inoremap <expr> ( ConditionalPairMap('(', ')')
+"inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
+"inoremap <expr> { ConditionalPairMap('{', '}')
+"inoremap <expr> }  strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
+"inoremap <expr> [ ConditionalPairMap('[', ']')
+"inoremap <expr> ]  strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]"
 "}}}
-
-"""""""""""""""""""""""""""""""""""""""""""""""""
+"colorpicker   取得光标处的匹配 {{{
+function! Lilydjwg_get_pattern_at_cursor(pat)
+  let col = col('.') - 1
+  let line = getline('.')
+  let ebeg = -1
+  let cont = match(line, a:pat, 0)
+  while (ebeg >= 0 || (0 <= cont) && (cont <= col))
+    let contn = matchend(line, a:pat, cont)
+    if (cont <= col) && (col < contn)
+      let ebeg = match(line, a:pat, cont)
+      let elen = contn - ebeg
+      break
+    else
+      let cont = match(line, a:pat, contn)
+    endif
+  endwhile
+  if ebeg >= 0
+    return strpart(line, ebeg, elen)
+  else
+    return ""
+  endif
+endfunction
+"}}}
+" 使用 colorpicker 程序获取颜色值(hex/rgba) {{{
+function! Lilydjwg_colorpicker()
+  if exists("g:last_color")
+    let color = substitute(system("colorpicker ".shellescape(g:last_color)), '\n', '', '')
+  else
+    let color = substitute(system("colorpicker"), '\n', '', '')
+  endif
+  if v:shell_error == 1
+    return ''
+  elseif v:shell_error == 2
+    " g:last_color 值不对
+    unlet g:last_color
+    return Lilydjwg_colorpicker()
+  else
+    let g:last_color = color
+    return color
+  endif
+endfunction "}}}
+" 更改光标下的颜色值(hex/rgba/rgb) {{{
+function! Lilydjwg_changeColor()
+  let color = Lilydjwg_get_pattern_at_cursor('\v\#[[:xdigit:]]{6}(\D|$)@=|<rgba\((\d{1,3},\s*){3}[.0-9]+\)|<rgb\((\d{1,3},\s*){2}\d{1,3}\)')
+  if color == ""
+    echohl WarningMsg
+    echo "No color string found."
+    echohl NONE
+    return
+  endif
+  let g:last_color = color
+  call Lilydjwg_colorpicker()
+  exe 'normal! eF'.color[0]
+  call setline('.', substitute(getline('.'), '\%'.col('.').'c\V'.color, g:last_color, ''))
+endfunction
+nmap <m-c> :call Lilydjwg_changeColor()<CR>
+nmap cac :call Lilydjwg_changeColor()<CR>
+inoremap <M-c> <C-R>=Lilydjwg_colorpicker()<CR>
+"}}}
 " 6.1.vimwiki_works
 """""""""""""""""""""""""""""""""""""""""""""""""
-"{{{set Prio of vimwiki todo-item
-nmap <leader>33 :call Ask_Prio("begin","min")<cr>
-nmap <leader>ss :call Ask_Prio("begin","min")<cr>
-nmap <leader>pp :call Ask_Prio("begin","min")<cr>
-nmap <leader>bb :call Ask_Prio("begin","min")<cr>
-nmap <leader>st :%s/\[\*/[+/<cr>
-nmap <leader>sp :%s/\[+\(\d\)\]/+\1/<cr>
-nmap <leader>si :%s/\[-\(\d\)\]/-\1/<cr>
-nmap <leader>sm :%s/<\(\d\d\d\d\)-\(\d\d\d\d\)>/\1_\2/<cr>
-"nmap <leader>bb :call Ask_Prio()<cr>
-"let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
-"let g:vimwiki_rxListNumber = '^\s*\%(\d\+[\.)]\)\+\s'
+"{{{Set Prio Of Vimwiki Todo-Item
+nmap <leader>33 :call Ask_Prio("begin","min")<CR>
+nmap <leader>pp :call Ask_Prio("begin","min")<CR>
 fun! Check_Valid()
     let line = getline('.')
     let rx_bul_item = g:vimwiki_rxListBullet
@@ -1571,8 +1849,6 @@ fun! Check_Valid()
     endif
 
 endfun
-map <leader>55 :call Set_Prio(5,"begin","min")<cr>
-map <leader>50 :call Set_Prio(10,"begin","min")<cr>
 
 fun! Set_Prio(val,...) "{{{
     if !Check_Valid()
@@ -1594,16 +1870,16 @@ fun! Set_Prio(val,...) "{{{
     if a:0 >1 && a:2 == "min"
     	if a:val>=0
             let v= "+".a:val
-        else 
+        else
             let v= a:val
         endif
-    else 
+    else
     	if a:val<0
             let v="[".a:val."]"
         else
             let v = "[+".a:val."]"
         endif
-    endif 
+    endif
 
     if a:val == 10
         let m = substitute(line,rx_Prio," ","")
@@ -1623,41 +1899,29 @@ fun! Set_Prio(val,...) "{{{
         else
             let m = substitute(line,rx_Prio,v." ","")
         endif
-    endif 
+    endif
 
     call setline('.',m)
-    
+
 endf "}}}
 
-map <leader>53 :call Ask_Prio("begin","min")<cr>
 fun! Ask_Prio(...)
     if Check_Valid()
-            "if has("gui_running")
-            let val = input("Set Priority Number,can use '`' as '-' 
+            let val = input("Set Priority Number,can use '`' as '-'
                         \\n(-9~9 ,10 to delete):")
-            while val > 10 || val <= -10 || val !~ '^[`-]\=\d\+$' 
-            	if val ==''
-            	    echom "Nothing changed ,exit with null input."
-            	    return 
+            while val > 10 || val <= -10 || val !~ '^[`-]\=\d\+$'
+                if val ==''
+                    echom "Nothing changed ,exit with null input."
+                    return
                 endif
 
                 echohl errormsg
                 echomsg "Invalid input."
                 echohl normal
 
-                let val = input("Set Priority Number,can use '`' as '-' 
+                let val = input("Set Priority Number,can use '`' as '-'
                             \\n(-9~9 ,10 to delete):")
             endwhile
-        "else 
-            "let val = inputdialog("Set Priority Number\n(0~9,-1 to delete):")
-            "while val > 9 || val < -1 || val !~ '\d' 
-                    "if val ==''
-                  "return 
-                "endif
-                "let val = inputdialog("Invalid input.
-                            "\ Input Priority Number\n(0~9 ,-1 to delete):)")
-            "endwhile
-        "endif
         let val = substitute(val,'`','-','')
         if a:0 && a:1 == "begin"
             if a:0 >1 && a:2 =="min"
@@ -1670,23 +1934,12 @@ fun! Ask_Prio(...)
         endif
     endif
 endfun
-"fun! Ask_Prio_begin()
-    "if Check_Valid()
-        "let val = input("Input Priority Number(0~9,-1 to delete):")
-        "while val > 9 || val < -1 || val !~ '\d'
-            "let val = input("Invalid input.
-                        "\ Input Priority Number(0~9 ,-1 to delete):)")
-        "endwhile
-        "call Set_Prio_begin(float2nr(str2nr(val)))
-    "endif
-"endfun
 "}}} end of set Prio
-
 "{{{Auto List Item with number sequence
 inoremap <expr> <C-CR>  "\<CR>".AutoListItem(line('.'))
-noremap <silent><m-n>  :call Sub_num('.')<cr>
+noremap <silent><m-n>  :call Sub_num('.')<CR>
 inoremap <expr> <C-Kenter>  "\<CR>".AutoListItem(line('.'))
-noremap <m-F12>  :call Prev_list_item(line('.'))<cr>
+noremap <m-F12>  :call Prev_list_item(line('.'))<CR>
 func! AutoListItem(lnum)
       let lnum=a:lnum
       let line=getline(a:lnum)
@@ -1722,6 +1975,7 @@ function! Prev_list_item(lnum) "{{{
   return 0
 endfunction
 fun! Sub_num(range)
+"FIXME havenot finished
     let lnum=line(a:range)
     let line=getline(lnum)
     " check if current line number exist
@@ -1735,15 +1989,14 @@ endfun
 
 "}}}
 "}}}
-
 "Auto Timestamp "{{{
-map <leader>ae :call Auto_TimeStamp('.','long')<cr>
-map <leader>dt :call Del_TimeStamp('.')<cr>
-map <leader>db :call Del_TodoBox('.')<cr>
-map <silent> <leader>ec <plug>VimwikiToggleListItem
-            \:call Toggle_TimeStamp_CBD('.')<cr>
+"map <leader>ae :call Auto_TimeStamp('.','long')<CR>
+"map <leader>dt :call Del_TimeStamp('.')<CR>
+"map <leader>db :call Del_TodoBox('.')<CR>
+"map <silent> <leader>ec <plug>VimwikiToggleListItem
+            \:call Toggle_TimeStamp('.')<CR>
 
-map <silent><leader>ee :call Toggle_checkbox_Timestamp()<cr>
+map <silent><leader>ee :call Toggle_checkbox_Timestamp()<CR>
 
 fun! Toggle_checkbox_Timestamp()
     let line = getline('.')
@@ -1751,14 +2004,11 @@ fun! Toggle_checkbox_Timestamp()
     	let checkbox_state = 2
     elseif line =~ '\s\[.\]\s'
         let checkbox_state = 1
-    else 
+    else
     	let checkbox_state = 0
-    endif 
-    "echo checkbox_state."state"
+    endif
     if checkbox_state==0
             exec "VimwikiToggleListItem"
-        "call Toggle_TimeStamp_CBD('.')
-        "call Auto_TimeStamp('.',"short")
     elseif checkbox_state==1
         exec "VimwikiToggleListItem"
         call Auto_TimeStamp('.',"min")
@@ -1787,8 +2037,7 @@ fun! Del_TodoBox(range)
     call setline(lnum,newline)
 endfun
 
-"fun! Toggle_TimeStamp_with_CheckBox_Done(range)
-fun! Toggle_TimeStamp_CBD(range)
+fun! Toggle_TimeStamp(range)
     let lnum=line(a:range)
     let rx_CheckBox_Done = '\[X\]'
     let line = getline(lnum)
@@ -1796,9 +2045,9 @@ fun! Toggle_TimeStamp_CBD(range)
         call Auto_TimeStamp(a:range,"min")
     else
         call Del_TimeStamp(a:range)
-        "call Del_TodoBox(a:range)
     endif
 endfun
+
 fun! Auto_TimeStamp(range,type)
     let rx_bul_item = '^\s*\%(\*\|-\|#\)\s'
     let rx_num_list = '^\s*\%(\d\+\.\)\+\s'
@@ -1814,7 +2063,8 @@ fun! Auto_TimeStamp(range,type)
     let rx_shortstamp='<\d\d\d\d-\d\d\d\d>'
     let rx_minstamp='\d\d\d\d_\d\d\d\d'
     let rx_timestamp='\('.rx_longstamp.'\|'.rx_shortstamp.'\|'.rx_minstamp.'\)'
-    "let rx_utf_timestamp='!\(\w\|\.\)'
+    " TODO
+    " let rx_utf_timestamp='!\(\w\|\.\)'
     " !0-9a-zA-Z_. : <11-04-11 17:20> -> !b4bgj
     " C-Q U :  <11-04-11 17:20> -> printf("%x",1104111720) -> ������
 
@@ -1844,10 +2094,48 @@ fun! Auto_TimeStamp(range,type)
     call setline(lnum,newline)
 endfun
 "}}}
-"
-"command! -nargs=* -complete=file Ack call Ack(<q-args>)
-command! -nargs=1  RXM call RX_match_test("<args>")
-function! RX_match_test(arg)
-    "echoe matchstr(getline('.'),escape(a:arg,'\'))
-    echoe matchstr(getline('.'),a:arg)
-endfun
+" cscope setting  "{{{
+if has("cscope") && executable("cscope")
+  " 设置 [[[2
+  set csto=1
+  set cst
+  set cscopequickfix=s-,c-,d-,i-,t-,e-
+
+  " add any database in current directory
+  function! Lilydjwg_csadd()
+    set nocsverb
+    if filereadable(expand('%:h:p') . "/cscope.out")
+      exe 'cs add ' . expand('%:h:p') . '/cscope.out'
+    elseif filereadable(expand('%:h:p') . "/../cscope.out")
+      exe 'cs add ' . expand('%:h:p') . '/../cscope.out'
+    elseif filereadable("cscope.out")
+      cs add cscope.out
+    endif
+    set csverb
+  endfunction
+
+  autocmd BufRead *.c,*.cpp,*.h call Lilydjwg_csadd()
+
+  "" 映射 [[[2
+  "" 查找C语言符号，即查找函数名、宏、枚举值等出现的地方
+  "nmap css :cs find s <C-R>=expand("<cword>")<CR><CR>
+  "" 查找函数、宏、枚举等定义的位置，类似ctags所提供的功能
+  "nmap csg :cs find g <C-R>=expand("<cword>")<CR><CR>
+  "" 查找本函数调用的函数
+  "nmap csd :cs find d <C-R>=expand("<cword>")<CR><CR>
+  "" 查找调用本函数的函数
+  "nmap csc :cs find c <C-R>=expand("<cword>")<CR><CR>
+  "" 查找指定的字符串
+  ""nmap cst :cs find t <C-R>=expand("<cword>")<CR><CR>
+  "" 查找egrep模式，相当于egrep功能，但查找速度快多了
+  "nmap cse :cs find e <C-R>=expand("<cword>")<CR><CR>
+  "" 查找并打开文件，类似vim的find功能
+  "nmap csf :cs find f <C-R>=expand("<cfile>")<CR><CR>
+  "" 查找包含本文件的文件
+  "nmap csi :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+  "" 生成新的数据库
+  "nmap csn :lcd %:p:h<CR>:!my_cscope<CR>
+  "" 自己来输入命令
+  "nmap cs<Space> :cs find
+endif
+nmap <S-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR> "}}}
