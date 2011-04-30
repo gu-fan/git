@@ -48,9 +48,18 @@ Bundle 'sjl/gundo.vim'
 Bundle 'hrp/EnhancedCommentify'
 Bundle 'tomtom/checksyntax_vim'
 Bundle 'Lokaltog/vim-easymotion'
-Bundle 'tpope/vim-surround'
 let g:EasyMotion_leader_key = 'f'
-
+Bundle 'tpope/vim-surround'
+"{{{
+"Bundle 'MarcWeber/snipmate.vim'
+"Install dependencies:
+Bundle "git://github.com/MarcWeber/vim-addon-mw-utils.git"
+Bundle "git://github.com/tomtom/tlib_vim.git"
+"Install:
+Bundle "git://github.com/garbas/snipmate.vim.git"
+"}}}
+"Bundle 'rykka/colorizer'
+Bundle 'lilydjwg/csspretty.vim'
 "" vim-scripts repos
 Bundle 'L9'
 Bundle 'FuzzyFinder'
@@ -66,11 +75,11 @@ Bundle 'matchit.zip'
 Bundle 'molokai'
 Bundle 'pyte'
 "Bundle 'proton'
-Bundle 'twilight'
+"Bundle 'twilight'
 "Bundle 'phd'
-Bundle 'nelstrom/vim-mac-classic-theme.git'
+"Bundle 'nelstrom/vim-mac-classic-theme.git'
 Bundle 'altercation/vim-colors-solarized'
-Bundle 'git@github.com:gmarik/ingretu.git'
+"Bundle 'git@github.com:gmarik/ingretu.git'
 
 "" non github repos
 "Bundle 'git://git.wincent.com/command-t.git'
@@ -97,12 +106,11 @@ set autowrite
 "}}}
 "{{{multi_byte
 set encoding=utf-8
+set fileformat=unix
+set fileformats=unix,dos
 set fileencoding=utf8
 set fileencodings=utf8,gb18030,cp936
 set termencoding=utf-8
-set formatoptions+=q2
-set fo-=r         " Do not automatically insert a comment leader after an enter
-set fo-=t                      " Do no auto-wrap text using textwidth (does not apply to comments)
 set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
 
 if has("multi_byte")
@@ -227,7 +235,7 @@ if has("gui_running")
         "set gfw=Yahei_Mono:h12:cGB2312
     endif
         if has("gui_gtk2")
-            set guifont=Droid\ Sans\ Mono\ 12,Fixed\ 12
+            set guifont=Monospace\ 12,Fixed\ 12
             set gfw=Wenquanyi\ Micro\ Hei\ Mono\ 12,WenQuanYi\ Zen\ Hei\ 12
     endif
 
@@ -335,7 +343,7 @@ else
   endif
 endif "}}}
 
-" 1.2.Misc_Settings
+" 1.2.Misc_Settin
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{"Misc Editing Options
 "use space to perform tab
@@ -364,10 +372,10 @@ set smartcase
 set wrapscan
 
 set comments=n:>,fb:-,fb:*
-set formatoptions+=1orn2mM
+set formatoptions+=1orn2mMq
 set formatlistpat="^\s*[(\d)*#-]\+[\]:.)}\t ]\s*"
-set fileformat=unix
-set fileformats=unix,dos
+"set fo-=r         " Do not automatically insert a comment leader after an enter
+set fo-=t                      " Do no auto-wrap text using textwidth (does not apply to comments)
 
 "Have the mouse enabled all the time:
 "set mouse=a
@@ -408,7 +416,7 @@ set backup
 set backupdir=~/.vim_backups/
 set directory=.,~/.vim_backups/
 
-set tags=./tags;$HOME
+"set tags=./tags;$HOME
 "set showfulltag             " Show more information while completing tags.
 set cscopetag               " When using :tag, <C-]>, or "vim -t", try cscope:
 "set cscopetagorder=0        " try ":cscope find g foo" and then ":tselect foo"
@@ -611,20 +619,21 @@ endfun "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{ Commands
 "command! -nargs=* Htag helptags $VIMRUNTIME/doc <args>
-command! -nargs=* HTAG call pathogen#helptags() <args>
-command! -nargs=* PAPP call pathogen#runtime_append_all_bundles(<args>) <args>
+command! -nargs=* Htag call pathogen#helptags() <args>
+command! -nargs=* Papp call pathogen#runtime_append_all_bundles(<args>) <args>
 
 
-command! -nargs=0 WSU exec "w !sudo tee % "
-command! -nargs=0 GSU exec "!gksu gvim % "
+command! -nargs=0 Wsu exec "w !sudo tee % "
+command! -nargs=0 Gsu exec "!gksu gvim '%:p' "
 
 command! Delete call delete(expand('%'))
 command! -range=% ClsXML <line1>,<line2>!tidy -utf8 -iq -xml
 command! -range=% ClsHTML <line1>,<line2>!tidy -utf8 -iq -omit -w 0
-command! -range=% THTML <line1>,<line2>!tidy -utf8 -iq -f 'errs.txt' -m
+command! -range=% Thtml <line1>,<line2>!tidy -utf8 -iq -f 'errs.txt' -m
 
-command! CHMOD !chmod 777 %
-command! GCC !gcc `pkg-config --cflags --libs gtk+-2.0` %
+command! Ch7 !chmod 755 '%:p'
+command! Ch6 !chmod 644 '%:p'
+command! Gcc !gcc `pkg-config --cflags --libs gtk+-2.0` '%:p'
 
 " The K stroke
 set keywordprg=":help"
@@ -675,13 +684,13 @@ iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 " F11
 " F12 Save session
 
-nmap <F1> :h <C-R><C-W> <CR>
+nmap <F1> :h <C-R>=expand("<cword>")<CR><CR>
 "map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
-nmap <s-F1> :!man <C-R><C-W> <CR>
-nmap <c-f1> :FufHelp <c-r><c-w><CR>
+nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
+nmap <c-f1> :FufHelp<C-R>=expand("<cword>")<CR><CR>
 
-nmap <F2> :FufLine <c-r><c-w><CR>
-map <c-F2> :Ack <C-R><C-W>
+nmap <F2> :FufLine <CR>
+map <c-F2> :Ack <C-R>=expand("<cword>")<CR>
 vnoremap <c-F2> "sy<esc><c-l>:Ack <c-r>s
 " replace word under cursor
 nmap <s-F2> :%s/<C-R><C-W>//gc<Left><Left><Left>
@@ -994,11 +1003,11 @@ nmap <leader>124 :set ft=php.html<CR>
 nmap <leader>131 :set ft=cpp<CR>
 nmap <leader>132 :set ft=python<CR>
 
-nmap <leader>11 :filetype detect \| syntax enable \| call Color_Modify() <CR>
+nmap <leader>`` :filetype detect \| syntax enable \| call Color_Modify() <CR>
 "nmap <leader>`` :filetype detect \| syntax enable \| so $MYVIMRC<CR>
 
 "use menu syntax
-nmap <leader>``  :emenu Syntax.
+nmap <leader>11  :emenu Syntax.
 "nnoremap <silent> <leader>1 :nohl<CR>
 nnoremap <silent> <C-l> :nohl<CR><C-l>
 "}}}
@@ -1009,15 +1018,34 @@ nnoremap <silent> <C-l> :nohl<CR><C-l>
 nmap <c-w>1 <c-w>_
 nmap <c-w><c-a> <c-w>_
 nmap <c-w>2 <c-w>=
-nmap <c-w><c-e> <c-w>=
+nmap <c-w><c-z> <c-w>=
 "nmap <c-w><c-w> <c-w>=<c-w>w
-nmap <c-w><c-w> <c-w>w
-nmap <c-w>3 z0<CR>
-nmap <c-w><c-z> z0<CR>
-nmap <c-w><c-w> <c-w>w
+"nmap <c-w>3 z0<CR>
 
+
+"buffer and window navigation
+nmap <c-w><c-w> :call Nav_buff_win("next")<cr>
+nmap <c-w><c-e> :call Nav_buff_win("prev")<cr>
+nmap <c-w><c-b> :call Nav_buff_win("list")<cr>
+fun! Nav_buff_win(act)
+    if a:act=="next"
+    	exe winnr('$')==1 ? "bnext" : "normal \<c-w>w"
+    endif
+    if a:act=="prev"
+    	exe winnr('$')==1 ? "bprevious" : "normal \<c-w>W"
+    endif
+    if a:act=="list"
+    	exe winnr('$')<=4 ? "Fufbuffer" : "Unite window "
+    endif
+endfun
+
+
+"dont close last window , use :q or 
+nmap <silent> <c-w><c-q> :call Check_winnr(-2)\|hid<CR>
+nmap <silent> <c-w><c-x><c-x> :qall<CR>
 "buffer in current window
 nmap <c-w><c-d> :bd<CR>
+nmap <c-w><c-u> :bun<CR>
 nnoremap <C-w><c-n> :bnext<CR>
 nnoremap <C-w>n :bnext<CR>
 nnoremap <C-w><c-p> :bprevious<CR>
@@ -1033,8 +1061,6 @@ nmap <silent> <c-w><c-l> :call Check_winnr(2)<CR><c-w>L
 nmap <silent> <c-w><c-j> :call Check_winnr(-2)<CR><c-w>J
 nmap <silent> <c-w><c-k> :call Check_winnr(-2)<CR><c-w>K
 
-nmap <silent> <c-w><c-q> :call Check_winnr(-2)\|q<CR>
-"nmap <silent> <leader>q  :call Check_winnr(-2)\|q<CR>
 
 nmap <silent> <c-w><c-t> :call Check_winnr(-2)<CR><c-w>T
 
@@ -1141,9 +1167,8 @@ nmap <leader>jp }
 nnoremap <C-Tab> gt
 nnoremap <C-S-Tab> gT
 
-nnoremap <C-cr> :bnext<CR>
-nnoremap <C-S-cr> :bprevious<CR>
-nnoremap <S-CR> A<CR><ESC>
+nnoremap <S-CR> o<ESC>
+nnoremap <c-CR> O<ESC>
 
 if v:version < 703
     nmap <silent> <m-MouseDown> zhzhzh
@@ -1187,7 +1212,7 @@ nmap <leader>uu gUiww
 nmap <leader>uw guiww
 
 "trim whitespace
-nnoremap <leader>sc :%s/\s\+$//<CR>:let @/=''<CR>
+nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
 
 vnoremap > >gv
 vnoremap < <gv
@@ -1362,6 +1387,7 @@ map cc <plug>NERDCommenterToggle
 map ca <plug>NERDCommenterAltDelims
 map ci <plug>NERDCommenterInInsert
 map cp <plug>NERDCommenterAppend
+map cA <plug>NERDCommenterAppend
 map cs <plug>NERDCommenterSexy
 let g:NERDCreateDefaultMappings=0
 "}}}
@@ -1372,14 +1398,14 @@ map ce  <Plug>Traditional
 map cf  <Plug>FirstLine
 map cm  <Plug>Comment
 let g:EnhCommentifyUserBindings = 'yes'
-let g:EnhCommentifyFirstLineMode='Yes'
-let g:EnhCommentifyRespectIndent = 'Yes'
+"let g:EnhCommentifyFirstLineMode='Yes'
+"let g:EnhCommentifyRespectIndent = 'Yes'
 let g:EnhCommentifyUseSyntax = 'Yes'
 let g:EnhCommentifyPretty = 'Yes'
 let g:EnhCommentifyBindInInsert = 'No'
-let g:EnhCommentifyMultiPartBlocks = 'Yes'
-let g:EnhCommentifyCommentsOp = 'Yes'
-let g:EnhCommentifyAlignRight = 'Yes'
+"let g:EnhCommentifyMultiPartBlocks = 'Yes'
+"let g:EnhCommentifyCommentsOp = 'Yes'
+"let g:EnhCommentifyAlignRight = 'Yes'
 let g:EnhCommentifyUseBlockIndent = 'Yes'
 "}}}
 "{{{GUNDO
@@ -1832,15 +1858,15 @@ nmap cac :call Lilydjwg_changeColor()<CR>
 inoremap <M-c> <C-R>=Lilydjwg_colorpicker()<CR>
 "}}}
 " 6.1.vimwiki_works
+" TODO pluginize
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{Set Prio Of Vimwiki Todo-Item
+" TODO set the prio [+-]/d as list_item
 nmap <leader>33 :call Ask_Prio("begin","min")<CR>
 nmap <leader>pp :call Ask_Prio("begin","min")<CR>
 fun! Check_Valid()
     let line = getline('.')
-    let rx_bul_item = g:vimwiki_rxListBullet
-    let rx_num_list = g:vimwiki_rxListNumber
-    let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
+    let rx_bul_item = g:vimwiki_rxListBullet let rx_num_list = g:vimwiki_rxListNumber let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
     if line !~ rx_lst_item
         echoe "Error: Can not set a none-list-line."
         return 0
@@ -1935,6 +1961,7 @@ fun! Ask_Prio(...)
     endif
 endfun
 "}}} end of set Prio
+" 
 "{{{Auto List Item with number sequence
 inoremap <expr> <C-CR>  "\<CR>".AutoListItem(line('.'))
 noremap <silent><m-n>  :call Sub_num('.')<CR>
@@ -2066,7 +2093,7 @@ fun! Auto_TimeStamp(range,type)
     " TODO
     " let rx_utf_timestamp='!\(\w\|\.\)'
     " !0-9a-zA-Z_. : <11-04-11 17:20> -> !b4bgj
-    " C-Q U :  <11-04-11 17:20> -> printf("%x",1104111720) -> ������
+    " C-Q U :  <11-04-11 17:20> -> printf("%x",1104111720) -> �
 
     let rx_list_no_timestamp = rx_lst_item.'\('.rx_CheckBox.'\s\)\?'.'\('.rx_Prio.'\s\)\?'
     let rx_list_timestamp = rx_list_no_timestamp.rx_timestamp
@@ -2094,6 +2121,15 @@ fun! Auto_TimeStamp(range,type)
     call setline(lnum,newline)
 endfun
 "}}}
+" 打开 snippets 文件[[[2
+function! Lilydjwg_snippets(ft)
+  if a:ft == ''
+    exe 'tabe '.g:snippets_dir.&ft.'.snippets'
+  else
+    exe 'tabe '.g:snippets_dir.a:ft.'.snippets'
+  endif
+endfunction
+map <leader>se :call Lilydjwg_snippets('')<cr>
 " cscope setting  "{{{
 if has("cscope") && executable("cscope")
   " 设置 [[[2
@@ -2138,4 +2174,4 @@ if has("cscope") && executable("cscope")
   "" 自己来输入命令
   "nmap cs<Space> :cs find
 endif
-nmap <S-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR> "}}}
+"nmap <S-F12> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<CR> "}}}
