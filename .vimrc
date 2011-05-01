@@ -15,59 +15,167 @@
 "5.Plugins_settings
 "6.Function_And_Key_Mapping
 "  6.1.vimwiki_works
-"7.Other_Stuffs "}}}
+"7.Other_Stuffs 
 "  By: Rykka10(at)gmail.com
-"  Last Change: 2011-04-27 23:01
-" "Tough time Goes , Tough People Stay. "
+"  Last Change: 2011-04-30 21:36
+"  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 
 " 1.General_Settings{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{ Vundle
+"load all bundles
+call pathogen#runtime_append_all_bundles()
+
 set nocompatible               " be iMproved
 filetype off                   " required!
 
 set rtp+=~/.vim/vundle.git/
 call vundle#rc()
-
 " My Bundles here:
 " original repos on github
 Bundle 'tpope/vim-fugitive'
-"Bundle 'lokaltog/vim-easymotion'
-"Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+Bundle 'tpope/vim-surround'
+
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
 Bundle 'ujihisa/unite-colorscheme'
-Bundle 'mattn/zencoding-vim'
+
+" vimshell "{{{
+Bundle 'Shougo/vimproc'
+Bundle 'Shougo/vimshell'
+"~/.vimshrc
+let g:vimshell_split_command="sp"
+let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+"let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
+let g:vimshell_enable_smart_case = 1
+if has('win32') || has('win64') 
+" Display user name on Windows.
+let g:vimshell_prompt = $USERNAME."% "
+else
+" Display user name on Linux.
+let g:vimshell_prompt = $USER."% "
+
+call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
+call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
+let g:vimshell_execute_file_list['zip'] = 'zipinfo'
+call vimshell#set_execute_file('tgz,gz', 'gzcat')
+    call vimshell#set_execute_file('tbz,bz2', 'bzcat')
+endif 
+aug vimshell
+    au!
+    au FileType vimshell call s:vimshell_setting()
+    	autocmd FileType vimshell
+	\ call vimshell#altercmd#define('g', 'git')
+	\| call vimshell#altercmd#define('i', 'iexe')
+	\| call vimshell#altercmd#define('l', 'll')
+	\| call vimshell#altercmd#define('ll', 'ls -la')
+	\| call vimshell#hook#set('chpwd', ['g:my_chpwd'])
+aug END
+fun! s:vimshell_setting()
+
+endf
+"}}}
+	
 Bundle 'mattn/calendar-vim'
-Bundle 'majutsushi/tagbar'
-Bundle 'scrooloose/nerdcommenter'
-"testing
+"{{{ tagbar
+Bundle 'majutsushi/tagbar' 
+map <leader>tt :TagbarToggle<CR>
+let g:tagbar_compact = 1
+let g:tagbar_width = 30
+"}}}
+"Zencoding Settings  "{{{
+Bundle 'mattn/zencoding-vim'
+let g:user_zen_leader_key = '<c-e>'
+"let g:use_zen_complete_tag = 1
+let g:user_zen_settings = {
+  \    'indentation' : '    '
+  \}
+
+let g:user_zen_expandabbr_key = '<c-e>e'    "e
+let g:user_zen_expandword_key = '<C-E>E'    "e
+    "'user_zen_balancetaginward_key'        "d
+    "'user_zen_balancetagoutward_key'       "D
+let g:user_zen_next_key='<c-e>n'            "n
+let g:user_zen_prev_key='<c-e>p'            "p
+    "'user_zen_imagesize_key'               "i
+    "'user_zen_togglecomment_key'           "/
+    "'user_zen_splitjointag_key'            "j
+    "'user_zen_removetag_key'               "k
+    "'user_zen_anchorizeurl_key'            "a
+    "'user_zen_anchorizesummary_key'        "A
+ "}}}
+"{{{ Command-T
 Bundle 'wincent/Command-T'
+"map <leader>ff :FufFile<CR>
+map <leader>ff :CommandT<CR>
+map <leader>tb :CommandTBuffer<CR>
+let g:CommandTMaxHeight=3
+"let g:CommandTMatchWindowAtTop=1
+"}}}
+"{{{GUNDO
 Bundle 'sjl/gundo.vim'
+let gundo_preview_bottom = 1
+let  g:gundo_width=30
+let g:gundo_right = 1
+nnoremap <leader>uu :GundoToggle<CR>
+"}}}
+"Fuzzyfinder "{{{
+Bundle 'L9'
+Bundle 'FuzzyFinder'
+map <c-\> :FufLine<CR>
+map <silent> <C-]> :FufBufferTagWithCursorWord<CR>
+let g:fuf_modesDisable = [ 'mrucmd', ]
+map <leader>h :FufHelp<CR>
+"}}}
+"NERD Commenter" "{{{
+Bundle 'scrooloose/nerdcommenter'
+map CC <plug>NERDCommenterToggle
+map cc <plug>NERDCommenterToggle
+map ca <plug>NERDCommenterAltDelims
+map ci <plug>NERDCommenterInInsert
+map cp <plug>NERDCommenterAppend
+map cA <plug>NERDCommenterAppend
+map cs <plug>NERDCommenterSexy
+let g:NERDCreateDefaultMappings=0
+"}}}
+" Enhcommentify "{{{
 Bundle 'hrp/EnhancedCommentify'
+" use it because it have block syntax comment
+map <leader>ce  <Plug>Traditional
+map ce  <Plug>Traditional
+map cf  <Plug>FirstLine
+map cm  <Plug>Comment
+let g:EnhCommentifyUserBindings = 'yes'
+let g:EnhCommentifyUseSyntax = 'Yes'
+let g:EnhCommentifyPretty = 'Yes'
+let g:EnhCommentifyBindInInsert = 'No'
+let g:EnhCommentifyUseBlockIndent = 'Yes'
+"}}}
+
+"testing
+Bundle 'ujihisa/quickrun'
 Bundle 'tomtom/checksyntax_vim'
 Bundle 'Lokaltog/vim-easymotion'
 let g:EasyMotion_leader_key = 'f'
-Bundle 'tpope/vim-surround'
-"{{{
+
+"{{{ "snipmate
 "Bundle 'MarcWeber/snipmate.vim'
 "Install dependencies:
 Bundle "git://github.com/MarcWeber/vim-addon-mw-utils.git"
 Bundle "git://github.com/tomtom/tlib_vim.git"
 "Install:
 Bundle "git://github.com/garbas/snipmate.vim.git"
+let g:snips_author = 'Rykka'
 "}}}
-"Bundle 'rykka/colorizer'
-Bundle 'lilydjwg/csspretty.vim'
 "" vim-scripts repos
-Bundle 'L9'
-Bundle 'FuzzyFinder'
 "Bundle 'rails.vim'
 "Bundle 'vimwiki'
+"Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
 
 Bundle 'jQuery'
-
+"Bundle 'rykka/colorizer'
+Bundle 'lilydjwg/csspretty.vim'
 Bundle 'css_color.vim'
 Bundle 'matchit.zip'
 
@@ -87,8 +195,6 @@ Bundle 'altercation/vim-colors-solarized'
 
 filetype plugin indent on     " required!
 "}}}
-"load all bundles
-call pathogen#runtime_append_all_bundles()
 "Basic Setting"{{{
 set nocompatible
 syntax on
@@ -178,17 +284,17 @@ endif
 set foldenable
 set foldmethod=marker
 set foldcolumn=1
-set foldlevel=2
+set foldlevel=99   "don't auto fold 
 set foldlevelstart=1
 set foldopen=block,hor,insert,jump,mark,percent,quickfix,search,tag,undo
-                                " which commands trigger auto-unfold
+set foldclose=
+"set foldopen=all
 set foldminlines=1
 "set foldclose=all
-
 " I want foldmarkers to be applied with space before a comment.
 nnoremap <silent> zf :set opfunc=MyFoldMarker<CR>g@
 vnoremap <silent> zf :<C-U>call MyFoldMarker(visualmode(), 1)<CR>
-vnoremap <silent> <leader><leader> :<C-U>call MyFoldMarker(visualmode(), 1)<CR>
+vnoremap <silent> <leader><leader> :<C-U>call MyFoldMarker(visualmode(), 1)<CR>zv
 
 function! s:set_fold_markers(lnum_st, lnum_end) "{{{
   let markers = split(&foldmarker, ",")
@@ -241,68 +347,116 @@ if has("gui_running")
 
 endif
 "Call After Colorscheme And Sourcecmd "{{{
+
 fun! Color_Modify()
     "all
     hi search          gui=underline
     hi incsearch       gui=underline
     "hi comment          gui=italic
-    if g:colors_name=="molokai" "{{{
-        hi Normal          guifg=#b8b8b2 guibg=#111111
-        hi NonText         guifg=#AAAAAA guibg=#111111
+    hi colorcolumn     guibg=#666
+    if exists("g:colors_name")
+        if g:colors_name=="molokai" "{{{
+            hi Normal          guifg=#b8b8b2 guibg=#111111
+            hi NonText         guifg=#AAAAAA guibg=#111111
 
-        hi StatusLine      guifg=#808070 guibg=#080808
-        hi StatusLineNC    guifg=#404040 guibg=#080808
-        hi VertSplit       guifg=#080808 guibg=#404040 gui=bold
+            hi StatusLine      guifg=#808070 guibg=#080808
+            hi StatusLineNC    guifg=#404040 guibg=#080808
+            hi VertSplit       guifg=#080808 guibg=#404040 gui=bold
 
-        hi tabline         guifg=#808070 guibg=#111111
-        hi tablinesel      guifg=#111111 guibg=#888870 gui=bold,underline
-        hi tablinefill     guifg=#111111 guibg=#111111
+            hi tabline         guifg=#808070 guibg=#111111
+            hi tablinesel      guifg=#111111 guibg=#888870 gui=bold,underline
+            hi tablinefill     guifg=#111111 guibg=#111111
 
-        hi SignColumn      guifg=#904040 guibg=#080808
-        hi FoldColumn      guifg=#555555 guibg=#111111
-        hi Folded          guifg=#998775 guibg=#111111
-        hi colorcolumn     guibg=#222
+            hi FoldColumn      guifg=#555555 guibg=#111111
+            hi Folded          guifg=#998775 guibg=#191919 
+            hi colorcolumn     guibg=#222
+            
+            hi title           guifg=#883838
+        endif "}}}
+        if g:colors_name=="pyte" "{{{
+            hi Normal           guibg=#cccccc
+            hi colorcolumn      guibg=#aaa
+            hi search           guifg=#111111 guibg=#999999 gui=underline
+            hi incsearch        guifg=#111111 guibg=#999999 gui=underline
+            hi Visual           guibg=#999999
+            hi comment          guifg=#778899
+            hi Error            guifg=#991111 guibg=#eeddcc
+            hi Todo             guifg=#555555               gui=bold
+            hi type             guifg=#aa6600
+            hi repeat           guifg=#117755
 
-        hi title           guifg=#883838
-    endif "}}}
-    if g:colors_name=="pyte" "{{{
-        hi Normal           guibg=#cccccc
-        hi colorcolumn      guibg=#aaa
-        hi search           guifg=#111111 guibg=#999999 gui=underline
-        hi incsearch        guifg=#111111 guibg=#999999 gui=underline
-        hi Visual           guibg=#999999
-        hi comment          guifg=#778899
-        hi Error            guifg=#991111 guibg=#eeddcc
-        hi Todo             guifg=#555555               gui=bold
-        hi type             guifg=#aa6600
-        hi repeat           guifg=#117755
+            hi StatusLine       guifg=#111111               gui=bold
+            hi tabline          guifg=#808070
+            hi tablinesel       guifg=#111111 guibg=#aabbcc
+            hi Folded           guifg=#665447 guibg=#aaa
+            hi FoldColumn       guifg=#555555 guibg=#aaa
+        endif "}}}
+        if g:colors_name=="kellys" "{{{
+            "~/.vim/colors/kellys.vim
+            hi normal           guifg=#999  
+            hi cursor           guifg=#111  guibg=#999
+            hi colorcolumn      guibg=#333
+            hi search           guifg=fg guibg=bg
+            hi incsearch        guifg=fg guibg=bg
 
-        hi StatusLine       guifg=#111111               gui=bold
-        hi tabline          guifg=#808070
-        hi tablinesel       guifg=#111111 guibg=#aabbcc
-        hi Folded           guifg=#665447 guibg=#aaa
-        hi FoldColumn       guifg=#555555 guibg=#aaa
-    endif "}}}
-    if g:colors_name=="solarized" "{{{
-        hi normal           guifg=#626262 guibg=#CFCBC9
-        hi folded           guibg=#DEDAD8 gui=underline
-        hi colorcolumn      guibg=#DEDAD8
-        hi foldcolumn       guibg=#DEDAD8
-    endif "}}}
+            hi FoldColumn       guifg=#365b64   guibg=#333
+            hi Folded           guifg=#467b94   guibg=#333      gui=none
+            hi StatusLine 	guifg=#2a2b2f	guibg=#999	gui=bold
+            hi StatusLineNC     guifg=#999	guibg=#555	gui=none
+
+            hi visual           guibg=#3a3b3f   gui=none     
+            hi underlined        guifg=#888
+            hi diffadd          guibg=#77bb80
+
+            hi tabline         guifg=#467b94 guibg=#111111 gui=underline
+            hi tablinesel      guifg=#467b94 guibg=#2a2b2f gui=bold
+            hi tablinefill     guifg=#111111 guibg=#111111
+
+            hi wildmenu         guifg=#3399ff           gui=bold
+            hi pmenu            guifg=#111 guibg=#789
+            
+            hi modemsg          guifg=#fc0
+            hi errormsg         guifg=#d30  guibg=#4a2b2f gui=bold
+            hi error            guifg=#9d0e15 guibg=#4a2b2f gui=bold
+
+            hi string           guifg=#ccaa77
+        endif "}}}
+        if g:colors_name=="solarized" "{{{
+            hi normal           guifg=#626262 guibg=#cecece
+            hi folded           guibg=#d9d7d6 gui=underline
+            hi colorcolumn      guibg=#d9d7d6
+            hi foldcolumn       guibg=#d9d7d6
+        endif "}}}
+    endif
 endfun "}}}
 "colorscheme
 if has("gui_running") 
     "let $colorscheme_n="desert"
     "let $colorscheme_n="molokai"
     "let $colorscheme_n="pyte"
-    let $colorscheme_n="solarized"
+    "let $colorscheme_n="solarized"
+    "let $colorscheme_n="clarity"
+    let $colorscheme_n="kellys"
     colorscheme $colorscheme_n
     call Color_Modify()
 else
     let $colorscheme_n="desert"
     colorscheme $colorscheme_n
 endif
-
+map <leader>ct :call Toggle_colorscheme()<cr>
+fun! Toggle_colorscheme()
+    " TODO change the colorsheme with file in folder
+"if     exists("g:colors_name")
+    "if g:colors_name=="solarized"
+        "colorscheme molokai
+        "call Color_Modify()
+    "elseif  g:colors_name=="molokai"
+        "colorscheme cl
+        "set background="light"
+        "call Color_Modify()
+    "endif
+"endif
+endf
 "menu
 if has("gui_running")
     source $VIMRUNTIME/delmenu.vim
@@ -311,7 +465,7 @@ if has("gui_running")
     let do_syntax_sel_menu=1
 endif
 "statusline
-set statusline=[%03l,%02c,%P]%<%F\%=[%1*%M%R%*%W%Y,%{&enc},%{&ff}][%oB,%bb]
+set statusline=[%03l,%02c,%P]%n:%<%F\%=[%1*%M%R%*%W%Y,%{&enc},%{&ff}][%oB,%bb]
 hi User1 ctermfg=red guibg=#111111 guifg=red gui=bold,underline
 "}}}
 "Term Color "{{{
@@ -322,7 +476,7 @@ else
   " 这里两者都需要。只前者标题会重复，只后者会乱码
   set t_fs=(B
   set t_IE=(B
-  if &term =~ "256color"
+  if &term =~ "256colora
     " 在不同模式下使用不同颜色的光标
     "set cursorline
     "colorscheme pink_lily
@@ -404,7 +558,7 @@ endif
 set completeopt+=preview
 "the c-x c-f file name completing  remove the "="
 set isfname-==
-"set iskeyword+=-
+set iskeyword+=_,$,@,%,# 
 "set iskeyword+=.
 "set iskeyword+=#
 set pumheight=10             " Keep a small completion window
@@ -499,8 +653,16 @@ aug vimrc_auto_mkdir  " {{{
     endif
   endfunction  "
 augroup END  " }}}
-aug some_color "{{{
-au! some_color
+aug statusline_color "{{{
+if version >= 700
+au InsertEnter * hi StatusLine  guibg=#467b94 guifg=#111 gui=bold
+au InsertLeave * hi StatusLine  guibg=#999   guifg=#111 gui=bold
+au InsertLeave * hi cursor      guifg=#111   guibg=#999
+au InsertEnter * hi cursor      guifg=#111   guibg=#467b94
+endif
+aug END "}}}
+aug color_modify "{{{
+au! color_modify
 "au! FileType vimwiki call filetype detect
 au! FileType vimwiki call Vimwiki_color()
 "au! Guienter,winenter *.vwk filetype detect
@@ -509,21 +671,29 @@ au! FileType vimwiki call Vimwiki_color()
 "au! SourceCmd,bufwritepost *.vimrc filetype detect
 "au! SourceCmd,bufwritepost *.vimrc syntax enable
 "au! SourceCmd,bufwritepost *.vimrc call Color_Modify()
-"au! colorscheme * call Color_Modify()
+au! colorscheme * call Color_Modify()
+au! colorscheme *.vwk call Vimwiki_color()
 aug END
 
 fun! Vimwiki_color() "{{{
-if g:colors_name=="molokai"
-hi VimwikiHeader1 guifg=#D0D090 gui=bold
-hi VimwikiHeader2 guifg=#9BC97E gui=bold
-hi VimwikiHeader3 guifg=#4FB16F gui=bold
-hi VimwikiHeader4 guifg=#4E83AE gui=bold
-hi VimwikiHeader5 guifg=#8889BA gui=bold
-hi VimwikiHeader6 guifg=#A365B7 gui=bold
-
-hi VimwikiLIst guifg=#bb9
-elseif g:colors_name=="solarized"
-
+if exists("g:colors_name")
+    if &bg=="dark"
+        hi VimwikiHeader1 guifg=#D0D090 gui=bold
+        hi VimwikiHeader2 guifg=#9BC97E gui=bold
+        hi VimwikiHeader3 guifg=#4FB16F gui=bold
+        hi VimwikiHeader4 guifg=#4E83AE gui=bold
+        hi VimwikiHeader5 guifg=#8889BA gui=bold
+        hi VimwikiHeader6 guifg=#A365B7 gui=bold
+        hi VimwikiLIst guifg=#bb9
+    else
+        hi VimwikiHeader1 guifg=#979730 gui=bold
+        hi VimwikiHeader2 guifg=#6D9730 gui=bold
+        hi VimwikiHeader3 guifg=#349730 gui=bold
+        hi VimwikiHeader4 guifg=#30978F gui=bold
+        hi VimwikiHeader5 guifg=#453097 gui=bold
+        hi VimwikiHeader6 guifg=#793097 gui=bold
+        hi VimwikiLIst guifg=#665
+    endif
 endif
 syn match VimwikishortTimeStamp /<\d\d\d\d-\d\d\d\d>/
 syn match VimwikiminTimeStamp /\d\d\d\d_\d\d\d\d/
@@ -622,7 +792,6 @@ endfun "}}}
 command! -nargs=* Htag call pathogen#helptags() <args>
 command! -nargs=* Papp call pathogen#runtime_append_all_bundles(<args>) <args>
 
-
 command! -nargs=0 Wsu exec "w !sudo tee % "
 command! -nargs=0 Gsu exec "!gksu gvim '%:p' "
 
@@ -684,131 +853,130 @@ iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 " F11
 " F12 Save session
 
-nmap <F1> :h <C-R>=expand("<cword>")<CR><CR>
+nmap <f1> :FufHelp<CR>
+nmap <c-F1> :h <C-R>=expand("<cword>")<CR><CR>
 "map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
 nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
-nmap <c-f1> :FufHelp<C-R>=expand("<cword>")<CR><CR>
 
-nmap <F2> :FufLine <CR>
+"Find "{{{
+map <F2> :FufLine<CR>
 map <c-F2> :Ack <C-R>=expand("<cword>")<CR>
 vnoremap <c-F2> "sy<esc><c-l>:Ack <c-r>s
+
 " replace word under cursor
 nmap <s-F2> :%s/<C-R><C-W>//gc<Left><Left><Left>
 " replace selection
 vnoremap <s-F2> "sy<esc><c-l>:%s/<c-r>s//g<Left><Left>
 "vnoremap <C-C> "+y
-
+"}}}
 map <silent> <F3> :FufBuffer<CR>
 map <s-F3> :Unite buffer<CR>
+
 "noremap <F4> :NERDTreeToggle "expand('%:p:h')"<CR>
 noremap <F4> :FufFile<CR>
 map <s-F4> :Unite file bookmark<CR>
 
+"it have errors ,many
+"nmap <silent> <F5> :QuickRun<CR>
+map <silent> <s-F5> :VimShellPop<cr>
+nmap <silent> <F5> :call Exe_cur_script("norm")<CR>
+vmap <silent> <F5> :call Exe_cur_script("visual")<CR>
+"command -range -nargs=1 EXEC calll Exe_cur_script(<args>)
+function! Exe_cur_script(mode) "{{{
+" TODO mac /win /linux check (kde,gnome ,)
+" define the cmd by user
+" TODO Pluginize: a cmd window to choose :sudo/norm
+" choose visual/line , file
+" debug mode
+" compile chmod make
+if expand("%") == ""
+    return -1
+endif
+"let priv=input("Sudo:s|Normal:n\n")
+"if priv=="s"
+    "let b_cmd="!sudo "
+"elseif priv=="n" 
+    "let b_cmd="!"
+"else
+    "echo   "no correct input"
+    "return -1
+"endif
 
-"FIXME ugly: 
-" should be F5 -> run file
-" S-F5 -> sudo file /chmod /compile
-" v_F5 -> yank and run range 
-nmap <silent> <F5> :call Exe_cur_script("file","norm")<CR>
-vmap <silent> <F5> :call Exe_cur_script("visual","norm")<CR>
-nmap <silent> <c-F5> :call Exe_cur_script("file","sudo")<CR>
-vmap <silent> <c-F5> :call Exe_cur_script("visual","sudo")<CR>
-nmap <silent> <s-F5> :call Exe_cur_script("line","norm")<CR>
-nmap <silent> <c-s-F5> :call Exe_cur_script("line","sudo")<CR>
-function! Exe_cur_script(range,priv) "{{{
-   " TODO mac /win /linux check (kde,gnome ,)
-   " define the cmd by user
-   " TODO Pluginize: a cmd window to choose :sudo/norm
-   " choose visual/line , file
-   " debug mode 
-   " compile chmod make
-    if expand("%") != ""
-        "w!
-        "FIXME wrong if no syntax
-        "if !exists("b:current_syntax")   "don't need the & prefix
-            "echom " can not  execute current file (%) "
-            "return 0
-        "endif
+let b_cmd="!"
+let browser = "firefox "
+let term = "gnome-terminal "
+let runner="gnome-open "
+let win_runner="start "
+let err_log=" 2>&1 | tee /tmp/.runtmp"
 
-        let browser = "firefox"
-        "let pri=""
-        "let rng=getline('.')
-        if a:range=="file"
-            let rng=expand('%:p')
-        elsei a:range=="line"
-            let rng=getline('.')
-        elsei a:range=="visual"
-            let firstLine = line("'<")
-            let lastLine = line("'>")
-            let rng_list=getline(firstLine,lastLine)
-            let rng=getline('.')
-            for item in rng_list
-                let rng .= item." && "
-            endfo
-        endif
-
-        if a:priv=="sudo"
-            let pri="sudo "
-        elseif a:priv=="norm"
-            let pri=""
-        endif
-
-        if exists("b:current_syntax")
-        let syn=b:current_syntax
-        if syn=="python" "{{{
-            exec "!".pri."python -d ".rng." 2>&1 | tee /tmp/.runtmp"
-            "exec "!".pri."python -d ".rng." 2 3 4 5"
-        elsei syn=~'^\(vim\|vba\)$'
-            if a:range=="file"
-                exec "so ".expand('%:p')
-            elseif a:range=="line"
-                exec rng
-            endif
-        elsei syn=~'html'
-            exec "!".browser.' "'.rng.'"'
-        elsei syn =~'^\(sh\|expect\|bash\)$'
-            if has("unix")
-
-                "exec "!".pri."gnome-terminal -e "."'".pri."sh -c ".rng."'"
-                if a:range=="file"
-                    if stridx(getfperm(rng), 'x') != 2
-                        call system("chmod +x ".shellescape(rng))
-                    endif
-                    exec "!".pri."gnome-terminal -e "."'".pri."bash ".rng."'"
-                else
-                    "exec "!".pri."gnome-terminal -e "."'".pri."sh -c ".rng."'"
-                    exec "!".pri."gnome-terminal -x ".rng
-                endif
-            elseif has("win32") || has("win64")
-                exec "!".pri."cmd -e".rng
-            endif
-        else
-            "setl binary
-            if has("unix") | exec "!gnome-open ".pri.rng
-            else | exec "!".pri.rng | endif
-        endif "}}}
-        else
-            "setl binary
-               if has("unix") | exec "!gnome-open ".pri.rng
-               else | exec "!".pri.rng | endif
-        endif
-
+if a:mode=="norm"
+    let file=" \"".expand('%:p')."\""
+elsei a:mode=="visual"
+    "let firstLine = line("'<")
+    "let lastLine = line("'>")
+    "let rng_list=getline(firstLine,lastLine)
+    "let rng=""
+    let rng=getline('.')
+endif
+if !exists("b:current_syntax")
+    if has("unix") 
+        exec b_cmd.runner.file
+    else  
+        exec b_cmd.file 
     endif
+    return 0
+endif
+if exists("b:current_syntax")
+    let syn=b:current_syntax
+    if syn=="python" 
+        exec b_cmd."python -d ".file.err_log
+    elsei syn=~'^vim$'
+        if a:mode=="norm"
+            exec "so ".file
+        elseif a:mode=="visual"
+            "for item in rng_list
+                "let rng.= item." \| "
+            "endfo
+            "let rng.="1sleep"
+            exec rng
+        endif
+    elsei syn=~'html'
+        exec b_cmd.browser.file
+    elsei syn =~'^\(sh\|expect\|bash\)$'
+        if a:mode=="norm"
+            exec b_cmd.term." -x bash ".file
+        else
+            "for item in rng_list
+                "let rng.= item." && "
+            "endfo
+            "let rng.= "sleep 1"
+            exec b_cmd.term." -x bash -c ".rng
+        endif
+    elsei syn=~'^bat$'
+        exec b_cmd.win_runner."cmd -e".file 
+    endif
+
+elsei has("unix") 
+    exec b_cmd.runner.file
+else  
+    exec b_cmd.win_runner.file 
+endif
+
 endf "}}}
-"map <silent> <c-F5> :execute "split .tmp"<CR>
-"run current line
 
 map <F6> :TagbarToggle<CR>
 
 map <F7> :GundoToggle<CR>
 
-map <silent><F8> :call Start_File_explore()<CR>
+"{{{ start from here
+map <silent><F8> :call Start_File_explore()<CR>  
 map <silent><s-F8> :call Start_terminal()<CR>
 fun! Start_File_explore()
     if expand("%:p:h") != ""
         if has("win32")
             exec "!start explorer '%:p:h'"
         else
+            "exec "!gnome-commander -l '%:p:h'"
             exec "!nautilus '%:p:h'"
         endif
     endif
@@ -820,21 +988,22 @@ fun! Start_terminal()
         exec "!gnome-terminal --working-directory='%:p:h'"
     endif
 endf
-
-"session save /load
+"}}}
+"""session save /load "{{{
 nmap <F12> :call SaveSession()<CR>
 nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
 set sessionoptions=buffers,curdir,help,tabpages,winsize,resize
 function! SaveSession()
   wall
-    let ses = strftime("%y-%m-%d_%H:%M")
+    let ses = strftime("%y-%m-%d_%h:%m")
     try
         exe "mksession! "."~/.vim/sessions/".ses
         echomsg "mks success! session file : ".ses
-    catch /^Vim\%((\a\+)\)\=:/
+    catch /^vim\%((\a\+)\)\=:/
         echoe "mks failure! error: " .v:exception
     endtry
-endfunction
+endfunction 
+"}}}
 
 "}}}
 
@@ -849,10 +1018,11 @@ nnoremap ; :
 noremap q: <nop>
 
 " Nop mapping
-nnoremap s z
-nnoremap S z
-nnoremap c <Nop>
-nnoremap C <Nop>
+nmap s %
+"vmap s %
+noremap S <Nop>
+"nnoremap c <Nop>
+"nnoremap C <Nop>
 
 "}}}
 "Edit .vimrc and other files <leader>XX"{{{
@@ -864,10 +1034,15 @@ map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
 "map <silent><leader>ww :call Split_if("") \| VimwikiIndex<CR>
 "map <silent><leader>WW :call Split_if("") \| VimwikiIndex<CR>
 
-"map <leader>vc :call Split_if("") \| e ~/$colorscheme_n.vim<CR>
+"map <leader>vc :call Split_if("") \| e $VIMRUNTIME/$colorscheme_n.vim<CR>
 "map <leader>VC :call Split_if("") \| e ~/.vim/colors/$colorscheme_n.vim<CR>
 
-"map <leader>vs :call Split_if("") \| exec "VimShell" <CR>
+
+
+"~/.vimshrc
+map <silent><leader>vsr :call Split_if("") \| e ~/.vimshrc<CR>
+map <leader>vss :call Split_if("") \| exec "VimShellPop" <CR>
+map <leader>vs :call Split_if("") \| exec "VimShellPop" <CR>
 "map <leader>VS :call Split_if("") \| exec "VimShell" <CR>
 
 "map <leader>vf :call Split_if("") \| exe "VimFiler" <CR><esc>
@@ -939,20 +1114,29 @@ nnoremap <silent> <leader>aa @=(&foldlevel?'zM':'zR')<CR>
 nnoremap <silent> <leader>AA @=(&foldlevel?'zM':'zR')<CR>
 "nnoremap f za
 "nnoremap F zA
-"vnoremap <leader><leader> zf
-map <silent><leader>fm :if &foldmethod == 'marker'  <bar>
-            \ set foldmethod=indent   <bar>
-            \ echo "set fdm=indent" <bar>
-            \ elseif &foldmethod=='indent'   <bar>
-            \ set foldmethod=syntax  <bar>
-            \ echo "set fdm=syntax" <bar>
-            \ elseif &foldmethod=='syntax'   <bar>
-            \ set foldmethod=expr  <bar>
-            \ echo "set fdm=expr" <bar>
-            \ elseif &foldmethod=='expr'   <bar>
-            \ set foldmethod=marker  <bar>
-            \ echo "set fdm=marker" <bar>
-            \ endif <CR>
+"auto folding
+map <silent><leader>fa :if &fcl=="" 
+            \\| setl fcl+=all fdo+=all
+            \\| exec "normal! zM" 
+            \\| echo "auto fold"
+            \\| else 
+            \\| setl fcl-=all fdo-=all
+            \\| echo "no auto fold"
+            \\| endif<cr>
+
+map <silent><leader>fm :if &foldmethod == 'marker' 
+            \\| setl foldmethod=indent  
+            \\| echo "setl fdm=indent"
+            \\| elseif &foldmethod=='indent'  
+            \\| setl foldmethod=syntax 
+            \\| echo "setl fdm=syntax"
+            \\| elseif &foldmethod=='syntax'  
+            \\| setl foldmethod=expr 
+            \\| echo "setl fdm=expr"
+            \\| elseif &foldmethod=='expr' 
+            \\| setl foldmethod=marker 
+            \\| echo "setl fdm=marker"
+            \\| endif <CR>
 "}}}
 "Misc Option Toggle "{{{
 
@@ -1009,60 +1193,64 @@ nmap <leader>`` :filetype detect \| syntax enable \| call Color_Modify() <CR>
 "use menu syntax
 nmap <leader>11  :emenu Syntax.
 "nnoremap <silent> <leader>1 :nohl<CR>
-nnoremap <silent> <C-l> :nohl<CR><C-l>
+nnoremap <silent> <C-L> :nohl<CR><C-l>/^^<cr>
 "}}}
 
 " 4.2.Window_control_mapping
 """""""""""""""""""""""""""""""""""""""""""""""""
 "Window Mapping  <C-W> "{{{
-nmap <c-w>1 <c-w>_
-nmap <c-w><c-a> <c-w>_
-nmap <c-w>2 <c-w>=
-nmap <c-w><c-z> <c-w>=
-"nmap <c-w><c-w> <c-w>=<c-w>w
-"nmap <c-w>3 z0<CR>
+nmap <C-W>1 <C-W>_
+nmap <C-W><c-a> <C-W>_
+nmap <C-W>2 <C-W>=
+nmap <C-W><c-z> <C-W>=
+"nmap <C-W><C-W> <C-W>=<C-W>w
+nmap <C-W>3 :call Nav_buff_win("list")<cr>
 
 
 "buffer and window navigation
-nmap <c-w><c-w> :call Nav_buff_win("next")<cr>
-nmap <c-w><c-e> :call Nav_buff_win("prev")<cr>
-nmap <c-w><c-b> :call Nav_buff_win("list")<cr>
+nmap <C-W><C-W> :call Nav_buff_win("next")<cr>
+nmap <C-W><c-e> :call Nav_buff_win("prev")<cr>
+nmap <C-W><c-b> :call Nav_buff_win("list")<cr>
+nmap <C-W><c-tab> :call Nav_buff_win("list")<cr>
+nmap <C-W><tab> :call Nav_buff_win("list")<cr>
 fun! Nav_buff_win(act)
     if a:act=="next"
-    	exe winnr('$')==1 ? "bnext" : "normal \<c-w>w"
+    	exe winnr('$')==1 ? "bnext" : "normal \<C-W>w"
     endif
     if a:act=="prev"
-    	exe winnr('$')==1 ? "bprevious" : "normal \<c-w>W"
+    	exe winnr('$')==1 ? "bprevious" : "normal \<C-W>W"
     endif
     if a:act=="list"
-    	exe winnr('$')<=4 ? "Fufbuffer" : "Unite window "
+    	exe winnr('$')<=4 ? "FufBuffer" : "Unite window "
     endif
 endfun
 
 
 "dont close last window , use :q or 
-nmap <silent> <c-w><c-q> :call Check_winnr(-2)\|hid<CR>
-nmap <silent> <c-w><c-x><c-x> :qall<CR>
+nmap <silent> <C-W><c-q> :call Check_winnr(-2)\|hid<CR>
+nmap <silent> <C-W><c-x><c-x> :qall<CR>
 "buffer in current window
-nmap <c-w><c-d> :bd<CR>
-nmap <c-w><c-u> :bun<CR>
-nnoremap <C-w><c-n> :bnext<CR>
-nnoremap <C-w>n :bnext<CR>
-nnoremap <C-w><c-p> :bprevious<CR>
-nnoremap <C-w>p :bprevious<CR>
+nmap <C-W><c-d> :bd<CR>
+nmap <C-W><c-u> :bun<CR>
+nnoremap <C-W><c-n> :bnext<CR>
+nnoremap <C-W>n :bnext<CR>
+nnoremap <C-W><c-p> :bprevious<CR>
+nnoremap <C-W>p :bprevious<CR>
+"nav tab
+nnoremap <silent> <C-W><c-g> gt
 "}}}
 "Window Width(Columns) Configure"{{{
-nmap <silent> <c-w><c-v> :call Check_winnr(0)\|vne<CR>
-nmap <silent> <c-w><c-h> :call Check_winnr(2)<CR><c-w>H
-nmap <silent> <c-w><c-l> :call Check_winnr(2)<CR><c-w>L
+nmap <silent> <C-W><c-v> :call Check_winnr(0)\|vne<CR>
+nmap <silent> <C-W><c-h> :call Check_winnr(2)<CR><C-W>H
+nmap <silent> <C-W><c-l> :call Check_winnr(2)<CR><C-W>L
 
-"nmap <silent> <c-w><c-s> :call Check_winnr(-1)\|new<CR>
-"nmap <silent> <c-w><c-s> :sp<CR>
-nmap <silent> <c-w><c-j> :call Check_winnr(-2)<CR><c-w>J
-nmap <silent> <c-w><c-k> :call Check_winnr(-2)<CR><c-w>K
+"nmap <silent> <C-W><c-s> :call Check_winnr(-1)\|new<CR>
+"nmap <silent> <C-W><c-s> :sp<CR>
+nmap <silent> <C-W><c-j> :call Check_winnr(-2)<CR><C-W>J
+nmap <silent> <C-W><c-k> :call Check_winnr(-2)<CR><C-W>K
 
 
-nmap <silent> <c-w><c-t> :call Check_winnr(-2)<CR><c-w>T
+nmap <silent> <C-W><c-t> :call Check_winnr(-2)<CR><C-W>T
 
 fun! Check_winnr(num) "{{{
     let col =78
@@ -1124,10 +1312,13 @@ cnoremap <m-k> <down>
 " <s-j> <s-k>
 noremap J 5j
 noremap K 5k
-noremap <c-j> J
+"the snipmate complete
+nmap <c-j> a<c-j><Esc>
+" :help 
 noremap <c-k> K
 
-
+"noremap <leader> 5j
+"noremap <c-j> 5j
 " just one space on the line, preserving indent
 "nmap <Up>   gk
 nnoremap k      gk
@@ -1165,14 +1356,18 @@ nmap <leader>jn {
 nmap <leader>jp }
 
 nnoremap <C-Tab> gt
-nnoremap <C-S-Tab> gT
+nnoremap <C-S-Tab> gT 
 
+"add new line
 nnoremap <S-CR> o<ESC>
-nnoremap <c-CR> O<ESC>
+"join line with line above
+nnoremap <c-CR> kJ 
+"format visual line
+vnoremap <C-CR> gq
 
 if v:version < 703
     nmap <silent> <m-MouseDown> zhzhzh
-    nmap <silent> <m-MouseUp> zlzlzl
+    nmap <silent> <m-MouseUp> zlzlzl 
     vmap <silent> <m-MouseDown> zhzhzh
     vmap <silent> <m-MouseUp> zlzlzl
     map <MouseUp> 3k
@@ -1199,126 +1394,75 @@ endif
 " make p in Visual mode replace the selected text with the yank register
 "vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
+"as D
 nnoremap Y y$
 
-""Word Capitalize Hotkeys
+"change case <m-s>
+nnoremap <M-S>1 gUU
+nnoremap <M-S>2 guu
 nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
-nmap <leader>ul :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
+nmap <M-S>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
 " Capitalize inner word
-nmap <leader>uc guiw~w
+nmap <M-S>c guiw~w
 " UPPERCASE inner word
-nmap <leader>uu gUiww
+nmap <M-S>e gUiww
 " lowercase inner word
-nmap <leader>uw guiww
+nmap <M-S>w guiww
+nmap <M-S><M-S> ~
 
 "trim whitespace
 nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
+                vnoremap > >gv
+                vnoremap < <gv
 
-vnoremap > >gv
-vnoremap < <gv
-
-nnoremap <leader>31 yyPVr=jyypVr=
-nnoremap <leader>32 yyPVr*jyypVr*
-nnoremap <leader>33 yypVr=
-nnoremap <leader>34 yypVr-
-nnoremap <leader>35 yypVr^
-nnoremap <leader>36 yypVr"
-nnoremap __ "zyy"zp<c-v>$r-
-nnoremap ++ "zyy"zp<c-v>$r=
 "}}}
 "Quick Wrapping "{{{
+" text object : i/a  w/s/p/{/</'"`/t/
+" iw :inner word ; aw : a word with white space
+" //e: last search pattern
+"surrond.vim: cs ds ys v_s i_<c-g>s
 "visualize selection
 nnoremap <leader>sl ^v$
 "use the remaped % ^ 'matchit'
 nmap <leader>ss %%V%
-" viw can do it
-"nnoremap <leader>sw gewve
-" viW
-"nnoremap <leader>sW geWvE
-" Note: 
-" Action:   V/D 
-" Range:    I/A  
-" Object:   Wsp/][/()/'`"/<>/{}
-"#ffee00
-" Use vim-Surround instead
-" surrond do this as v_s + "surrond things"
-" Imporvement:
-" Normal Mode:
-"               ds -> delete 
-"               dst -> delete <>tag
-"               cs -> change
-"               cst -> change <>tag
-"               ys -> surrond visual select motion
-"               yss -> surrond current line without whitespace
-" Visual Mode:
-"               s
-" Visul_block: 
-"               s
-"TODO put it in a function or use bundles
-"  viw s"
-"nnoremap <Leader>e" ciw"<C-r>""<ESC>
-"vnoremap <Leader>e" c"<C-r>""<ESC>`[
-"nnoremap <Leader>e' ciw'<C-r>"'<ESC>
-"vnoremap <Leader>e' c'<C-r>"'<ESC>`[
-" viw s>
-"nnoremap <Leader>e< ciw<<C-r>"><ESC>
-"vnoremap <Leader>e< c<<C-r>"><ESC>`[
 
-"nnoremap <Leader>e` ciw`<C-r>"`<ESC>
-"vnoremap <Leader>e` c`<C-r>"`<ESC>`[
-"nnoremap <Leader>e8 ciw*<C-r>"*<ESC>
-"vnoremap <Leader>e8 c*<C-r>"*<ESC>`[
-"nnoremap <Leader>e9 ciw(<C-r>")<ESC>
-"vnoremap <Leader>e9 c(<C-r>")<ESC>`[
-"nnoremap <Leader>e- ciw_<C-r>"_<ESC>
-"vnoremap <Leader>e- c_<C-r>"_<ESC>`[
-
-"viw s]
-"nnoremap <Leader>e[ ciw[<C-r>"]<ESC>
-"vnoremap <Leader>e[ c[<C-r>"]<ESC>`[
-"nnoremap <Leader>e{ ciw{<C-r>"}<ESC>
-"vnoremap <Leader>e{ c{<C-r>"}<ESC>`[
 nnoremap <Leader>e} ciw{{{<C-r>"}}}<ESC>
 vnoremap <Leader>e} c{{{<C-r>"}}}<ESC>`[
 nnoremap <Leader>e] ciw[[<C-r>"]]<ESC>
 vnoremap <Leader>e] c[[<C-r>"]]<ESC>`[
 
-"viw s<div id=....
-"nnoremap <leader>ed ciw<div id=""><C-r>"</div><ESC>
-"vnoremap <Leader>ed c<div id=""><C-r>"</div><ESC>`[
-"nnoremap <leader>ea ciw<a href="" ><C-r>"</a><ESC>
-"vnoremap <Leader>ea c<a href="" ><C-r>"</a><ESC>`[
-"nnoremap <leader>ei ciw<img href="" ><C-r>"</img><ESC>
-"vnoremap <Leader>ei c<img href="" ><C-r>"</img><ESC>`[
 "php
-"nnoremap <leader>ep ciw<?php <C-r>" ?><ESC>
-"vnoremap <Leader>ep c<?php <C-r>" ?><ESC>`[
+nnoremap <leader>ep ciw<?php <C-r>" ?><ESC>
+vnoremap <Leader>ep c<?php <C-r>" ?><ESC>`[
 "" html comment
 nnoremap <leader>e! ciw<!-- <C-r>" --><ESC>
 vnoremap <Leader>e! c<!-- <C-r>" --><ESC>`[
 "}}}
 "Formating "{{{
 "alignment of text
-nmap <leader>al :left<CR>
-nmap <leader>ar :right<CR>
-nmap <leader>ac :center<CR>
+nmap <leader>ll :left<CR>
+nmap <leader>lr :right<CR>
+nmap <leader>lc :center<CR>
 
 "make vimwiki list
-nnoremap <leader>l1 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1* /&e\|nohl<CR>
-nnoremap <leader>l2 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1# /&e\|nohl<CR>
-nnoremap <leader>l3 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1- /&e\|nohl<CR>
-nnoremap <leader>l4 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\11. /&e\|nohl<CR>
+nm <leader>l1 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1* /&e<CR>
+nm <leader>l2 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1# /&e<CR>
+nm <leader>l3 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1- /&e<CR>
+nm <leader>l4 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\11. /&e<CR><c-l>
 
+nnoremap <leader>l=2 yyPVr=jyypVr=
+nnoremap <leader>l*2 yyPVr*jyypVr*
+nnoremap <leader>l= yypVr=
+nnoremap <leader>l- yypVr-
+nnoremap <leader>l^ yypVr^
+nnoremap <leader>l" yypVr"
+"nnoremap __ "zyy"zp<c-v>$r-
+"nnoremap ++ "zyy"zp<c-v>$r=
 " Use Q for formatting the current paragraph (or visual selection)
-vmap Q gq
-nmap Q gqap
-
-"将当前行以下转换为文本
-map <M-r><M-r> <ESC>gqap
+"nmap Q gqap
+"vnoremap <C-CR> gq
 "段落后添加空行
-map <M-r><M-q> <ESC>:.,$s/\([。！？”—）]\)$/\1\r/g<CR>
-"quick format current sentence
-map <M-r><M-f> <ESC>gqap
+"map <M-q><M-l> <ESC>:.s/\([.!?"。！？”—）]\)$/\1\r/g<CR>
 
 "}}}
 
@@ -1329,90 +1473,23 @@ if has('gui_running')
     behave mswin
     source $VIMRUNTIME/mswin.vim
 endif "}}}
-"{{{ Win_behav Mapping
+"{{{ Win_behav Mapping modify
 vnoremap <c-d> "+x
-vmap <C-X> "+x  " often no cut contentat all
-vmap <C-m-X> "+x  " often no cut contentat all
-vnoremap <S-Del> "+x
-" CTRL-C and CTRL-Insert are Copy
-vnoremap <C-C> "+y
-vnoremap <C-Insert> "+y
+"vnoremap <C-X> "+x
+vnoremap <C-m-X> "+x  " often no cut contentat all
 
-" CTRL-V and SHIFT-Insert are Paste
-map <c-v>       "+gp
-map <S-Insert>  "+gp
-imap <C-v>      "+gp
-imap <S-Insert> "+gp
-cmap <C-v>      <C-R>+
-cmap <S-Insert> <C-R>+
-
-exe 'inoremap <script> <C-V>' paste#paste_cmd['i']
-exe 'vnoremap <script> <C-V>' paste#paste_cmd['v']
-" Use CTRL-Q to do what CTRL-V used to do
-noremap <C-Q> <C-V>
-
-" CTRL-Z is Undo; not in cmdline though
-noremap <C-Z> u
-inoremap <C-Z> <C-O>u
-vnoremap <C-Z> <esc>
-
-" CTRL-Y is Redo (although not repeat); not in cmdline though
-noremap <C-Y> <C-R>
-inoremap <C-Y> <C-O><C-R>
-
-noremap <C-A> gggH<C-O>G
-inoremap <C-A> <C-O>gg<C-O>gH<C-O>G
-cnoremap <C-A> <C-C>gggH<C-O>G
-onoremap <C-A> <C-C>gggH<C-O>G
-snoremap <C-A> <C-C>gggH<C-O>G
-xnoremap <C-A> <C-C>ggVG
-
-nmap <c-s> :update<CR>
-imap <c-s> <esc>:update<CR>a
 "}}}
-
+"open fold while undo /redo "{{{
+noremap <C-Z> uzv
+inoremap <C-Z> <esc>uzva
+"no action in visual mode
+vnoremap <C-Z> <esc>
+noremap <C-Y> <C-R>zv
+inoremap <C-Y> <esc><c-r>zva
+"}}}
 "5.Plugins_settings{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
-"{{{ Command-T
-nnoremap <leader>uu :GundoToggle<CR>
-"map <leader>ff :FufFile<CR>
-map <leader>ff :CommandT<CR>
-map <leader>tb :CommandTBuffer<CR>
-let g:CommandTMaxHeight=3
-"let g:CommandTMatchWindowAtTop=1
-"}}}
-"NERD Commenter" "{{{
-map CC <plug>NERDCommenterToggle
-map cc <plug>NERDCommenterToggle
-map ca <plug>NERDCommenterAltDelims
-map ci <plug>NERDCommenterInInsert
-map cp <plug>NERDCommenterAppend
-map cA <plug>NERDCommenterAppend
-map cs <plug>NERDCommenterSexy
-let g:NERDCreateDefaultMappings=0
-"}}}
-" Enhcommentify "{{{
-" use it because it have block syntax comment
-map <leader>ce  <Plug>Traditional
-map ce  <Plug>Traditional
-map cf  <Plug>FirstLine
-map cm  <Plug>Comment
-let g:EnhCommentifyUserBindings = 'yes'
-"let g:EnhCommentifyFirstLineMode='Yes'
-"let g:EnhCommentifyRespectIndent = 'Yes'
-let g:EnhCommentifyUseSyntax = 'Yes'
-let g:EnhCommentifyPretty = 'Yes'
-let g:EnhCommentifyBindInInsert = 'No'
-"let g:EnhCommentifyMultiPartBlocks = 'Yes'
-"let g:EnhCommentifyCommentsOp = 'Yes'
-"let g:EnhCommentifyAlignRight = 'Yes'
-let g:EnhCommentifyUseBlockIndent = 'Yes'
-"}}}
-"{{{GUNDO
-let gundo_preview_bottom = 1
-let  g:gundo_width=30
-let g:gundo_right = 1
-"}}}
+
 "Unite Settings "{{{
 "noremap <leader>ww :Unite file bookmark<CR>
 noremap <m-w><m-w> :Unite file bookmark<CR>
@@ -1504,6 +1581,10 @@ inoremap <expr><C-g>     neocomplcache#undo_completion()
 " <CR>: close popup and save indent.
 inoremap <expr><CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 " <TAB>: completion.
+
+" Comment The Snipmate 'S Map <Tab> Function
+" ~/.vim/bundle/snipmate.vim/after/plugin/snipMate.vim
+"
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><s-TAB>  pumvisible() ? "\<C-p>" : "\<s-TAB>"
 "<C-h>, <BS>: close popup and delete backword char.
@@ -1547,26 +1628,6 @@ aug END
 let g:neocomplcache_text_mode_filetypes = {"vimwiki":1,"vim":1}
 let g:neocomplcache_disable_caching_file_path_pattern="fuf"
 "}}}
-"Zencoding Settings  "{{{
-let g:user_zen_leader_key = '<c-e>'
-"let g:use_zen_complete_tag = 1
-let g:user_zen_settings = {
-  \    'indentation' : '    '
-  \}
-
-let g:user_zen_expandabbr_key = '<c-e>e'    "e
-let g:user_zen_expandword_key = '<C-E>E'    "e
-    "'user_zen_balancetaginward_key'        "d
-    "'user_zen_balancetagoutward_key'       "D
-let g:user_zen_next_key='<c-e>n'            "n
-let g:user_zen_prev_key='<c-e>p'            "p
-    "'user_zen_imagesize_key'               "i
-    "'user_zen_togglecomment_key'           "/
-    "'user_zen_splitjointag_key'            "j
-    "'user_zen_removetag_key'               "k
-    "'user_zen_anchorizeurl_key'            "a
-    "'user_zen_anchorizesummary_key'        "A
- "}}}
 "Vimwiki Settings "{{{
 map <Leader>ww <Plug>VimwikiIndex
 
@@ -1689,8 +1750,8 @@ fun! s:vimwiki_my_settings() "{{{
     imap <buffer><expr> <m-Home> "<Plug>VimwikiGoBackLink"
     inoremap <buffer><expr> <m-End> "\<c-o><c-i>"
     noremap <buffer><expr> <m-End> "\<c-i>"
-    "nmap <silent><buffer> <TAB> <Plug>VimwikiNextLink
-    inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
+    nmap <silent><buffer> <TAB> <Plug>VimwikiNextLink
+    "inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
 
 
     inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
@@ -1715,19 +1776,12 @@ noremap <expr> <m-End> "\<c-i>"
 "}}}
 
 "}}}
-"Fuzzyfinder "{{{
-map <c-\> :FufLine<CR>
-map <silent> <C-]> :FufBufferTagWithCursorWord<CR>
-let g:fuf_modesDisable = [ 'mrucmd', ]
-map <leader>h :FufHelp<CR>
-"}}}
+
 "Misc Plugins Settings "{{{
 "   syntax/vim.vim 默认会高亮 s:[a-z] 这样的函数名为错误
 let g:vimsyn_noerror = 1
-nmap <leader>ca :CalendarH<CR>
+"nmap <leader>cah :CalendarH<CR>
 
-map <leader>tt :TagbarToggle<CR>
-let g:tagbar_compact = 1
 
 "let g:vimshell_prompt = $USER."> "
 "let g:NERDTreeChDirMode=2
@@ -1742,10 +1796,13 @@ let g:tagbar_compact = 1
 function! LastChangeUpdate()
   for linenr in range(1, min([30, line('$')]))
     let line = getline(linenr)
-    if line =~ 'Last Change:'
-      let line = substitute(line, 'Last Change:.*$',
-                  \ 'Last Change: '.strftime("%Y-%m-%d %H:%M"), '')
+    let rx_str_upd='\%(Change\|Update\|Updated\|Modify\|Modified\)'
+    let rx_str_lupd='Last '.rx_str_upd.':'
+    if line =~ rx_str_lupd
+      let line = substitute(line, '\('.rx_str_lupd.'\s*\).*$',
+                  \ '\1'.strftime("%Y-%m-%d %H:%M"), '')
       call setline(linenr, line)
+      break
       break
     endif
 endfor
@@ -1799,74 +1856,76 @@ endfun "}}}
 "inoremap <expr> ]  strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]"
 "}}}
 "colorpicker   取得光标处的匹配 {{{
-function! Lilydjwg_get_pattern_at_cursor(pat)
-  let col = col('.') - 1
-  let line = getline('.')
-  let ebeg = -1
-  let cont = match(line, a:pat, 0)
-  while (ebeg >= 0 || (0 <= cont) && (cont <= col))
-    let contn = matchend(line, a:pat, cont)
-    if (cont <= col) && (col < contn)
-      let ebeg = match(line, a:pat, cont)
-      let elen = contn - ebeg
-      break
-    else
-      let cont = match(line, a:pat, contn)
-    endif
-  endwhile
-  if ebeg >= 0
-    return strpart(line, ebeg, elen)
-  else
-    return ""
-  endif
-endfunction
-"}}}
-" 使用 colorpicker 程序获取颜色值(hex/rgba) {{{
-function! Lilydjwg_colorpicker()
-  if exists("g:last_color")
-    let color = substitute(system("colorpicker ".shellescape(g:last_color)), '\n', '', '')
-  else
-    let color = substitute(system("colorpicker"), '\n', '', '')
-  endif
-  if v:shell_error == 1
-    return ''
-  elseif v:shell_error == 2
-    " g:last_color 值不对
-    unlet g:last_color
-    return Lilydjwg_colorpicker()
-  else
-    let g:last_color = color
-    return color
-  endif
-endfunction "}}}
-" 更改光标下的颜色值(hex/rgba/rgb) {{{
-function! Lilydjwg_changeColor()
-  let color = Lilydjwg_get_pattern_at_cursor('\v\#[[:xdigit:]]{6}(\D|$)@=|<rgba\((\d{1,3},\s*){3}[.0-9]+\)|<rgb\((\d{1,3},\s*){2}\d{1,3}\)')
-  if color == ""
-    echohl WarningMsg
-    echo "No color string found."
-    echohl NONE
-    return
-  endif
-  let g:last_color = color
-  call Lilydjwg_colorpicker()
-  exe 'normal! eF'.color[0]
-  call setline('.', substitute(getline('.'), '\%'.col('.').'c\V'.color, g:last_color, ''))
-endfunction
-nmap <m-c> :call Lilydjwg_changeColor()<CR>
-nmap cac :call Lilydjwg_changeColor()<CR>
-inoremap <M-c> <C-R>=Lilydjwg_colorpicker()<CR>
+"function! Lilydjwg_get_pattern_at_cursor(pat)
+  "let col = col('.') - 1
+  "let line = getline('.')
+  "let ebeg = -1
+  "let cont = match(line, a:pat, 0)
+  "while (ebeg >= 0 || (0 <= cont) && (cont <= col))
+    "let contn = matchend(line, a:pat, cont)
+    "if (cont <= col) && (col < contn)
+      "let ebeg = match(line, a:pat, cont)
+      "let elen = contn - ebeg
+      "break
+    "else
+      "let cont = match(line, a:pat, contn)
+    "endif
+  "endwhile
+  "if ebeg >= 0
+    "return strpart(line, ebeg, elen)
+  "else
+    "return ""
+  "endif
+"endfunction
+""}}}
+"" 使用 colorpicker 程序获取颜色值(hex/rgba) {{{
+"function! Lilydjwg_colorpicker()
+  "if exists("g:last_color")
+    "let color = substitute(system("colorpicker ".shellescape(g:last_color)), '\n', '', '')
+  "else
+    "let color = substitute(system("colorpicker"), '\n', '', '')
+  "endif
+  "if v:shell_error == 1
+    "return ''
+  "elseif v:shell_error == 2
+    "" g:last_color 值不对
+    "unlet g:last_color
+    "return Lilydjwg_colorpicker()
+  "else
+    "let g:last_color = color
+    "return color
+  "endif
+"endfunction "}}}
+"" 更改光标下的颜色值(hex/rgba/rgb) {{{
+"function! Lilydjwg_changeColor()
+  "let color = Lilydjwg_get_pattern_at_cursor('\v\#[[:xdigit:]]{6}(\D|$)@=|<rgba\((\d{1,3},\s*){3}[.0-9]+\)|<rgb\((\d{1,3},\s*){2}\d{1,3}\)')
+  "if color == ""
+    "echohl WarningMsg
+    "echo "No color string found."
+    "echohl NONE
+    "return
+  "endif
+  "let g:last_color = color
+  "call Lilydjwg_colorpicker()
+  "exe 'normal! eF'.color[0]
+  "call setline('.', substitute(getline('.'), '\%'.col('.').'c\V'.color, g:last_color, ''))
+"endfunction
+"nmap <m-c> :call Lilydjwg_changeColor()<CR>
+"nmap cac :call Lilydjwg_changeColor()<CR>
+"inoremap <M-c> <C-R>=Lilydjwg_colorpicker()<CR>
 "}}}
 " 6.1.vimwiki_works
 " TODO pluginize
 """""""""""""""""""""""""""""""""""""""""""""""""
 "{{{Set Prio Of Vimwiki Todo-Item
 " TODO set the prio [+-]/d as list_item
-nmap <leader>33 :call Ask_Prio("begin","min")<CR>
+"nmap <leader>33 :call Ask_Prio("begin","min")<CR>
 nmap <leader>pp :call Ask_Prio("begin","min")<CR>
 fun! Check_Valid()
     let line = getline('.')
-    let rx_bul_item = g:vimwiki_rxListBullet let rx_num_list = g:vimwiki_rxListNumber let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
+    let rx_bul_item = g:vimwiki_rxListBullet 
+    let rx_num_list = g:vimwiki_rxListNumber 
+    let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
     if line !~ rx_lst_item
         echoe "Error: Can not set a none-list-line."
         return 0
@@ -1961,7 +2020,6 @@ fun! Ask_Prio(...)
     endif
 endfun
 "}}} end of set Prio
-" 
 "{{{Auto List Item with number sequence
 inoremap <expr> <C-CR>  "\<CR>".AutoListItem(line('.'))
 noremap <silent><m-n>  :call Sub_num('.')<CR>
@@ -2026,6 +2084,9 @@ endfun
 map <silent><leader>ee :call Toggle_checkbox_Timestamp()<CR>
 
 fun! Toggle_checkbox_Timestamp()
+" DONE 0430_1231  
+" FIXED 0430_1231 
+ "also change none list item todo to done ;fixme to fixed
     let line = getline('.')
     if line =~ '\s\[X\]\s'
     	let checkbox_state = 2
@@ -2035,13 +2096,40 @@ fun! Toggle_checkbox_Timestamp()
     	let checkbox_state = 0
     endif
     if checkbox_state==0
+    	    if b:current_syntax=="vimwiki"
             exec "VimwikiToggleListItem"
+            else 
+            call Toggle_strtodo()
+            call Auto_TimeStamp('.',"min")
+            endif
     elseif checkbox_state==1
-        exec "VimwikiToggleListItem"
+    	    if b:current_syntax=="vimwiki"
+            exec "VimwikiToggleListItem"
+            else
+            call Toggle_strtodo()
+            endif
         call Auto_TimeStamp('.',"min")
     elseif checkbox_state==2
         call Del_TimeStamp('.')
         call Del_TodoBox('.')
+    endif
+endfun
+map <leader>tx :call Toggle_strtodo()<Cr>
+fun! Toggle_strtodo() "{{{
+    let lnum=line('.')
+    let line=getline(lnum)
+    let rx_strtodo='\(TODO\|DONE\|FIXME\|FIXED\):\='
+    if line =~# rx_strtodo
+    	if line =~# 'TODO'
+            let m = substitute(line,'TODO','DONE','')
+        elseif line =~# 'DONE'
+            let m = substitute(line,'DONE','TODO','')
+        elseif line =~# 'FIXME'
+            let m = substitute(line,'FIXME','FIXED','')
+        elseif line =~# 'FIXED'
+            let m = substitute(line,'FIXED','FIXME','')
+        endif
+        call setline(lnum,m)
     endif
 endfun
 fun! Del_TimeStamp(range)
@@ -2073,9 +2161,9 @@ fun! Toggle_TimeStamp(range)
     else
         call Del_TimeStamp(a:range)
     endif
-endfun
+endfun "}}}
 
-fun! Auto_TimeStamp(range,type)
+fun! Auto_TimeStamp(range,type) "{{{
     let rx_bul_item = '^\s*\%(\*\|-\|#\)\s'
     let rx_num_list = '^\s*\%(\d\+\.\)\+\s'
     let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
@@ -2099,6 +2187,8 @@ fun! Auto_TimeStamp(range,type)
     let rx_list_timestamp = rx_list_no_timestamp.rx_timestamp
 
 
+    let rx_strDONE='\(TODO\|DONE\|FIXME\|FIXED\):\='
+
     let lnum=line(a:range)
     let line = getline(lnum)
     if a:type =="short"
@@ -2111,15 +2201,19 @@ fun! Auto_TimeStamp(range,type)
 
     if line =~ rx_list_timestamp
         let newline = substitute(line,rx_timestamp,cur_timestamp,'')
-    else
-        if line !~ rx_list_no_timestamp
-            return 0
-        endif
+    elseif line =~ rx_list_no_timestamp
         let newline = substitute(line,rx_list_no_timestamp,
                     \'&'.cur_timestamp.' ','')
+    elseif line =~# rx_strDONE
+        if line =~ rx_timestamp
+            let newline = substitute(line,rx_timestamp,cur_timestamp,'')
+        else 
+            let newline = substitute(line,rx_strDONE,
+                        \'& '.cur_timestamp.' ','')
+        endif
     endif
     call setline(lnum,newline)
-endfun
+endfun "}}}
 "}}}
 " 打开 snippets 文件[[[2
 function! Lilydjwg_snippets(ft)
