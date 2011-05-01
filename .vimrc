@@ -349,10 +349,10 @@ endif
 
 fun! Color_Modify()
     "all
-    hi search          gui=underline
-    hi incsearch       gui=underline
+    hi search          term=underline gui=underline
+    hi incsearch       term=underline gui=underline
     "hi comment          gui=italic
-    hi colorcolumn     guibg=#666
+    hi colorcolumn     ctermbg=5 guibg=#666
     if exists("g:colors_name")
         if g:colors_name=="molokai" "{{{
             hi Normal          guifg=#b8b8b2 guibg=#111111
@@ -471,29 +471,17 @@ hi User1 ctermfg=red guibg=#111111 guifg=red gui=bold,underline
 if has("gui_running")
 else
   set ambiwidth=single
+  hi colorcolumn ctermbg=5 
   " 防止退出时终端乱码
   " 这里两者都需要。只前者标题会重复，只后者会乱码
   set t_fs=(B
   set t_IE=(B
-  if &term =~ "256color"
-    " 在不同模式下使用不同颜色的光标
-    "set cursorline
-    "colorscheme pink_lily
     if &term =~ "xterm"
-      silent !echo -ne "\e]12;HotPink\007"
+      silent !echo -ne "\e]12;Grey\007"
       let &t_SI="\e]12;RoyalBlue1\007"
-      let &t_EI="\e]12;HotPink\007"
+      let &t_EI="\e]12;Grey\007"
       autocmd VimLeave * :!echo -ne "\e]12;green\007"
     endif
-  else
-    " 在Linux文本终端下非插入模式显示块状光标
-    if &term == "linux"
-       set t_ve+=[?6c
-       autocmd InsertEnter * set t_ve-=[?6c
-       autocmd InsertLeave * set t_ve+=[?6c
-       autocmd VimLeave * set t_ve-=[?6c
-    endif
-  endif
 endif "}}}
 
 " 1.2.Misc_Settin
@@ -563,7 +551,7 @@ set iskeyword+=_,$,@,%,#
 set pumheight=10             " Keep a small completion window
 " backup
 if !isdirectory(expand('~/.vim_backups'))
-  call mkdir(expand('~/.vim_backups'))
+    call mkdir(expand('~/.vim_backups'))
 endif
 set backup
 set backupdir=~/.vim_backups/
@@ -639,7 +627,7 @@ aug htmls "{{{
     au! htmls
     " Autoclose tags on html, xml, etc
     au FileType php,html,xhtml,xml imap <buffer> <C-m-b> </<C-X><C-O>
-    au Filetype php,html,xhtml,xml set shiftwidth=2 softtabstop=2
+    au Filetype php,html,xhtml,xml set shiftwidth=4 softtabstop=4
     au Filetype php,html,xhtml,xml set foldmethod=indent
 aug END "}}}
 aug vimrc_auto_mkdir  " {{{
@@ -653,11 +641,13 @@ aug vimrc_auto_mkdir  " {{{
   endfunction  "
 augroup END  " }}}
 aug statusline_color "{{{
+    au!
 if version >= 700
-au InsertEnter * hi StatusLine  guibg=#467b94 guifg=#111 gui=bold
-au InsertLeave * hi StatusLine  guibg=#999   guifg=#111 gui=bold
-au InsertLeave * hi cursor      guifg=#111   guibg=#999
-au InsertEnter * hi cursor      guifg=#111   guibg=#467b94
+au InsertEnter * hi StatusLine ctermbg=black ctermfg=blue guibg=#4b9fc9 guifg=#111 gui=bold
+au InsertLeave * hi StatusLine ctermbg=black ctermfg=grey guibg=#999   guifg=#111 gui=bold
+
+au InsertEnter * hi cursor  ctermbg=black  ctermfg=blue  guifg=#111   guibg=#4b9fc9
+au InsertLeave * hi cursor  ctermbg=black  ctermfg=grey  guifg=#111   guibg=#999
 endif
 aug END "}}}
 aug color_modify "{{{
@@ -1026,6 +1016,7 @@ noremap S <Nop>
 "}}}
 "Edit .vimrc and other files <leader>XX"{{{
 map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
+map <silent><leader>gv :call Split_if("v") \| e ~/Documents/git/.vimrc<CR>
 map <leader>vd :e ~/.vim/ <CR>
 map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
 map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
@@ -1230,8 +1221,8 @@ endfun
 nmap <silent> <C-W><c-q> :call Check_winnr(-2)\|hid<CR>
 nmap <silent> <C-W><c-x><c-x> :qall<CR>
 "buffer in current window
-nmap <C-W><c-d> :bd<CR>
-nmap <C-W><c-u> :bun<CR>
+nmap <C-W><c-d> :call Check_winnr(-2)\|:bd<CR>
+nmap <C-W><c-u> :call Check_winnr(-2)\|:bun<CR>
 nnoremap <C-W><c-n> :bnext<CR>
 nnoremap <C-W>n :bnext<CR>
 nnoremap <C-W><c-p> :bprevious<CR>
