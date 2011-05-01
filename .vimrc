@@ -199,13 +199,12 @@ filetype plugin indent on     " required!
 set nocompatible
 syntax on
 filetype plugin indent on
-
 "history
 "the browse window's directory
 set browsedir=buffer
 set history=255
 " Tell vim to remember certain things when we exit
-set viminfo='100,\"30,:30,s10,%
+set viminfo='100,\"30,:30,s10
 "Set to auto read when a file is changed from the outside
 set autoread
 set autowrite
@@ -1030,6 +1029,7 @@ map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
 map <leader>vd :e ~/.vim/ <CR>
 map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
 map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
+map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
 
 "map <silent><leader>ww :call Split_if("") \| VimwikiIndex<CR>
 "map <silent><leader>WW :call Split_if("") \| VimwikiIndex<CR>
