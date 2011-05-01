@@ -476,7 +476,7 @@ else
   " 这里两者都需要。只前者标题会重复，只后者会乱码
   set t_fs=(B
   set t_IE=(B
-  if &term =~ "256colora
+  if &term =~ "256color"
     " 在不同模式下使用不同颜色的光标
     "set cursorline
     "colorscheme pink_lily
@@ -1489,7 +1489,6 @@ inoremap <C-Y> <esc><c-r>zva
 "}}}
 "5.Plugins_settings{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
-
 "Unite Settings "{{{
 "noremap <leader>ww :Unite file bookmark<CR>
 noremap <m-w><m-w> :Unite file bookmark<CR>
