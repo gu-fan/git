@@ -39,48 +39,49 @@ Bundle 'tpope/vim-surround'
 
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
+Bundle 'tungd/unite-session'
 Bundle 'ujihisa/unite-colorscheme'
-
+"Bundle 'Shougo/vimfiler'
 " vimshell "{{{
-Bundle 'Shougo/vimproc'
-Bundle 'Shougo/vimshell'
-"~/.vimshrc
-let g:vimshell_split_command="sp"
-let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
-"let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
-let g:vimshell_enable_smart_case = 1
-if has('win32') || has('win64') 
-" Display user name on Windows.
-let g:vimshell_prompt = $USERNAME."% "
-else
-" Display user name on Linux.
-let g:vimshell_prompt = $USER."% "
+"Bundle 'Shougo/vimproc'
+"Bundle 'Shougo/vimshell'
+""~/.vimshrc
+"let g:vimshell_split_command="sp"
+"let g:vimshell_user_prompt = 'fnamemodify(getcwd(), ":~")'
+""let g:vimshell_right_prompt = 'vimshell#vcs#info("(%s)-[%b]", "(%s)-[%b|%a]")'
+"let g:vimshell_enable_smart_case = 1
+"if has('win32') || has('win64') 
+"" Display user name on Windows.
+"let g:vimshell_prompt = $USERNAME."% "
+"else
+"" Display user name on Linux.
+"let g:vimshell_prompt = $USER."% "
 
-call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
-call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
-let g:vimshell_execute_file_list['zip'] = 'zipinfo'
-call vimshell#set_execute_file('tgz,gz', 'gzcat')
-    call vimshell#set_execute_file('tbz,bz2', 'bzcat')
-endif 
-aug vimshell
-    au!
-    au FileType vimshell call s:vimshell_setting()
-    	autocmd FileType vimshell
-	\ call vimshell#altercmd#define('g', 'git')
-	\| call vimshell#altercmd#define('i', 'iexe')
-	\| call vimshell#altercmd#define('l', 'll')
-	\| call vimshell#altercmd#define('ll', 'ls -la')
-	\| call vimshell#hook#set('chpwd', ['g:my_chpwd'])
-aug END
-fun! s:vimshell_setting()
+"call vimshell#set_execute_file('bmp,jpg,png,gif', 'gexe eog')
+"call vimshell#set_execute_file('mp3,m4a,ogg', 'gexe amarok')
+"let g:vimshell_execute_file_list['zip'] = 'zipinfo'
+"call vimshell#set_execute_file('tgz,gz', 'gzcat')
+    "call vimshell#set_execute_file('tbz,bz2', 'bzcat')
+"endif 
+"aug vimshell
+    "au!
+    "au FileType vimshell call s:vimshell_setting()
+        "autocmd FileType vimshell
+	"\ call vimshell#altercmd#define('g', 'git')
+	"\| call vimshell#altercmd#define('i', 'iexe')
+	"\| call vimshell#altercmd#define('l', 'll')
+	"\| call vimshell#altercmd#define('ll', 'ls -la')
+	"\| call vimshell#hook#set('chpwd', ['g:my_chpwd'])
+"aug END
+"fun! s:vimshell_setting()
 
-endf
+"endf
 "}}}
 	
 Bundle 'mattn/calendar-vim'
 "{{{ tagbar
 Bundle 'majutsushi/tagbar' 
-map <leader>tt :TagbarToggle<CR>
+"map <leader>tt :TagbarToggle<CR>
 let g:tagbar_compact = 1
 let g:tagbar_width = 30
 "}}}
@@ -108,6 +109,7 @@ let g:user_zen_prev_key='<c-e>p'            "p
 "{{{ Command-T
 Bundle 'wincent/Command-T'
 "map <leader>ff :FufFile<CR>
+map <leader>tt :CommandT<CR>
 map <leader>ff :CommandT<CR>
 map <leader>tb :CommandTBuffer<CR>
 let g:CommandTMaxHeight=3
@@ -168,6 +170,9 @@ Bundle "git://github.com/tomtom/tlib_vim.git"
 Bundle "git://github.com/garbas/snipmate.vim.git"
 let g:snips_author = 'Rykka'
 "}}}
+"Bundle "scrooloose/snipmate-snippets"
+
+
 "" vim-scripts repos
 "Bundle 'rails.vim'
 "Bundle 'vimwiki'
@@ -417,8 +422,18 @@ fun! Color_Modify()
             hi modemsg          guifg=#fc0
             hi errormsg         guifg=#d30  guibg=#4a2b2f gui=bold
             hi error            guifg=#9d0e15 guibg=#4a2b2f gui=bold
-
             hi string           guifg=#ccaa77
+
+            hi diffAdd          guibg=#77AA77
+            hi diffDelete       guibg=#AA7777
+            hi diffChange       guibg=#AAAA77
+            hi DiffText         guibg=#cc5555
+            "TODO
+            " StatusLine Color
+            " tabline Color
+            " pluginze
+            " easy deined color
+            " ~/.vim/colors/kellys.vim
         endif "}}}
         if g:colors_name=="solarized" "{{{
             hi normal           guifg=#626262 guibg=#cecece
@@ -501,6 +516,7 @@ set linebreak
 " backspace and cursor keys wrap to previous/next line
 set backspace=indent,eol,start whichwrap+=<,>,[,]
 
+set nopaste
 set pastetoggle=<F2>            " when in insert mode, press <F2> to go to
                                 "    paste mode, where you can paste mass data
                                 "    that won't be autoindented
@@ -621,6 +637,7 @@ aug END "}}}
 aug Filetypes "{{{
     au! Filetypes
     "au FileType text,vimwiki setlocal tw=76
+    au FileType snippet setlocal expandtab
     "endif
 aug END "}}}
 aug htmls "{{{
@@ -700,54 +717,28 @@ syn match vimwiki_rx_list_num /^\s*\%(\d\+\.\)\+\ze\s/
 "hi vimwiki_rx_list guifg=#8c8 gui=bold
 hi default link vimwiki_rx_list_num VimwikiLIst
 
+" FIXED: 0504_0052  using \@<! and \@! to match with zerowidth;
+syn match Vimwiki_Prio9 /\S\@<!\(+9\|\[+9\]\)\S\@!/
+syn match Vimwiki_Prio8 /\S\@<!\(+8\|\[+8\]\)\S\@!/
+syn match Vimwiki_Prio7 /\S\@<!\(+7\|\[+7\]\)\S\@!/
+syn match Vimwiki_Prio6 /\S\@<!\(+6\|\[+6\]\)\S\@!/
+syn match Vimwiki_Prio5 /\S\@<!\(+5\|\[+5\]\)\S\@!/
+syn match Vimwiki_Prio4 /\S\@<!\(+4\|\[+4\]\)\S\@!/
+syn match Vimwiki_Prio3 /\S\@<!\(+3\|\[+3\]\)\S\@!/
+syn match Vimwiki_Prio2 /\S\@<!\(+2\|\[+2\]\)\S\@!/
+syn match Vimwiki_Prio1 /\S\@<!\(+1\|\[+1\]\)\S\@!/
+syn match Vimwiki_Prio0 /\(^\s*\|.*\s\)\(+0\|\[+0\]\)\(\s*$\|\s.*\)/
 
-syn match Vimwiki_Prio9 /\[+9\]/
-syn match Vimwiki_Prio8 /\[+8\]/
-syn match Vimwiki_Prio7 /\[+7\]/
-syn match Vimwiki_Prio6 /\[+6\]/
-syn match Vimwiki_Prio5 /\[+5\]/
-syn match Vimwiki_Prio4 /\[+4\]/
-syn match Vimwiki_Prio3 /\[+3\]/
-syn match Vimwiki_Prio2 /\[+2\]/
-syn match Vimwiki_Prio1 /\[+1\]/
-syn match Vimwiki_Prio0 /.*\[+0\].*/
-
-"can't match because the list item used all the \s
-"so use \@<= instead
-"syn match Vimwiki_Prio9 /\s\zs=+9\ze\s/
-
-syn match Vimwiki_Prio9 /\s\@<=+9\s/
-syn match Vimwiki_Prio8 /\s\@<=+8\s/
-syn match Vimwiki_Prio7 /\s\@<=+7\s/
-syn match Vimwiki_Prio6 /\s\@<=+6\s/
-syn match Vimwiki_Prio5 /\s\@<=+5\s/
-syn match Vimwiki_Prio4 /\s\@<=+4\s/
-syn match Vimwiki_Prio3 /\s\@<=+3\s/
-syn match Vimwiki_Prio2 /\s\@<=+2\s/
-syn match Vimwiki_Prio1 /\s\@<=+1\s/
-syn match Vimwiki_Prio0 /.*\s+0\s.*/
-
-syn match Vimwiki_minus9 /\s\@<=-9\s/
-syn match Vimwiki_minus8 /\s\@<=-8\s/
-syn match Vimwiki_minus7 /\s\@<=-7\s/
-syn match Vimwiki_minus6 /\s\@<=-6\s/
-syn match Vimwiki_minus5 /\s\@<=-5\s/
-syn match Vimwiki_minus4 /\s\@<=-4\s/
-syn match Vimwiki_minus3 /\s\@<=-3\s/
-syn match Vimwiki_minus2 /\s\@<=-2\s/
-syn match Vimwiki_minus1 /\s\@<=-1\s/
-syn match Vimwiki_minus0 /.*\s-0\s.*/
-
-syn match Vimwiki_minus9 /\[-9\]/
-syn match Vimwiki_minus8 /\[-8\]/
-syn match Vimwiki_minus7 /\[-7\]/
-syn match Vimwiki_minus6 /\[-6\]/
-syn match Vimwiki_minus5 /\[-5\]/
-syn match Vimwiki_minus4 /\[-4\]/
-syn match Vimwiki_minus3 /\[-3\]/
-syn match Vimwiki_minus2 /\[-2\]/
-syn match Vimwiki_minus1 /\[-1\]/
-syn match Vimwiki_minus0 /.*\[-0\].*/
+syn match Vimwiki_minus9 /\S\@<!\(-9\|\[-9\]\)\S\@!/
+syn match Vimwiki_minus8 /\S\@<!\(-8\|\[-8\]\)\S\@!/
+syn match Vimwiki_minus7 /\S\@<!\(-7\|\[-7\]\)\S\@!/
+syn match Vimwiki_minus6 /\S\@<!\(-6\|\[-6\]\)\S\@!/
+syn match Vimwiki_minus5 /\S\@<!\(-5\|\[-5\]\)\S\@!/
+syn match Vimwiki_minus4 /\S\@<!\(-4\|\[-4\]\)\S\@!/
+syn match Vimwiki_minus3 /\S\@<!\(-3\|\[-3\]\)\S\@!/
+syn match Vimwiki_minus2 /\S\@<!\(-2\|\[-2\]\)\S\@!/
+syn match Vimwiki_minus1 /\S\@<!\(-1\|\[-1\]\)\S\@!/
+syn match Vimwiki_minus0 /\(^\s*\|.*\s\)\(-0\|\[-0\]\)\(\s*$\|\s.*\)/
 
 hi Vimwiki_Prio9 guifg=#BF4040 gui=bold
 hi Vimwiki_Prio8 guifg=#BF6040 gui=bold
@@ -841,29 +832,30 @@ iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 " F10
 " F11
 " F12 Save session
-
-nmap <f1> :FufHelp<CR>
-nmap <c-F1> :h <C-R>=expand("<cword>")<CR><CR>
+nmap <f1> :VimwikiIndex<cr>
+nmap <c-f1> :FufHelp<CR>
+nmap <leader>hh :h <C-R>=expand("<cword>")<CR><CR>
 "map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
 nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
 
 "Find "{{{
-map <F2> :FufLine<CR>
+map <s-F2> :FufLine<CR>
 map <c-F2> :Ack <C-R>=expand("<cword>")<CR>
 vnoremap <c-F2> "sy<esc><c-l>:Ack <c-r>s
 
 " replace word under cursor
-nmap <s-F2> :%s/<C-R><C-W>//gc<Left><Left><Left>
+nmap <F2> :%s/<C-R><C-W>//gc<Left><Left><Left>
 " replace selection
-vnoremap <s-F2> "sy<esc><c-l>:%s/<c-r>s//g<Left><Left>
+vnoremap <F2> "sy<esc><c-l>:%s/<c-r>s//g<Left><Left>
 "vnoremap <C-C> "+y
 "}}}
 map <silent> <F3> :FufBuffer<CR>
 map <s-F3> :Unite buffer<CR>
 
 "noremap <F4> :NERDTreeToggle "expand('%:p:h')"<CR>
-noremap <F4> :FufFile<CR>
-map <s-F4> :Unite file bookmark<CR>
+"nmap <F4> :FufFile<CR>
+nmap <s-F4> :CommandT<CR>
+map <F4> :Unite file bookmark -input=.<CR>
 
 "it have errors ,many
 "nmap <silent> <F5> :QuickRun<CR>
@@ -899,7 +891,8 @@ let win_runner="start "
 let err_log=" 2>&1 | tee /tmp/.runtmp"
 
 if a:mode=="norm"
-    let file=" \"".expand('%:p')."\""
+	" FIXME: error of the file name wrapping ?
+    let file=" ".expand('%:p').""
 elsei a:mode=="visual"
     "let firstLine = line("'<")
     "let lastLine = line("'>")
@@ -979,12 +972,13 @@ fun! Start_terminal()
 endf
 "}}}
 """session save /load "{{{
-nmap <F12> :call SaveSession()<CR>
-nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
+nmap <s-F12> :call SaveSession()<CR>
+"nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
+nmap <F12> :Unite session<cr>
 set sessionoptions=buffers,curdir,help,tabpages,winsize,resize
 function! SaveSession()
   wall
-    let ses = strftime("%y-%m-%d_%h:%m")
+    let ses = strftime("%y%m%d_%H%M%S")
     try
         exe "mksession! "."~/.vim/sessions/".ses
         echomsg "mks success! session file : ".ses
@@ -1031,9 +1025,9 @@ map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
 
 
 "~/.vimshrc
-map <silent><leader>vsr :call Split_if("") \| e ~/.vimshrc<CR>
-map <leader>vss :call Split_if("") \| exec "VimShellPop" <CR>
-map <leader>vs :call Split_if("") \| exec "VimShellPop" <CR>
+"map <silent><leader>vsr :call Split_if("") \| e ~/.vimshrc<CR>
+"map <leader>vss :call Split_if("") \| exec "VimShellPop" <CR>
+"map <leader>vs :call Split_if("") \| exec "VimShellPop" <CR>
 "map <leader>VS :call Split_if("") \| exec "VimShell" <CR>
 
 "map <leader>vf :call Split_if("") \| exe "VimFiler" <CR><esc>
@@ -1046,7 +1040,6 @@ map <leader>vr :so ~/.vimrc<CR>
 map <leader>rr :nohl \|redr<CR>
 
 map <Leader>tn :call Split_if("t")<CR>
-
 map <leader>rf :FufMruFile<CR>
 map <leader>re <c-^>
 "map <leader>
@@ -1148,12 +1141,14 @@ no <silent><m-2> :if &go=~#'r'\|se go-=r\|else\|se go+=r\|endif<CR>
 " copy filename
 map <silent> <leader>cl :let @+=expand('%').':'.line('.')<CR>
 map <silent> <leader>cf :let @+=expand('%:p')<CR>
-" copy path
 map <silent> <leader>cp :let @+=expand('%:p:h')<CR>
+"map <silent> <leader>cp :let @+=g:<CR>
+"Copy current variables
+command! -nargs=1 -complete=var Cvar let @+=<args>
 
 "Keymapping Of Gtd
 map<silent> <Leader>ntd :TinyTodo<CR>
-command! -nargs=* TinyTodo call TinyTodo()<args>
+command! TinyTodo call TinyTodo()
 fun! TinyTodo()
     if expand('%') != ""
       exec '!gvim "+winp 1400 150" "+win 37 25"
@@ -1196,6 +1191,7 @@ nmap <C-W>2 <C-W>=
 nmap <C-W><c-z> <C-W>=
 "nmap <C-W><C-W> <C-W>=<C-W>w
 nmap <C-W>3 :call Nav_buff_win("list")<cr>
+nmap <C-W>4 :CommandT<cr>
 
 
 "buffer and window navigation
@@ -1222,7 +1218,7 @@ nmap <silent> <C-W><c-q> :call Check_winnr(-2)\|hid<CR>
 nmap <silent> <C-W><c-x><c-x> :qall<CR>
 "buffer in current window
 nmap <C-W><c-d> :call Check_winnr(-2)\|:bd<CR>
-nmap <C-W>d :call Check_winnr(-2)\|:bd<CR>
+"nmap <C-W>d :call Check_winnr(-2)\|:bd<CR>
 nmap <C-W><c-u> :call Check_winnr(-2)\|:bun<CR>
 nnoremap <C-W><c-n> :bnext<CR>
 nnoremap <C-W>n :bnext<CR>
@@ -1262,8 +1258,9 @@ fun! Check_winnr(num) "{{{
         "if &co!=col | let &co=col | endif
     endif
 endfun "}}}
-"}}}
 
+
+    "}}}
 " 4.3.move_around_mapping
 """""""""""""""""""""""""""""""""""""""""""""""""
 " <M-X> Moving "{{{
@@ -1304,11 +1301,11 @@ cnoremap <m-k> <down>
 " <s-j> <s-k>
 noremap J 5j
 noremap K 5k
+" jump to next in normal mode
+" Rating: 5 
 "the snipmate complete
-nmap <c-j> a<c-j><Esc>
-" :help 
-noremap <c-k> K
-
+nmap <c-j> a<c-j>
+nmap <c-k> a<c-k>
 "noremap <leader> 5j
 "noremap <c-j> 5j
 " just one space on the line, preserving indent
@@ -1326,7 +1323,12 @@ noremap H B
 noremap L W
 
 " i_c-h is <bs> , so:
-inoremap <c-l> <del>
+"inoremap <c-l> <del>
+noremap <c-h> K
+imap <c-l> <esc><ctrl-l>
+"imap <c-h> <esc><ctrl-h>
+
+
 
 "quick move to last selection
 nnoremap `w `<
@@ -1347,16 +1349,24 @@ nmap <leader>jl ]]
 nmap <leader>jn {
 nmap <leader>jp }
 
-nnoremap <C-Tab> gt
-nnoremap <C-S-Tab> gT 
+"conflict with plugin vimwiki
+"nnoremap <C-Tab> gt
+"nnoremap <C-S-Tab> gT 
 
 "add new line
-nnoremap <S-CR> o<ESC>
+noremap <S-CR> o<ESC>
 "join line with line above
 nnoremap <c-CR> kJ 
-"format visual line
+"format line in visual mode
 vnoremap <C-CR> gq
 
+"search selected text and go next
+" Rating: 7
+" the search backword/forward was wrong side??
+vnoremap n "sy<esc>?<c-r>s<cr><ctrl-g>
+vnoremap N "sy<esc>/<c-r>s<cr><ctrl-g>
+
+"mousewheel go around
 if v:version < 703
     nmap <silent> <m-MouseDown> zhzhzh
     nmap <silent> <m-MouseUp> zlzlzl 
@@ -1478,13 +1488,16 @@ inoremap <C-Z> <esc>uzva
 vnoremap <C-Z> <esc>
 noremap <C-Y> <C-R>zv
 inoremap <C-Y> <esc><c-r>zva
+
+" Not "+gP 
+map <C-V>		"+gp
+map <S-Insert>		"+gp
 "}}}
 "5.Plugins_settings{{{1
 """""""""""""""""""""""""""""""""""""""""""""""""
 "Unite Settings "{{{
 "noremap <leader>ww :Unite file bookmark<CR>
-noremap <m-w><m-w> :Unite file bookmark<CR>
-noremap <m-W><m-W> :Unite file bookmark<CR>
+noremap <m-w><m-w> :Unite file bookmark -input=.<CR>
 noremap <m-w><m-t> :Unite tab window<CR>
 noremap <m-w><m-b> :Unite buffer<CR>
 noremap <m-w><m-r> :Unite file_mru directory_mru<CR>
@@ -1493,12 +1506,11 @@ noremap <m-w><m-s> :Unite source<CR>
 noremap <m-w><m-i> :Unite session<CR>
 noremap <m-w><m-c> :Unite colorscheme<CR>
 
-let g:unite_winheight=5
+let g:unite_winheight=10
 
 let g:unite_source_file_mru_limit = 200
 let g:unite_cursor_line_highlight = 'TabLineSel'
 let g:unite_abbr_highlight = 'TabLine'
-
 
 " For optimize.
 let g:unite_source_file_mru_filename_format = ''
@@ -1530,6 +1542,7 @@ endfunction "}}}
 
 "}}}
 "Neocomplcache Settings "{{{
+
 map <leader>nt :NeoComplCacheToggle<CR>
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
@@ -1547,18 +1560,29 @@ let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 "let g:neocomplcache_enable_auto_delimiter = 1
 
+
 " Define dictionary.
 let g:neocomplcache_dictionary_filetype_lists = {
     \ 'default' : '',
     \ 'vimshell' : $HOME.'/.vimshell_hist',
     \ 'scheme' : $HOME.'/.gosh_completions'
         \ }
-
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
     let g:neocomplcache_keyword_patterns = {}
 endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+"let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" TODO add Always Quick Match Option
+let g:neco_always_quick_match=1
+let g:neocomplcache_enable_quick_match=1
+let g:neocomplcache_quick_match_patterns={'default':'`'}
+inoremap <expr><space> pumvisible() ? "\<c-n>\<c-p>\<space>" : "\<space>"
+"inoremap <expr><space> pumvisible() ? "\<c-n>\<c-p>".
+            "\neocomplcache#smart_close_popup() : "\<space>"
+let g:neocomplcache_quick_match_table = {
+        \'1' : 0, '2' : 1, '3' : 2, '4' : 3, '5' : 4, '6' : 5, '7' : 6, '8' : 7, '9' : 8, '0' : 9,
+        \} 
 
 " Plugin key-mappings.
 imap <C-k>     <Plug>(neocomplcache_snippets_expand)
@@ -1566,16 +1590,18 @@ smap <C-k>     <Plug>(neocomplcache_snippets_expand)
 imap <c-j>     <Plug>(neocomplcache_snippets_jump)
 smap <c-j>     <Plug>(neocomplcache_snippets_jump)
 inoremap <expr><C-g>     neocomplcache#undo_completion()
-"inoremap <expr><C-l>     neocomplcache#complete_common_string()
 
+"inoremap <expr><C-l>     neocomplcache#complete_common_string()
 " Recommended key-mappings.
 " <CR>: close popup and save indent.
-inoremap <expr><CR> pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+inoremap <expr><CR> pumvisible() ?
+            \ neocomplcache#smart_close_popup() : "\<CR>"
 " <TAB>: completion.
-
 " Comment The Snipmate 'S Map <Tab> Function
 " ~/.vim/bundle/snipmate.vim/after/plugin/snipMate.vim
-"
+
+
+
 inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 inoremap <expr><s-TAB>  pumvisible() ? "\<C-p>" : "\<s-TAB>"
 "<C-h>, <BS>: close popup and delete backword char.
@@ -1591,10 +1617,10 @@ inoremap <expr><C-e>  neocomplcache#cancel_popup()
 "inoremap <expr><s-TAB> pumvisible() ? "\<c-p>" : <SID>check_back_space() ?
             \ "\<s-TAB>" : "\<C-x>\<c-u><c-p><c-n>"
 
-function! s:check_back_space()
-let col = col('.') - 1
-return !col || getline('.')[col - 1] =~ '\s'
-endfunction
+"function! s:check_back_space()
+"let col = col('.') - 1
+"return !col || getline('.')[col - 1] =~ '\s'
+"endfunction
 
 aug omni_compl "{{{
   au! omni_compl
@@ -1646,7 +1672,9 @@ let g:vimwiki_folding=0
 
 let g:vimwiki_hl_cb_checked = 1
 let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
-let g:vimwiki_rxListNumber = '^\s*\%(\d\+[\.)]\)\+\s'
+let g:vimwiki_rxListNumber = '^\s*\%([+-]\d\|\[[+-]\d\]\|\%(\d\+[\.)]\)\+\)\s'
+execute 'syntax match VimwikiList /'.g:vimwiki_rxListBullet.'/'
+execute 'syntax match VimwikiList /'.g:vimwiki_rxListNumber.'/'
 function! MyVimwikiFoldText() "{{{
   let line = substitute(getline(v:foldstart), '\t',
         \ repeat(' ', &tabstop), 'g')
@@ -1726,7 +1754,6 @@ fun! s:vimwiki_my_settings() "{{{
     map <buffer><Leader>wr <Plug>VimwikiRenameLink
     map <buffer><Leader>wd <Plug>VimwikiDeleteLink
 
-    map <buffer><m-backspace> <Plug>VimwikiGoBackLink
 
     map <buffer><Leader>w2  :Vimwiki2HTML<CR>
     map <buffer><Leader>w2a :VimwikiAll2HTML<CR>
@@ -1774,9 +1801,21 @@ let g:vimsyn_noerror = 1
 "nmap <leader>cah :CalendarH<CR>
 
 
+"let g:UltiSnipsExpandTrigger="<c-i>"
+"let g:UltiSnipsJumpForwardTrigger="<c-i>"
+"let g:UltiSnipsJumpBackwardTrigger="<s-c-i>"
 "let g:vimshell_prompt = $USER."> "
 "let g:NERDTreeChDirMode=2
 "noremap <m-w><m-w> :NERDTreeToggle "expand('%:p:h')"<CR>
+"
+"
+"xptemplate"
+"let g:xptemplate_key = '<c-f>'
+"let g:xptemplate_key_pum_only = '<c-e>'
+"let g:xptemplate_key_force_pum = '<c-r><c-f>'
+"let g:xptemplate_nav_next = '<C-j>'
+"let g:xptemplate_nav_prev = '<C-k>'
+"let g:xptemplate_nav_cancel = '<C-c>'
 "}}}
 
 "6.Function_And_Key_Mapping{{{1
@@ -1810,24 +1849,25 @@ function! Ack(args)
   let &grepprg=grepprg_bak
 endfunction
 "}}}
-"{{{ # * visual search
+"{{{ # * visual search 
+" use v_n instead
 "Basically you press * or # to search for the current selection !! Really useful
-vnoremap <silent> * :call VisualSearch('f')<CR>
-vnoremap <silent> # :call VisualSearch('b')<CR>
-" From an idea by Michael Naumann
-function! VisualSearch(direction) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-    let l:pattern = escape(@", '\\/.*$^~[]')
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-    if a:direction == 'b'
-        execute "normal ?" . l:pattern . "^M"
-    else
-        execute "normal /" . l:pattern . "^M"
-    endif
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfun "}}}
+"vnoremap <silent> * :call VisualSearch('f')<CR>
+"vnoremap <silent> # :call VisualSearch('b')<CR>
+"" From an idea by Michael Naumann
+"function! VisualSearch(direction) range
+    "let l:saved_reg = @"
+    "execute "normal! vgvy"
+    "let l:pattern = escape(@", '\\/.*$^~[]')
+    "let l:pattern = substitute(l:pattern, "\n$", "", "")
+    "if a:direction == 'b'
+        "execute "normal ?" . l:pattern . "^M"
+    "else
+        "execute "normal /" . l:pattern . "^M"
+    "endif
+    "let @/ = l:pattern
+    "let @" = l:saved_reg
+"endfun "}}}
 "{{{ ConditionalPairMap
 "function! ConditionalPairMap(open, close)
   "let line = getline('.')
@@ -1923,7 +1963,6 @@ fun! Check_Valid()
     else
         return 1
     endif
-
 endfun
 
 fun! Set_Prio(val,...) "{{{
@@ -1931,10 +1970,10 @@ fun! Set_Prio(val,...) "{{{
         return
     endif
     let line = getline('.')
-    "let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
-    "let g:vimwiki_rxListNumber = '^\s*\%(\d\+[\.)]\)\+\s'
-    let rx_bul_item = '^\s*\%(\*\|-\|#\)'
-    let rx_num_list = '^\s*\%(\d\+[\.)]\)\+'
+    let rx_bul_item = g:vimwiki_rxListBullet 
+    let rx_num_list = g:vimwiki_rxListNumber 
+    "let rx_bul_item = '^\s*\%(\*\|-\|#\)'
+    "let rx_num_list = '^\s*\%(\d\+[\.)]\)\+'
     let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
     let rx_CheckBox = '\[.\?\]'
     let rx_list = rx_lst_item.'\(\s*'.rx_CheckBox.'\)\='.'\ze\s*'
@@ -2127,10 +2166,10 @@ fun! Del_TimeStamp(range)
     let lnum=line(a:range)
     let line = getline(lnum)
     let rx_longstamp = '<\d\d-\d\d-\d\d \d\d:\d\d>'
-    let rx_shortstamp='<\d\d\d\d-\d\d\d\d>'
-    let rx_minstamp='\d\d\d\d_\d\d\d\d'
+    let rx_shortstamp='<\d\{4}-\d\{4}>'
+    let rx_minstamp='\%(\d\{4}_\d\{4}\|\d\{6}_\d\{4}\)'
     let rx_minstamp2='#\d\d\d\d\d\d\d\d'
-    let rx_timestamp='\('.rx_longstamp.'\|'.rx_shortstamp.'\|'.rx_minstamp.'\)'
+    let rx_timestamp='\%('.rx_longstamp.'\|'.rx_shortstamp.'\|'.rx_minstamp.'\)'
     let newline = substitute(line,rx_timestamp.'\s','','')
     call setline(lnum,newline)
 endfun
@@ -2155,8 +2194,10 @@ fun! Toggle_TimeStamp(range)
 endfun "}}}
 
 fun! Auto_TimeStamp(range,type) "{{{
-    let rx_bul_item = '^\s*\%(\*\|-\|#\)\s'
-    let rx_num_list = '^\s*\%(\d\+\.\)\+\s'
+    let rx_bul_item = g:vimwiki_rxListBullet 
+    let rx_num_list = g:vimwiki_rxListNumber 
+    "let rx_bul_item = '^\s*\%(\*\|-\|#\)\s'
+    "let rx_num_list = '^\s*\%(\d\+\.\)\+\s'
     let rx_lst_item = '\('. rx_bul_item . '\|' . rx_num_list . '\)'
 
     let rx_CheckBox = '\[.\?\]'
@@ -2166,62 +2207,76 @@ fun! Auto_TimeStamp(range,type) "{{{
     let rx_Prio = '\('. rx_Prio_normal . '\|' . rx_Prio_min . '\)'
 
     let rx_longstamp = '<\d\d-\d\d-\d\d \d\d:\d\d>'
-    let rx_shortstamp='<\d\d\d\d-\d\d\d\d>'
-    let rx_minstamp='\d\d\d\d_\d\d\d\d'
-    let rx_timestamp='\('.rx_longstamp.'\|'.rx_shortstamp.'\|'.rx_minstamp.'\)'
-    " TODO
+    let rx_shortstamp='<\d\{4}-\d\{4}>'
+    let rx_minstamp='\%(\d\{4}_\d\{4}\|\d\{6}_\d\{4}\)'
+    let rx_timestamp='\%('.rx_longstamp.'\|'.rx_shortstamp.'\|'.rx_minstamp.'\)'
     " let rx_utf_timestamp='!\(\w\|\.\)'
     " !0-9a-zA-Z_. : <11-04-11 17:20> -> !b4bgj
     " C-Q U :  <11-04-11 17:20> -> printf("%x",1104111720) -> �
 
-    let rx_list_no_timestamp = rx_lst_item.'\('.rx_CheckBox.'\s\)\?'.'\('.rx_Prio.'\s\)\?'
+    let rx_list_no_timestamp = rx_lst_item.'\%('.rx_CheckBox.'\s\)\?'.'\('.rx_Prio.'\s\)\?'
     let rx_list_timestamp = rx_list_no_timestamp.rx_timestamp
 
-
-    let rx_strDONE='\(TODO\|DONE\|FIXME\|FIXED\):\='
+    let rx_strDONE='\%(TODO\|DONE\|FIXME\|FIXED\):\='
 
     let lnum=line(a:range)
     let line = getline(lnum)
     if a:type =="short"
         let cur_timestamp = '<'.strftime("%m%d-%H%M").'>'
     elseif a:type=="min"
-        let cur_timestamp = strftime("%m%d_%H%M")
+        let cur_timestamp = strftime("%y%m%d_%H%M")
     else
         let cur_timestamp = '<'.strftime("%y-%m-%d %H:%M").'>'
     endif
 
     if line =~ rx_list_timestamp
         let newline = substitute(line,rx_timestamp,cur_timestamp,'')
+        call setline(lnum,newline)
     elseif line =~ rx_list_no_timestamp
         let newline = substitute(line,rx_list_no_timestamp,
                     \'&'.cur_timestamp.' ','')
+        call setline(lnum,newline)
+        " match case with DONE FIXME TODO
     elseif line =~# rx_strDONE
         if line =~ rx_timestamp
             let newline = substitute(line,rx_timestamp,cur_timestamp,'')
+            call setline(lnum,newline)
         else 
+            "add after strDONE
             let newline = substitute(line,rx_strDONE,
                         \'& '.cur_timestamp.' ','')
+            call setline(lnum,newline)
         endif
     endif
-    call setline(lnum,newline)
 endfun "}}}
 "}}}
-" 打开 snippets 文件[[[2
+" 打开 snippets 文件 "{{{
+
 function! Lilydjwg_snippets(ft)
   if a:ft == ''
-    exe 'tabe '.g:snippets_dir.&ft.'.snippets'
+    if &ft!=''
+        exe 'sp '.g:snippets_dir.&ft.'.snippets'
+    else
+        exe 'sp '.g:snippets_dir.'_.snippets'
+    endif
   else
-    exe 'tabe '.g:snippets_dir.a:ft.'.snippets'
+    exe 'sp '.g:snippets_dir.a:ft.'.snippets'
   endif
 endfunction
+
+let g:neocomplcache_snippets_dir="~/.vim/my_snips/snippets_complete/"
+"the snipmate_snippets
+"let g:snippets_dir="~/.vim/my_snips/snippets/"
 map <leader>se :call Lilydjwg_snippets('')<cr>
+map <leader>sn :NeoComplCacheEditSnippets<cr>
+map <leader>s_ :e ~/.vim/my_snips/snippets_complete/_.snip <cr>
+"}}}
 " cscope setting  "{{{
 if has("cscope") && executable("cscope")
   " 设置 [[[2
   set csto=1
   set cst
   set cscopequickfix=s-,c-,d-,i-,t-,e-
-
   " add any database in current directory
   function! Lilydjwg_csadd()
     set nocsverb
