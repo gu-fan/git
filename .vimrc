@@ -1222,6 +1222,7 @@ nmap <silent> <C-W><c-q> :call Check_winnr(-2)\|hid<CR>
 nmap <silent> <C-W><c-x><c-x> :qall<CR>
 "buffer in current window
 nmap <C-W><c-d> :call Check_winnr(-2)\|:bd<CR>
+nmap <C-W>d :call Check_winnr(-2)\|:bd<CR>
 nmap <C-W><c-u> :call Check_winnr(-2)\|:bun<CR>
 nnoremap <C-W><c-n> :bnext<CR>
 nnoremap <C-W>n :bnext<CR>
@@ -1389,17 +1390,17 @@ endif
 nnoremap Y y$
 
 "change case <m-s>
-nnoremap <M-S>1 gUU
-nnoremap <M-S>2 guu
+nnoremap <m-s>1 gUU
+nnoremap <m-s>2 guu
 nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
-nmap <M-S>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
+nmap <m-s>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
 " Capitalize inner word
-nmap <M-S>c guiw~w
+nmap <m-s>c guiw~w
 " UPPERCASE inner word
-nmap <M-S>e gUiww
+nmap <m-s>e gUiww
 " lowercase inner word
-nmap <M-S>w guiww
-nmap <M-S><M-S> ~
+nmap <m-s>w guiww
+nmap <m-s><m-s> ~
 
 "trim whitespace
 nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
