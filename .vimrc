@@ -1,4 +1,4 @@
-" vim:tw=0 sw=4 ts=4 sts=4 fdm=marker fenc=utf8 fdls=0 :
+" vim:tw=0 sw=4 ts=4 sts=4 fdm=marker fdls=0 :
 """""""""""""""""""""""""""""""""""""""""""""""""
 "vimrc Index "{{{
 "1.General_Settings
@@ -14,10 +14,9 @@
 "  4.5.win_behave_settings
 "5.Plugins_settings
 "6.Function_And_Key_Mapping
-"  6.1.vimwiki_works
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-05-30
+"  Last Change: 2011-06-17
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -36,7 +35,6 @@ Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'Shougo/neocomplcache'
-let g:snips_author = 'Rykka.Krin <Rykka.krin@gmail.com>'
 Bundle 'Shougo/unite.vim'
 Bundle 'tungd/unite-session'
 Bundle 'ujihisa/unite-colorscheme'
@@ -100,7 +98,14 @@ Bundle 'altercation/vim-colors-solarized'
 "Bundle 'vimwiki'
 
 set rtp+=~/.vim/vimwiki/
-set rtp+=~/.vim/git/ColorV
+" my script
+" set rtp+=~/.vim/git/ColorV
+if has("unix")
+set rtp+=~/.vim/git/ColorV/
+set rtp+=~/.vim/git/so_that
+else
+Bundle 'rykka/ColorV'
+endif
 filetype plugin indent on     " required!
 
 "Bundle 'rykka/colorizer'
@@ -124,13 +129,20 @@ set autoread
 set autowrite
 "}}}
 "{{{multi_byte
-set encoding=utf-8
-set fileformat=unix
+" set encoding=utf-8
+" set fileencoding=utf8
+if has("unix")
+" set fileformat=unix
 set fileformats=unix,dos
-set fileencoding=utf8
-set fileencodings=utf8,gb18030,cp936
+" set fileencoding=utf8
+" set fileencodings=utf8,gb18030,cp936
 set termencoding=utf-8
-set fencs=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
+set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
+" set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
+else
+" set fileformat=dos
+set fileformats=unix,dos
+endif
 
 if has("multi_byte")
     "language messages zh_CN.utf-8
@@ -207,38 +219,38 @@ set foldminlines=1
 "set foldclose=all
 
 function! s:set_fold_markers(lnum_st, lnum_end) "{{{
-  let markers = split(&foldmarker, ",")
+    let markers = split(&foldmarker, ",")
 
-  function! s:set_line(ln, marker)
-    let cmnt = substitute(&commentstring, "%s", a:marker, "")
-    let line = getline(a:ln)
-    if line =~ '^\s*$'
-      let space = ''
-    else
-      let space = ' '
-    endif
-    let line = substitute(line, '\s*$', space, '').cmnt
-    call setline(a:ln, line)
-  endfunction
+    function! s:set_line(ln, marker)
+        let cmnt = substitute(&commentstring, "%s", a:marker, "")
+        let line = getline(a:ln)
+        if line =~ '^\s*$'
+            let space = ''
+        else
+            let space = ' '
+        endif
+        let line = substitute(line, '\s*$', space, '').cmnt
+        call setline(a:ln, line)
+    endfunction
 
-  call s:set_line(a:lnum_st, markers[0])
-  call s:set_line(a:lnum_end, markers[1])
+    call s:set_line(a:lnum_st, markers[0])
+    call s:set_line(a:lnum_end, markers[1])
 endfunction "}}}
 
 function! MyFoldMarker(type, ...) "{{{
-  let sel_save = &selection
-  let &selection = "inclusive"
-  let reg_save = @@
+    let sel_save = &selection
+    let &selection = "inclusive"
+    let reg_save = @@
 
-  if a:0  " Invoked from Visual mode, use '< and '> marks.
-    call s:set_fold_markers("'<", "'>")
-  elseif a:type == 'line'
-    call s:set_fold_markers("'[", "']")
-  elseif a:type == 'block'
-  endif
+    if a:0  " Invoked from Visual mode, use '< and '> marks.
+        call s:set_fold_markers("'<", "'>")
+    elseif a:type == 'line'
+        call s:set_fold_markers("'[", "']")
+    elseif a:type == 'block'
+    endif
 
-  let &selection = sel_save
-  let @@ = reg_save
+    let &selection = sel_save
+    let @@ = reg_save
 endfunction "}}}
 "}}}
 
@@ -246,8 +258,10 @@ endfunction "}}}
 "{{{ Guifont And Color
 if has("gui_running")
     if has ("win32")
-        set guifont=Courier_New:h13:cANSI
-        "set gfw=Yahei_Mono:h12:cGB2312
+        set guifont=Courier_New:h14:cANSI
+        " set gfw=Yahei\ Mono:h14:cGB2312
+        set gfw=Consolas:h14:cGB2312
+        " set gfw=ÐÂËÎÌå:h14:cGB2312
     endif
         if has("gui_gtk2")
             set guifont=Monospace\ 14,Fixed\ 14
@@ -259,10 +273,10 @@ endif
 
 fun! Color_Modify()
     "all
-    "hi Search           guifg=NONE guibg=NONE   gui=underline
-    "hi IncSearch        guifg=NONE guibg=NONE   gui=underline
+    hi Search           guifg=NONE guibg=NONE   gui=underline
+    hi IncSearch        guifg=fg   guibg=bg     gui=underline,reverse
     "hi comment          gui=italic
-    "hi colorcolumn     ctermbg=5 guibg=#666
+    " hi colorcolumn     ctermbg=5 guibg=#666
     if exists("g:colors_name")
         if g:colors_name=="molokai" "{{{
             hi Normal          guifg=#b8b8b2 guibg=#111111
@@ -278,13 +292,13 @@ fun! Color_Modify()
 
             hi FoldColumn      guifg=#555555 guibg=#111111
             hi Folded          guifg=#998775 guibg=#191919 
-            hi colorcolumn     guibg=#222
+            hi colorcolumn     guibg=#222222
             
             hi title           guifg=#883838
         endif "}}}
         if g:colors_name=="pyte" "{{{
             hi Normal           guibg=#cccccc
-            hi colorcolumn      guibg=#aaa
+            hi colorcolumn      guibg=#aaaaaa
             hi search           guifg=#111111 guibg=#999999 gui=underline
             hi incsearch        guifg=#111111 guibg=#999999 gui=underline
             hi Visual           guibg=#999999
@@ -297,50 +311,8 @@ fun! Color_Modify()
             hi StatusLine       guifg=#111111               gui=bold
             hi tabline          guifg=#808070
             hi tablinesel       guifg=#111111 guibg=#aabbcc
-            hi Folded           guifg=#665447 guibg=#aaa
-            hi FoldColumn       guifg=#555555 guibg=#aaa
-        endif "}}}
-        if g:colors_name=="kellys" "{{{
-            "~/.vim/colors/kellys.vim
-            "hi normal           guifg=#999  
-            "hi cursor           guifg=#111  guibg=#999
-            "hi colorcolumn      guibg=#333
-            "hi search           guifg=fg guibg=bg
-            "hi incsearch        guifg=fg guibg=bg
-
-            "hi FoldColumn       guifg=#365b64   guibg=#333
-            "hi Folded           guifg=#467b94   guibg=#333      gui=none
-            "hi StatusLine 	guifg=#2a2b2f	guibg=#999	gui=bold
-            "hi StatusLineNC     guifg=#999	guibg=#555	gui=none
-
-            "hi visual           guibg=#3a3b3f   gui=none     
-            "hi underlined        guifg=#888
-
-            "hi tabline         guifg=#467b94 guibg=#111111 gui=underline
-            "hi tablinesel      guifg=#467b94 guibg=#2a2b2f gui=bold
-            "hi tablinefill     guifg=#111111 guibg=#111111
-
-            "hi wildmenu         guifg=#3399ff           gui=bold
-            "hi pmenu            guifg=#111 guibg=#789
-            
-            "hi modemsg          guifg=#fc0
-            "hi errormsg         guifg=#d30  guibg=#4a2b2f gui=bold
-            "hi error            guifg=#9d0e15 guibg=#4a2b2f gui=bold
-            "hi string           guifg=#ccaa77
-            
-            "hi PreProc          guifg=#997733
-
-            "hi diffAdd          guibg=#262e40
-            "hi diffDelete       guifg=#444444 guibg=#402626
-            "hi diffChange       guibg=#54524b
-            "hi DiffText         guibg=#402626
-
-            "TOD
-            " StatusLine Color
-            " tabline Color
-            " pluginze
-            " easy deined color
-            " ~/.vim/colors/kellys.vim
+            hi Folded           guifg=#665447 guibg=#aaaaaa
+            hi FoldColumn       guifg=#555555 guibg=#aaaaaa
         endif "}}}
         if g:colors_name=="solarized" "{{{
             hi normal           guifg=#626262 guibg=#cecece
@@ -348,7 +320,32 @@ fun! Color_Modify()
             hi colorcolumn      guibg=#d9d7d6
             hi foldcolumn       guibg=#d9d7d6
         endif "}}}
+        if g:colors_name=="buttercream" "{{{
+            " hi normal           guifg=#626262 guibg=#cecece
+            " hi folded           guibg=#d9d7d6 gui=underline
+            hi colorcolumn      guibg=#e5e5c8
+            " hi foldcolumn       guibg=#e5e5c8
+        endif "}}}
     endif
+    
+hi User1 guibg=RED      gui=bold,reverse
+hi User2 guibg=#73bfbf  gui=bold,reverse
+
+aug statusline_color "{{{
+    au!
+    if version >= 700
+        au InsertEnter * hi StatusLine guibg=#ccbfa3 gui=bold
+        au InsertLeave * hi StatusLine guibg=bg gui=reverse,bold
+
+        au InsertEnter * hi User1 guibg=#ccbfa3 gui=bold
+        au InsertLeave * hi User1 guibg=red gui=bold,reverse
+        au InsertEnter * hi User2 guibg=#ccbfa3 gui=bold
+        au InsertLeave * hi User2 guibg=#73bfbf gui=reverse,bold
+
+        " au InsertEnter * hi cursor guifg=#111   guibg=#fc3 gui=bold
+        " au InsertLeave * hi cursor guifg=#111   guibg=#fc3 gui=bold,reverse
+    endif
+aug END "}}}
 endfun "}}}
 "colorscheme
 if has("gui_running") 
@@ -357,26 +354,51 @@ if has("gui_running")
     "let $colorscheme_n="pyte"
     "let $colorscheme_n="solarized"
     "let $colorscheme_n="clarity"
-    let $colorscheme_n="kellys"
+    " let $colorscheme_n="kellys"
+    let $colorscheme_n="buttercream"
     colorscheme $colorscheme_n
     call Color_Modify()
 else
     let $colorscheme_n="desert"
     colorscheme $colorscheme_n
 endif
-map <leader>ct :call Toggle_colorscheme()<cr>
+map <silent><leader>cs :call Toggle_colorscheme()<cr>
 fun! Toggle_colorscheme()
-    " TODO change the colorsheme with file in folder
-"if     exists("g:colors_name")
-    "if g:colors_name=="solarized"
-        "colorscheme molokai
-        "call Color_Modify()
-    "elseif  g:colors_name=="molokai"
-        "colorscheme cl
-        "set background="light"
-        "call Color_Modify()
-    "endif
-"endif
+" DONE 110530  change the colorsheme with list in folder
+let cs_list=[
+\'aiseered       ', 'anotherdark    ', 'autumn         ', 'autumnleaf     ',
+\'bclear         ', 'biogoo         ', 'brookstream    ', 'buttercream    ',
+\'camo           ', 'candycode      ', 'chocolateliquor', 'clarity        ',
+\'desert256      ', 'freya          ', 'fruit          ',
+\'herald         ', 'jellybeans     ', 'kellys         ', 'lucius         ',
+\'molokai        ', 'moria          ', 'rdark          ',
+\'silent         ', 'soso           ', 'tango2         ', 'vc             ',
+\'wombat256      ', 'zenburn        ',
+            \]
+let cs_list=[
+\'bclear         ',  'buttercream    ',
+\  'clarity        ',
+\ 'freya          ',
+\ 'jellybeans     ', 'kellys         ',
+\'molokai        ', 'rdark          ',
+\'soso           ',  'vc             ',
+\'zenburn        ',
+            \]
+    let idx=0
+    for cs in cs_list
+        if idx<len(cs_list)-1
+            let idx+=1
+        else  
+            let idx=0
+        endif
+    	if cs =~ '^'.g:colors_name.'\s*$'
+            exec "colorscheme ".cs_list[idx]
+            silent! call Color_Modify()
+            redraw
+            echo "ColorScheme:" cs_list[idx]
+            return
+        endif
+    endfor
 endf
 "menu
 if has("gui_running")
@@ -490,7 +512,7 @@ if v:version >= 703
     set colorcolumn=79
 
     if !isdirectory(expand('~/.vim_undo'))
-      call mkdir(expand('~/.vim_undo'))
+        call mkdir(expand('~/.vim_undo'))
     endif
     set undofile
     set undodir=~/.vim_undo/
@@ -528,11 +550,17 @@ aug vimrc_Buffer
     au BufEnter * silent! lcd %:p:h:gs/ /\\ /
     au BufReadPost * if line("'\"") && line("'\"") <= line("$") | exe  "normal! g`\"" | endif
     au BufRead,BufNewFile *.vim,.vimrc set filetype=vim
+    au BufReadPost,BufEnter LearnWords.vwk call FoldWhite()
     "au BufReadPost,BufNewFile *.vwk filetype detect
     "au BufRead,BufNewFile *.vwk syntax enable
     "au BufRead,BufNewFile *.vwk source $MYVIMRC
     "auto go to last position when open file
 aug END "}}}
+function! FoldWhite() "{{{
+    set fdm=expr
+    set fde=getline(v:lnum)=~'^\\s*$'&&getline(v:lnum+1)=~'\\S'?'<1':1
+    set fdt=foldtext()
+endfunction "}}}
 aug vimrc_edit "{{{
     au! vimrc_edit
     "When .vimrc is edited, reload it
@@ -578,7 +606,7 @@ if exists("g:colors_name")
         hi VimwikiHeader4 guifg=#4E83AE gui=bold
         hi VimwikiHeader5 guifg=#8889BA gui=bold
         hi VimwikiHeader6 guifg=#A365B7 gui=bold
-        hi VimwikiLIst guifg=#bb9
+        hi VimwikiLIst guifg=#bbbb99
     else
         hi VimwikiHeader1 guifg=#979730 gui=bold
         hi VimwikiHeader2 guifg=#6D9730 gui=bold
@@ -586,11 +614,11 @@ if exists("g:colors_name")
         hi VimwikiHeader4 guifg=#30978F gui=bold
         hi VimwikiHeader5 guifg=#453097 gui=bold
         hi VimwikiHeader6 guifg=#793097 gui=bold
-        hi VimwikiLIst guifg=#665
+        hi VimwikiLIst guifg=#666655
     endif
 endif
 
-hi vimwikibold guifg=#aa9
+hi vimwikibold guifg=#aaaa99
 
 syn match VimwikishortTimeStamp /<\d\d\d\d-\d\d\d\d>/
     "let rx_minstamp='\%(\d\{4}_\d\{4}\|\d\{6}_\d\{4}\|\d\{6}\)'
@@ -696,6 +724,7 @@ iab ttime <C-R>=strftime("%y%m%d_%H%M")<CR>
 iab dtime <C-R>=strftime("%y-%m-%d %H:%M:%S")<CR>
 iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 "}}}
+
 " 4.Key_Mapping_General{{{1
 " F1-F12 "{{{
 " TODO make F1~F12 The plugin key which have cmd win 
@@ -724,9 +753,26 @@ map <s-F2> :Ack <C-R>=expand("<cword>")<CR>
 vnoremap <s-F2> "sy<c-l>:Ack "<c-r>s"
 
 " replace word under cursor
-nmap <F2> :%s/<C-R><C-W>/<C-R><C-W>/gc<Left><Left><Left>
+nmap <F2> :<C-\>eRead_visual("sw")<CR><Left><Left><Left>
 " replace selection
-vnoremap <F2> "sy<esc><c-l>:%s/<c-r>s/<c-r>s/gc<Left><Left><Left>
+vnoremap <F2> "sy<esc><c-l>:<C-\>eRead_visual("s")<CR><Left><Left><Left>
+" vnoremap <F2> :echo Read_visual_and_change()<cr>
+function! Read_visual(...) "{{{
+    let ptn_1="[]/~.*^$\\"
+    let ptn_2="/&~\\"
+    if exists("a:1") && a:1== "s"
+        let x=escape(@s,ptn_1)
+        let x1=escape(@s,ptn_2)
+        return "%s/".x."/".x1."/gc"
+    elseif exists("a:1") && a:1== "sw"
+        let w=escape(expand('<cword>'),ptn_1)
+        let w1=escape(expand('<cword>'),ptn_2)
+        return "%s/".w."/".w1."/gc"
+    elseif exists("a:1") && a:1== "e"
+        let x=escape(@s,ptn_1)
+        return x
+    endif
+endfunction "}}}
 "vnoremap <C-C> "+y
 "}}}
 "map <silent> <F3> :FufBuffer<CR>
@@ -737,13 +783,17 @@ map <F3> :Unite buffer<CR>
 nmap <F4> :CommandT<CR>
 map <s-F4> :Explore<CR>
 
+" ...3
 "it have errors ,many
 "nmap <silent> <F5> :QuickRun<CR>
 "map <silent> <s-F5> :VimShellPop<cr>
-nmap <F5> :SCCompileRun<cr>
+nmap <s-F5> :SCCompileRun<cr>
 call SingleCompile#ChooseCompiler('html', 'firefox')
-
-nmap <silent> <s-F5> :call Exe_cur_script("norm")<CR>
+" call SingleCompile#ChooseCompiler('vim', 'source')
+" call SingleCompile#SetCompilerTemplate('vim', 'source', 'source', 'source', '', '')
+" call SingleCompile#SetOutfile('filetype', 'compiler', 'out_file')
+" call SingleCompile#ChooseCompiler('vim', 'source')
+nmap <silent> <F5> :call Exe_cur_script("norm")<CR>
 vmap <silent> <F5> :call Exe_cur_script("visual")<CR>
 "command -range -nargs=1 EXEC calll Exe_cur_script(<args>)
 function! Exe_cur_script(mode) "{{{
@@ -836,7 +886,7 @@ map <F7> :GundoToggle<CR>
 "{{{ start from here
 map <silent><F8> :call Start_File_explore()<CR>  
 map <silent><s-F8> :call Start_terminal()<CR>
-fun! Start_File_explore()
+fun! Start_File_explore() "{{{
     if expand("%:p:h") != ""
         if has("win32")
             exec "!start explorer '%:p:h'"
@@ -845,21 +895,21 @@ fun! Start_File_explore()
             exec "!nautilus '%:p:h'"
         endif
     endif
-endf
-fun! Start_terminal()
+endf "}}}
+fun! Start_terminal() "{{{
     if has("win32")
         exec "!start cmd '%:p:h'"
     else
         exec "!gnome-terminal --working-directory='%:p:h'"
     endif
-endf
+endf "}}}
 "}}}
 """session save /load "{{{
 nmap <s-F12> :call SaveSession()<CR>
 "nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
 nmap <F12> :Unite session<cr>
 set sessionoptions=buffers,curdir,help,tabpages,winsize,resize
-function! SaveSession()
+function! SaveSession() "{{{
   wall
     let ses = strftime("%y%m%d_%H%M%S")
     try
@@ -868,7 +918,7 @@ function! SaveSession()
     catch /^vim\%((\a\+)\)\=:/
         echoe "mks failure! error: " .v:exception
     endtry
-endfunction 
+endfunction "}}}
 "}}}
 
 "}}}
@@ -906,15 +956,18 @@ nnoremap <m-x> <c-a>
 "Edit .vimrc and other files <leader>XX"{{{
 map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
 " map <silent><leader>vgv :call Split_if("v") \| e ~/Documents/git/.vimrc<CR>
-map <silent><leader>vgv :call DiffOrig("~/.vimrc","~/Documents/git/.vimrc")<cr>
+map <silent><leader>vdv :call DiffOrig("~/.vimrc","~/Documents/git/.vimrc")<cr>
 map <leader>vd :e ~/.vim/ <CR>
-map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
-map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
-map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
-map <silent><leader>va2 :call Split_if("") \| e ~/.aria2/aria2.conf<CR>
-map <silent><leader>vax :call Split_if("") \| e ~/.axelrc<CR>
-map <silent><leader>vsp :call Split_if("s",10) \|e ~/Documents/vimwiki/Ref/ShuangPin.vwk<CR>
-
+if has("unix")
+    map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
+    map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
+    map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
+    map <silent><leader>va2 :call Split_if("") \| e ~/.aria2/aria2.conf<CR>
+    map <silent><leader>vax :call Split_if("") \| e ~/.axelrc<CR>
+    map <silent><leader>vsp :call Split_if("s",10) \|e ~/Documents/vimwiki/Ref/ShuangPin.vwk<CR>
+else
+    map <silent><leader>vsp :call Split_if("s",10) \|e d:/Documents/vimwiki/Ref/ShuangPin.vwk<CR>
+endif
 "reloading of the .vimrc
 map <leader>vr :so ~/.vimrc<CR>
 "map <leader>RR :so ~/.vimrc<CR>
@@ -972,6 +1025,8 @@ endfun
 
 set diffopt=filler,vertical,foldcolumn:1
 nmap <leader>da :1,$+1diffget<cr>
+nmap <leader>dc :1,.diffget<cr>
+nmap <leader>d$ :.,$+1diffget<cr>
 map <silent> <leader>do :call DiffOrig()<CR>
 command! DiffOrig win 151 100 | vert new | setl bt=nofile | r # | 0d_
             \ | diffthis | setl noma
@@ -996,6 +1051,7 @@ function! DiffOrig(...)
 endfunction
 "}}}
 "Toggle Folding And Foldmethod  "{{{
+"NOTE: 'n_==' is useful to indent folded text
 "noremap <silent> <leader> zA
 " I want foldmarkers to be applied with space before a comment.
 nnoremap <silent> zf :set opfunc=MyFoldMarker<CR>g@
@@ -1034,9 +1090,11 @@ map <silent><leader>fm :if &foldmethod == 'marker'
             \\| endif <CR>
  "}}}
 "Misc Option Toggle "{{{
-
+if has("unix")
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
-"set listchars=tab:\|-,trail:-,extends:>,precedes:<
+else
+set listchars=tab:\|-,trail:-,extends:>,precedes:<
+endif
 map <Leader>li :set list! list?<CR>
 map <silent><leader>nn :if  &nu \| setl rnu \| elseif &rnu \| setl nornu
             \ \| else \| setl nu\| endif <CR>
@@ -1060,16 +1118,17 @@ command! -nargs=1 -complete=var Cvar let @+=<args>
 "Keymapping Of Gtd
 map<silent> <Leader>ntd :TinyTodo<CR>
 command! TinyTodo call TinyTodo()
-fun! TinyTodo()
+fun! TinyTodo() "{{{
     if expand('%') != ""
-      exec '!gvim "+winp 1400 150" "+win 37 25"
-         \"+se fdc=0" "+se stl=" "+se nosc"
-         \"~/Documents/vimwiki/Todo/TodoTiny.vwk"'
+        exec '!gvim "+winp 1400 150" "+win 37 25"
+                    \"+se fdc=0" "+se stl=" "+se nosc"
+                    \"~/Documents/vimwiki/Todo/TodoTiny.vwk"'
     else
-      exec "winp 1400 150 \| win 37 25 \| se nosc fdc=0 stl= "
-      exec "e ~/Documents/vimwiki/Todo/TodoTiny.vwk"
-  endif
+        exec "winp 1400 150 \| win 37 25 \| se nosc fdc=0 stl= "
+        exec "e ~/Documents/vimwiki/Todo/TodoTiny.vwk"
+    endif
 endfun "}}}
+"}}}
 "Syntax Quick Set "{{{
 "Some nice mapping to switch syntax (useful if one mixes different languages in one file)
 nmap <leader>1vm :set ft=vim<CR>
@@ -1093,7 +1152,6 @@ nmap <leader>1me  :emenu Syntax.
 " DONE: 110519 clear all hlsearch without warningmsg
 nnoremap <silent> <C-L> :nohl<CR><C-l>:s/^^//e<cr>
 "}}}
-
 " 4.2.Window_control_mapping
 "Window Mapping  <C-W> "{{{
 nmap <C-W>1 <C-W>_
@@ -1121,19 +1179,19 @@ nmap <C-W><c-b> :call NavBuff("list")<cr>
 nmap <C-W><c-tab> :call NavBuff("list")<cr>
 nmap <C-W><tab> :call NavBuff("list")<cr>
 
-fun! NavBuff(act)
+fun! NavBuff(act) "{{{
     if a:act=="next"
-    	exe winnr('$')==1 ? "bnext" : "normal \<C-W>w"
+        exe winnr('$')==1 ? "bnext" : "normal \<C-W>w"
     endif
     if a:act=="prev"
-    	exe winnr('$')==1 ? "bprevious" : "normal \<C-W>W"
+        exe winnr('$')==1 ? "bprevious" : "normal \<C-W>W"
     endif
     if a:act=="list"
-    	exe winnr('$')<=4 ? "CommandTBuffer" : "Unite window "
+        exe winnr('$')<=4 ? "CommandTBuffer" : "Unite window "
     endif
-endfun
+endfun "}}}
 
-"dont close last window , use :Q OR 
+"dont close last window , use :hid
 nmap <silent> <C-W><c-q> :call ChkWin(-2)\|hid<CR>
 nmap <silent> <C-W>q :call ChkWin(-2)\|hid<CR>
 nmap <silent> <C-W><c-x> :call ChkWin(-2)\|q<CR>
@@ -1298,15 +1356,21 @@ vnoremap <C-Kenter> gq
 "search selected text and go next
 " Rating: 7
 " the search backword/forward was wrong side??
-vnoremap <c-n> "sy<c-c>?<c-r>s<cr><ctrl-g>
-vnoremap / "sy<c-c>/<c-r>s<cr><ctrl-g>
-vnoremap ? "sy<c-c>?<c-r>s<cr><ctrl-g>
-vnoremap # "sy<c-c>?<c-r>s<cr><ctrl-g>
-vnoremap * "sy<c-c>/<c-r>s<cr><ctrl-g>
+vnoremap <c-n> "sy<c-c>/<c-\>eRead_visual("e")<CR><CR><ctrl-g>
+vnoremap <c-p> "sy<c-c>/<c-\>eRead_visual("e")<CR><CR><ctrl-g>
+vnoremap / "sy<c-c>/<c-\>eRead_visual("e")<CR><cr><ctrl-g>
+vnoremap ? "sy<c-c>?<c-\>eRead_visual("e")<CR><cr><ctrl-g>
+vnoremap # "sy<c-c>?<c-\>eRead_visual("e")<CR><cr><ctrl-g>
+vnoremap * "sy<c-c>/<c-\>eRead_visual("e")<CR><cr><ctrl-g>
 nnoremap <c-n> n
+nnoremap <c-p> N
+
 "search for none exist before / after
 vnoremap <leader>/ "sy<c-c>/\(\)\@<!<c-r>s<Home><right><right>
 vnoremap <leader>? "sy<c-c>/<c-r>s\(\)\@!<left><left><left><left><left>
+
+
+
 
 "nnoremap # n
 "nnoremap * n
@@ -1343,9 +1407,7 @@ else
     vnoremap <c-scrollwheelup> <gv
 endif
 
-
 "}}}
-
 " 4.4.Edit_and_formatting
 " Easy Editing Modify "{{{
 " make p in Visual mode replace the selected text with the yank register
@@ -1358,14 +1420,14 @@ nnoremap Y y$
 nnoremap <m-s>1 gUU
 nnoremap <m-s>2 guu
 nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
-nmap <m-s>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
+nmap <m-c>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
 " Capitalize inner word
-nmap <m-s>c guiw~w
+nmap <m-c>c guiw~w
 " UPPERCASE inner word
-nmap <m-s>e gUiww
+nmap <m-c>e gUiww
 " lowercase inner word
-nmap <m-s>w guiww
-nmap <m-s><m-s> ~
+nmap <m-c>w guiww
+nmap <m-c><m-c> ~h
 
 "trim whitespace
 nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
@@ -1399,12 +1461,16 @@ vnoremap <Leader>ep c<?php <C-r>" ?><ESC>`[
 nnoremap <leader>e! ciw<!-- <C-r>" --><ESC>
 vnoremap <Leader>e! c<!-- <C-r>" --><ESC>`[
 "}}}
+"TODOTHINS "{{{
+nnoremap <expr><leader>et (Is_whiteline() ? "A" : "o" ) ."\" TODO: "
+nnoremap <expr><leader>ef (Is_whiteline() ? "A" : "o" ) ."\"FIXME: "
+" nnoremap <expr><leader>ew (Is_whiteline() ? "A" : "o" ) ."\"WTFIX: "
+nnoremap <expr><leader>ex (Is_whiteline() ? "A" : "o" ) ."\"  XXX: "
+function! Is_whiteline()
+    return getline('.')=~'^\s*$'
+endfunction
 
-nnoremap <leader>et o" TODO: <esc>
-nnoremap <leader>ef o" FIXME: <esc>
-nnoremap <leader>ew o" WONTFIX: <esc>
-nnoremap <leader>ex o" XXX: <esc>
-
+"}}}
 "Formating "{{{
 "alignment of text
 nmap <leader>ll :left<CR>
@@ -1432,7 +1498,6 @@ nnoremap <leader>l" yypVr"
 "map <M-q><M-l> <ESC>:.s/\([.!?"。！？”—）]\)$/\1\r/g<CR>
 
 "}}}
-
 " 4.5.win_behave_settings (yank and pasting)
 "{{{ Behave Win And Menu
 if has('gui_running')
@@ -1457,6 +1522,7 @@ inoremap <C-Y> <C-O>U<C-O>zv
 map <C-V>		"+gp
 map <S-Insert>		"+gp
 "}}}
+
 "5.Plugins_settings{{{1
 "Unite Settings "{{{
 "noremap <leader>ww :Unite file bookmark<CR>
@@ -1510,7 +1576,6 @@ map <leader>nt :NeoComplCacheToggle<CR>
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
-
 
 " Use smartcase.
 let g:neocomplcache_enable_smart_case = 0
@@ -1600,7 +1665,11 @@ let g:neocomplcache_disable_caching_file_path_pattern="fuf"
 map <Leader>ww <Plug>VimwikiIndex
 
 let wiki_1 = {}
+if has("unix")
     let wiki_1.path = '~/Documents/vimwiki'
+else
+    let wiki_1.path = 'd:/Documents/vimwiki'
+endif
     let wiki_1.ext = '.vwk'
     let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
@@ -1615,7 +1684,7 @@ let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
                         \,js,css,html,php
                         \,vim,vba'
 let g:vimwiki_conceallevel=3
-
+let g:vimwiki_lower="a-z0-9\u0430-\u044f"
 
 let g:vimwiki_use_mouse =1
 let g:vimwiki_fold_lists=1
@@ -1638,12 +1707,12 @@ fun! s:vimwiki_my_settings() "{{{
     "will cause internal error with \zs duplicated
     "let g:vimwiki_rxListNumber = '^\s*\zs\%(\d\+[\.)]\)\+\ze\s'
     if g:vimwiki_hl_cb_checked
-    execute 'syntax match VimwikiCheckBoxDone /'.
-            \ g:vimwiki_rxListBullet.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
-            \ ' contains=VimwikiNoExistsLink,VimwikiLink'
-    execute 'syntax match VimwikiCheckBoxDone /'.
-            \ g:vimwiki_rxListNumber.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
-            \ ' contains=VimwikiNoExistsLink,VimwikiLink'
+        execute 'syntax match VimwikiCheckBoxDone /'.
+                    \ g:vimwiki_rxListBullet.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
+                    \ ' contains=VimwikiNoExistsLink,VimwikiLink'
+        execute 'syntax match VimwikiCheckBoxDone /'.
+                    \ g:vimwiki_rxListNumber.'\s*\['.g:vimwiki_listsyms[4].'\].*$/'.
+                    \ ' contains=VimwikiNoExistsLink,VimwikiLink'
     endif
 
     map <buffer><leader>wl <Plug>VimwikiToggleListItem
@@ -1668,6 +1737,8 @@ fun! s:vimwiki_my_settings() "{{{
     noremap <buffer><expr> <m-End> "\<c-i>"
     nmap <silent><buffer> <TAB> <Plug>VimwikiNextLink
     "inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
+    inoremap <expr> <buffer> <c-h> vimwiki_tbl#kbd_shift_tab()
+    inoremap <expr> <buffer> <c-l> vimwiki_tbl#kbd_tab()
 
 
     inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
@@ -1704,14 +1775,21 @@ nmap  <leader>gp :Git push<cr>
 "Misc Plugins Settings "{{{
 "   syntax/vim.vim 默认会高亮 s:[a-z] 这样的函数名为错误
 let g:vimsyn_noerror = 1
-"nmap <leader>cah :CalendarH<CR>
+"nmap <leader>ch :CalendarH<CR>
 
 "let g:NERDTreeChDirMode=2
 "noremap <m-w><m-w> :NERDTreeToggle "expand('%:p:h')"<CR>
 
-let g:ColorV_dynamic_hue=1
+let g:ColorV_dynamic_hue=0
 let g:ColorV_show_tips=0
-let g:ColorV_name_approx=6
+" let g:ColorV_show_quit=1
+let g:ColorV_name_approx=4
+let g:ColorV_echo_tips=1
+
+let g:ColorV_dynamic_hue=1
+let g:ColorV_dynamic_hue_step=9
+
+let g:ColorV_win_pos="bot"
 
 let g:user_zen_leader_key = '<c-e>'
 "let g:use_zen_complete_tag = 1
@@ -1742,10 +1820,13 @@ let  g:gundo_width=30
 let g:gundo_right = 1
 nnoremap <leader>uu :GundoToggle<CR>
 noremap <leader>cc :TComment<cr>
+
+noremap <c-F5> :call so_that#show()<cr>
 "{{{
 let g:neocomplcache_snippets_dir="~/.vim/my_snips/snippets_complete/"
 map <leader>se :sp\|NeoComplCacheEditSnippets<cr>
-map <leader>s- :e ~/.vim/my_snips/snippets_complete/_.snip <cr>
+map <leader>s- :sp\|e ~/.vim/my_snips/snippets_complete/_.snip <cr>
+map <leader>s_ :sp\|e ~/.vim/my_snips/snippets_complete/_.snip <cr>
 "}}}
 "}}}
 
@@ -1753,30 +1834,29 @@ map <leader>s- :e ~/.vim/my_snips/snippets_complete/_.snip <cr>
 "LastUpdate check "{{{
 " Check no more than 30 lines from start for 'Last Change:' and update it with
 " the current datetime.
-function! LastChangeUpdate()
-  for linenr in range(1, min([30, line('$')]))
-    let line = getline(linenr)
-    let rx_str_upd='\%(Change\|Update\|Updated\|Modify\|Modified\)'
-    let rx_str_lupd='\%(Last \)\='.rx_str_upd.':'
-    if line =~ rx_str_lupd
-      let line = substitute(line, '\('.rx_str_lupd.'\s*\).*$',
-                  \ '\1'.strftime("%Y-%m-%d"), '')
-      call setline(linenr, line)
-      break
-      break
-    endif
-endfor
-endfunction
+function! LastChangeUpdate() "{{{
+    for linenr in range(1, min([30, line('$')]))
+        let line = getline(linenr)
+        let rx_str_upd='\%(Change\|Update\|Updated\|Modify\|Modified\)'
+        let rx_str_lupd='\%(Last \)\='.rx_str_upd.':'
+        if line =~ rx_str_lupd
+            let line = substitute(line, '\('.rx_str_lupd.'\s*\).*$',
+                        \ '\1'.strftime("%Y-%m-%d"), '')
+            call setline(linenr, line)
+            break
+            break
+        endif
+    endfor
+endfunction "}}}
 command! -nargs=* LastChangeUpdate call LastChangeUpdate() <args>
 "}}}
 "ACK "{{{
 command! -nargs=* -complete=file Ack call Ack(<q-args>)
-function! Ack(args)
-  let grepprg_bak=&grepprg
-  set grepprg=ack-grep\ -a\ -H\ --nocolor\ --nogroup
-  execute "silent! grep " . a:args
-  botright copen
-  let &grepprg=grepprg_bak
-endfunction
+function! Ack(args) "{{{
+    let grepprg_bak=&grepprg
+    set grepprg=ack-grep\ -a\ -H\ --nocolor\ --nogroup
+    execute "silent! grep " . a:args
+    botright copen
+    let &grepprg=grepprg_bak
+endfunction "}}}
 "}}}
-
