@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-06-17
+"  Last Change: 2011-06-25
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -144,11 +144,20 @@ else
 set fileformats=unix,dos
 endif
 
+if has("win32")
+    set helplang=cn " help language = cn!
+    set langmenu=en_US
+    language messages zh_CN.utf-8
+endif
 if has("multi_byte")
     "language messages zh_CN.utf-8
     if v:lang =~? '^\(zh\)\|\(ja\)\|\(ko\)'
         set ambiwidth=double
     endif
+    set encoding=utf-8
+    set termencoding=utf-8
+    set fileencoding=utf-8
+    
 endif
 "}}}
 "{{{ui setting
@@ -258,9 +267,12 @@ endfunction "}}}
 "{{{ Guifont And Color
 if has("gui_running")
     if has ("win32")
-        set guifont=Courier_New:h14:cANSI
+        " set guifont=Courier_New:h14:cANSI
+        set guifont=Dejavu_Sans_Mono:h14:cANSI
         " set gfw=Yahei\ Mono:h14:cGB2312
-        set gfw=Consolas:h14:cGB2312
+        " set gfw=Consolas:h14:cGB2312
+        " set gfw=Microsoft_YaHei:h14:cGB2312
+        set gfw=Wenquanyi_Micro_Hei_Mono:h14:cGB2312
         " set gfw=ÐÂËÎÌå:h14:cGB2312
     endif
         if has("gui_gtk2")
@@ -273,8 +285,8 @@ endif
 
 fun! Color_Modify()
     "all
-    hi Search           guifg=NONE guibg=NONE   gui=underline
-    hi IncSearch        guifg=fg   guibg=bg     gui=underline,reverse
+    " hi Search           guifg=NONE guibg=NONE   gui=underline
+    " hi IncSearch        guifg=fg   guibg=bg     gui=underline,reverse
     "hi comment          gui=italic
     " hi colorcolumn     ctermbg=5 guibg=#666
     if exists("g:colors_name")
@@ -328,24 +340,24 @@ fun! Color_Modify()
         endif "}}}
     endif
     
-hi User1 guibg=RED      gui=bold,reverse
-hi User2 guibg=#73bfbf  gui=bold,reverse
+" hi User1 guibg=RED      gui=bold,reverse
+" hi User2 guibg=#73bfbf  gui=bold,reverse
 
-aug statusline_color "{{{
-    au!
-    if version >= 700
-        au InsertEnter * hi StatusLine guibg=#ccbfa3 gui=bold
-        au InsertLeave * hi StatusLine guibg=bg gui=reverse,bold
-
-        au InsertEnter * hi User1 guibg=#ccbfa3 gui=bold
-        au InsertLeave * hi User1 guibg=red gui=bold,reverse
-        au InsertEnter * hi User2 guibg=#ccbfa3 gui=bold
-        au InsertLeave * hi User2 guibg=#73bfbf gui=reverse,bold
-
-        " au InsertEnter * hi cursor guifg=#111   guibg=#fc3 gui=bold
-        " au InsertLeave * hi cursor guifg=#111   guibg=#fc3 gui=bold,reverse
-    endif
-aug END "}}}
+" aug statusline_color "{{{
+"     au!
+"     if version >= 700
+"         au InsertEnter * hi StatusLine guibg=#ccbfa3 gui=bold
+"         au InsertLeave * hi StatusLine guibg=bg gui=reverse,bold
+" 
+"         au InsertEnter * hi User1 guibg=#ccbfa3 gui=bold
+"         au InsertLeave * hi User1 guibg=red gui=bold,reverse
+"         au InsertEnter * hi User2 guibg=#ccbfa3 gui=bold
+"         au InsertLeave * hi User2 guibg=#73bfbf gui=reverse,bold
+" 
+"         " au InsertEnter * hi cursor guifg=#111   guibg=#fc3 gui=bold
+"         " au InsertLeave * hi cursor guifg=#111   guibg=#fc3 gui=bold,reverse
+"     endif
+" aug END "}}}
 endfun "}}}
 "colorscheme
 if has("gui_running") 
@@ -355,7 +367,8 @@ if has("gui_running")
     "let $colorscheme_n="solarized"
     "let $colorscheme_n="clarity"
     " let $colorscheme_n="kellys"
-    let $colorscheme_n="buttercream"
+    let $colorscheme_n="galaxy"
+    " let $colorscheme_n="buttercream"
     colorscheme $colorscheme_n
     call Color_Modify()
 else
@@ -378,7 +391,7 @@ let cs_list=[
 let cs_list=[
 \'bclear         ',  'buttercream    ',
 \  'clarity        ',
-\ 'freya          ',
+\ 'freya          ', 'galaxy          ',
 \ 'jellybeans     ', 'kellys         ',
 \'molokai        ', 'rdark          ',
 \'soso           ',  'vc             ',
@@ -532,13 +545,14 @@ endif "}}}
 " 2.AutoCmd_Group{{{1
 aug vimrc_GuiEnter "{{{
     au! vimrc_GuiEnter
-    "au GUIENTER * cd ~/Documents/vim
-    "au GUIENTER * e ~/Documents/vimwiki/Todo/TodoToday.vwk
-    "au GUIENTER *.vwk set filetype=vimwiki
-    "au GUIEnter * VimwikiIndex
     au GuiEnter * set t_vb=
     au GuiEnter * winpos 331 0
     au GuiEnter * winsize 80 100
+aug END
+
+aug vimrc_misc "{{{
+    au! vimrc_misc
+    au Swapexists * let v:swapchoice='e'
 aug END
 
 aug vimrc_Buffer
@@ -550,11 +564,8 @@ aug vimrc_Buffer
     au BufEnter * silent! lcd %:p:h:gs/ /\\ /
     au BufReadPost * if line("'\"") && line("'\"") <= line("$") | exe  "normal! g`\"" | endif
     au BufRead,BufNewFile *.vim,.vimrc set filetype=vim
+    "  XXX: not run?
     au BufReadPost,BufEnter LearnWords.vwk call FoldWhite()
-    "au BufReadPost,BufNewFile *.vwk filetype detect
-    "au BufRead,BufNewFile *.vwk syntax enable
-    "au BufRead,BufNewFile *.vwk source $MYVIMRC
-    "auto go to last position when open file
 aug END "}}}
 function! FoldWhite() "{{{
     set fdm=expr
@@ -598,27 +609,28 @@ aug color_modify "{{{
 aug END
 
 fun! Vimwiki_color() "{{{
-if exists("g:colors_name")
-    if &bg=="dark"
-        hi VimwikiHeader1 guifg=#D0D090 gui=bold
-        hi VimwikiHeader2 guifg=#9BC97E gui=bold
-        hi VimwikiHeader3 guifg=#4FB16F gui=bold
-        hi VimwikiHeader4 guifg=#4E83AE gui=bold
-        hi VimwikiHeader5 guifg=#8889BA gui=bold
-        hi VimwikiHeader6 guifg=#A365B7 gui=bold
-        hi VimwikiLIst guifg=#bbbb99
-    else
-        hi VimwikiHeader1 guifg=#979730 gui=bold
-        hi VimwikiHeader2 guifg=#6D9730 gui=bold
-        hi VimwikiHeader3 guifg=#349730 gui=bold
-        hi VimwikiHeader4 guifg=#30978F gui=bold
-        hi VimwikiHeader5 guifg=#453097 gui=bold
-        hi VimwikiHeader6 guifg=#793097 gui=bold
-        hi VimwikiLIst guifg=#666655
-    endif
-endif
+" if exists("g:colors_name")
+"     if &bg=="dark"
+"         hi VimwikiHeader1 guifg=#D0D090 gui=bold
+"         hi VimwikiHeader2 guifg=#9BC97E gui=bold
+"         hi VimwikiHeader3 guifg=#4FB16F gui=bold
+"         hi VimwikiHeader4 guifg=#4E83AE gui=bold
+"         hi VimwikiHeader5 guifg=#8889BA gui=bold
+"         hi VimwikiHeader6 guifg=#A365B7 gui=bold
+"         hi VimwikiLIst guifg=#bbbb99
+"     else
+"         hi VimwikiHeader1 guifg=#66664D gui=bold
+"         hi VimwikiHeader2 guifg=#59664D gui=bold
+"         hi VimwikiHeader3 guifg=#4D664D gui=bold
+"         hi VimwikiHeader4 guifg=#4D6659 gui=bold
+"         hi VimwikiHeader5 guifg=#4D6666 gui=bold
+"         hi VimwikiHeader6 guifg=#4D5966 gui=bold
+"         hi VimwikiLIst guifg=#666655
+"     endif
+" endif
 
-hi vimwikibold guifg=#aaaa99
+" hi def link vimwikibold Title
+
 
 syn match VimwikishortTimeStamp /<\d\d\d\d-\d\d\d\d>/
     "let rx_minstamp='\%(\d\{4}_\d\{4}\|\d\{6}_\d\{4}\|\d\{6}\)'
@@ -626,8 +638,8 @@ syn match VimwikiminTimeStamp /\%(\d\{4}_\d\{4}\|\d\{6}_\d\{4}\|\d\{6}\)/
 syn match VimwikiTimeStamp /<\d\d\d\d-\d\d\d\d>/
 hi def link VimwikishortTimeStamp VimwikiTimeStamp
 hi def link VimwikiminTimeStamp VimwikiTimeStamp
-hi def link VimwikiTimeStamp SpecialComment
-hi VimwikiTimeStamp guifg=#777777 gui=bold
+" hi def link VimwikiTimeStamp SpecialComment
+" hi VimwikiTimeStamp guifg=#777777 gui=bold
 
 let rxListBullet = '^\s*\zs\%(\*\|-\|#\)\ze\s'
 "let rxListNumber = '^\s*\zs\%(\d\+[\.)]\)\+\s'
@@ -638,16 +650,16 @@ syn match vimwiki_rx_list_num /^\s*\%(\d\+\.\)\+\ze\s/
 hi default link vimwiki_rx_list_num VimwikiLIst
 
 " FIXED: 0504_0052  using \@<! and \@! to match with zerowidth;
-syn match Vimwiki_Prio9 /\S\@<!\(+9\|\[+9\]\)\S\@!/
-syn match Vimwiki_Prio8 /\S\@<!\(+8\|\[+8\]\)\S\@!/
-syn match Vimwiki_Prio7 /\S\@<!\(+7\|\[+7\]\)\S\@!/
-syn match Vimwiki_Prio6 /\S\@<!\(+6\|\[+6\]\)\S\@!/
-syn match Vimwiki_Prio5 /\S\@<!\(+5\|\[+5\]\)\S\@!/
-syn match Vimwiki_Prio4 /\S\@<!\(+4\|\[+4\]\)\S\@!/
-syn match Vimwiki_Prio3 /\S\@<!\(+3\|\[+3\]\)\S\@!/
-syn match Vimwiki_Prio2 /\S\@<!\(+2\|\[+2\]\)\S\@!/
-syn match Vimwiki_Prio1 /\S\@<!\(+1\|\[+1\]\)\S\@!/
-syn match Vimwiki_Prio0 /\(^\s*\|.*\s\)\(+0\|\[+0\]\)\(\s*$\|\s.*\)/
+syn match Vimwiki_Posit9 /\S\@<!\(+9\|\[+9\]\)\S\@!/
+syn match Vimwiki_Posit8 /\S\@<!\(+8\|\[+8\]\)\S\@!/
+syn match Vimwiki_Posit7 /\S\@<!\(+7\|\[+7\]\)\S\@!/
+syn match Vimwiki_Posit6 /\S\@<!\(+6\|\[+6\]\)\S\@!/
+syn match Vimwiki_Posit5 /\S\@<!\(+5\|\[+5\]\)\S\@!/
+syn match Vimwiki_Posit4 /\S\@<!\(+4\|\[+4\]\)\S\@!/
+syn match Vimwiki_Posit3 /\S\@<!\(+3\|\[+3\]\)\S\@!/
+syn match Vimwiki_Posit2 /\S\@<!\(+2\|\[+2\]\)\S\@!/
+syn match Vimwiki_Posit1 /\S\@<!\(+1\|\[+1\]\)\S\@!/
+syn match Vimwiki_Posit0 /\(^\s*\|.*\s\)\(+0\|\[+0\]\)\(\s*$\|\s.*\)/
 
 syn match Vimwiki_minus9 /\S\@<!\(-9\|\[-9\]\)\S\@!/
 syn match Vimwiki_minus8 /\S\@<!\(-8\|\[-8\]\)\S\@!/
@@ -660,27 +672,27 @@ syn match Vimwiki_minus2 /\S\@<!\(-2\|\[-2\]\)\S\@!/
 syn match Vimwiki_minus1 /\S\@<!\(-1\|\[-1\]\)\S\@!/
 syn match Vimwiki_minus0 /\(^\s*\|.*\s\)\(-0\|\[-0\]\)\(\s*$\|\s.*\)/
 
-hi Vimwiki_Prio9 guifg=#BF4040 gui=bold
-hi Vimwiki_Prio8 guifg=#BF6040 gui=bold
-hi Vimwiki_Prio7 guifg=#BF8040 gui=bold
-hi Vimwiki_Prio6 guifg=#BF9F40 gui=bold
-hi Vimwiki_Prio5 guifg=#BFBF40 gui=bold
-hi Vimwiki_Prio4 guifg=#9FBF40 gui=bold
-hi Vimwiki_Prio3 guifg=#80BF40 gui=bold
-hi Vimwiki_Prio2 guifg=#60BF40 gui=bold
-hi Vimwiki_Prio1 guifg=#40BF40 gui=bold
-hi Vimwiki_Prio0 guifg=#404040 gui=bold
-
-hi Vimwiki_minus0 guifg=#404060 gui=bold
-hi Vimwiki_minus1 guifg=#40BF9F gui=bold
-hi Vimwiki_minus2 guifg=#40BFBF gui=bold
-hi Vimwiki_minus3 guifg=#409FBF gui=bold
-hi Vimwiki_minus4 guifg=#4080BF gui=bold
-hi Vimwiki_minus5 guifg=#4060BF gui=bold
-hi Vimwiki_minus6 guifg=#4040BF gui=bold
-hi Vimwiki_minus7 guifg=#6040BF gui=bold
-hi Vimwiki_minus8 guifg=#8040BF gui=bold
-hi Vimwiki_minus9 guifg=#9F40BF gui=bold
+" hi Vimwiki_Posit9 guifg=#BF4040 gui=bold
+" hi Vimwiki_Posit8 guifg=#BF6040 gui=bold
+" hi Vimwiki_Posit7 guifg=#BF8040 gui=bold
+" hi Vimwiki_Posit6 guifg=#BF9F40 gui=bold
+" hi Vimwiki_Posit5 guifg=#BFBF40 gui=bold
+" hi Vimwiki_Posit4 guifg=#9FBF40 gui=bold
+" hi Vimwiki_Posit3 guifg=#80BF40 gui=bold
+" hi Vimwiki_Posit2 guifg=#60BF40 gui=bold
+" hi Vimwiki_Posit1 guifg=#40BF40 gui=bold
+" hi Vimwiki_Posit0 guifg=#404040 gui=bold
+" 
+" hi Vimwiki_minus0 guifg=#404060 gui=bold
+" hi Vimwiki_minus1 guifg=#40BF9F gui=bold
+" hi Vimwiki_minus2 guifg=#40BFBF gui=bold
+" hi Vimwiki_minus3 guifg=#409FBF gui=bold
+" hi Vimwiki_minus4 guifg=#4080BF gui=bold
+" hi Vimwiki_minus5 guifg=#4060BF gui=bold
+" hi Vimwiki_minus6 guifg=#4040BF gui=bold
+" hi Vimwiki_minus7 guifg=#6040BF gui=bold
+" hi Vimwiki_minus8 guifg=#8040BF gui=bold
+" hi Vimwiki_minus9 guifg=#9F40BF gui=bold
 endfun "}}}
 "}}}
 
@@ -788,7 +800,9 @@ map <s-F4> :Explore<CR>
 "nmap <silent> <F5> :QuickRun<CR>
 "map <silent> <s-F5> :VimShellPop<cr>
 nmap <s-F5> :SCCompileRun<cr>
+if has("unix")
 call SingleCompile#ChooseCompiler('html', 'firefox')
+endif
 " call SingleCompile#ChooseCompiler('vim', 'source')
 " call SingleCompile#SetCompilerTemplate('vim', 'source', 'source', 'source', '', '')
 " call SingleCompile#SetOutfile('filetype', 'compiler', 'out_file')
@@ -1108,9 +1122,9 @@ no <silent><m-1> :if &go=~#'m'\|se go-=m\|else\|se go+=m\|endif<CR>
 no <silent><m-2> :if &go=~#'r'\|se go-=r\|else\|se go+=r\|endif<CR>
 
 " copy filename
-map <silent> <leader>cl :let @+=expand('%').':'.line('.')<CR>
-map <silent> <leader>cf :let @+=expand('%:p')<CR>
-map <silent> <leader>cp :let @+=expand('%:p:h')<CR>
+map <silent> <leader>pl :let @+=expand('%').':'.line('.')<CR>
+map <silent> <leader>pf :let @+=expand('%:p')<CR>
+map <silent> <leader>ph :let @+=expand('%:p:h')<CR>
 "map <silent> <leader>cp :let @+=g:<CR>
 "Copy current variables
 command! -nargs=1 -complete=var Cvar let @+=<args>
@@ -1665,11 +1679,7 @@ let g:neocomplcache_disable_caching_file_path_pattern="fuf"
 map <Leader>ww <Plug>VimwikiIndex
 
 let wiki_1 = {}
-if has("unix")
     let wiki_1.path = '~/Documents/vimwiki'
-else
-    let wiki_1.path = 'd:/Documents/vimwiki'
-endif
     let wiki_1.ext = '.vwk'
     let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
@@ -1684,7 +1694,7 @@ let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
                         \,js,css,html,php
                         \,vim,vba'
 let g:vimwiki_conceallevel=3
-let g:vimwiki_lower="a-z0-9\u0430-\u044f"
+" let g:vimwiki_lower="a-z0-9\u0430-\u044f"
 
 let g:vimwiki_use_mouse =1
 let g:vimwiki_fold_lists=1
@@ -1700,10 +1710,10 @@ execute 'syntax match VimwikiList /'.g:vimwiki_rxListNumber.'/'
 
 fun! s:vimwiki_my_settings() "{{{
 
-    setlocal fdm=indent
+    " setlocal fdm=indent
     "setlocal foldexpr=Myfoldlevel(v:lnum)
-    setlocal foldexpr=VimwikiFoldLevel(v:lnum)
-    setlocal foldtext=MyVimwikiFoldText()
+    " setlocal foldexpr=VimwikiFoldLevel(v:lnum)
+    " setlocal foldtext=MyVimwikiFoldText()
     "will cause internal error with \zs duplicated
     "let g:vimwiki_rxListNumber = '^\s*\zs\%(\d\+[\.)]\)\+\ze\s'
     if g:vimwiki_hl_cb_checked
@@ -1725,9 +1735,6 @@ fun! s:vimwiki_my_settings() "{{{
     map <buffer><Leader>w2  :Vimwiki2HTML<CR>
     map <buffer><Leader>w2a :VimwikiAll2HTML<CR>
 
-    "nnoremap <silent><buffer> <2-LeftMouse> :VimwikiFollowLink<CR>k
-    nnoremap <silent><buffer> <S-2-LeftMouse> <LeftMouse>:VimwikiSplitLink<CR>
-    nnoremap <silent><buffer> <C-2-LeftMouse> <LeftMouse>:VimwikiVSplitLink<CR>
     "map <M-RightMouse> <Plug>VimwikiGoBackWord
     map <buffer><expr> <rightmouse><leftmouse> "<Plug>VimwikiGoBackLink"
     imap <buffer><expr> <rightmouse><leftmouse> "<Plug>VimwikiGoBackLink"
@@ -1737,13 +1744,13 @@ fun! s:vimwiki_my_settings() "{{{
     noremap <buffer><expr> <m-End> "\<c-i>"
     nmap <silent><buffer> <TAB> <Plug>VimwikiNextLink
     "inoremap <expr> <buffer> <Tab> vimwiki_tbl#kbd_tab()
-    inoremap <expr> <buffer> <c-h> vimwiki_tbl#kbd_shift_tab()
-    inoremap <expr> <buffer> <c-l> vimwiki_tbl#kbd_tab()
 
-
-    inoremap <expr><TAB> pumvisible() ? "\<c-n>" : "\<TAB>"
+    inoremap <buffer><expr><TAB> pumvisible() ? "\<c-n>" : 
+                \ vimwiki#tbl#kbd_tab()
+    inoremap <buffer><expr><s-TAB> pumvisible() ? "\<c-p>" : 
+                \ vimwiki#tbl#kbd_shift_tab()
     "tab with 2 space sts sw
-    setl shiftwidth=2 softtabstop=2
+    setl shiftwidth=4 softtabstop=4
 endfun "}}}
 
 aug vimwiki_myset "{{{
