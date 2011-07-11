@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-06-25
+"  Last Change: 2011-07-12
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -79,13 +79,13 @@ Bundle 'lilydjwg/csspretty.vim'
 Bundle 'matchit.zip'
 Bundle 'kchmck/vim-coffee-script'
 "colorscheme
-Bundle 'molokai'
-Bundle 'pyte'
+" Bundle 'molokai'
+" Bundle 'pyte'
 "Bundle 'proton'
 "Bundle 'twilight'
 "Bundle 'phd'
 "Bundle 'nelstrom/vim-mac-classic-theme.git'
-Bundle 'altercation/vim-colors-solarized'
+" Bundle 'altercation/vim-colors-solarized'
 "Bundle 'git@github.com:gmarik/ingretu.git'
 
 "" non github repos
@@ -96,6 +96,11 @@ Bundle 'altercation/vim-colors-solarized'
 "Note:install by manual
 "Bundle 'css_color.vim'
 "Bundle 'vimwiki'
+
+"test
+Bundle 'godlygeek/tabular'
+Bundle 'scrooloose/syntastic'
+Bundle 'fs111/pydoc.vim'
 
 set rtp+=~/.vim/vimwiki/
 " my script
@@ -272,18 +277,18 @@ if has("gui_running")
         " set gfw=Yahei\ Mono:h14:cGB2312
         " set gfw=Consolas:h14:cGB2312
         " set gfw=Microsoft_YaHei:h14:cGB2312
-        set gfw=Wenquanyi_Micro_Hei_Mono:h14:cGB2312
+        set gfw=Wenquanyi_Micro_Hei_Mono:h14:cANSI
         " set gfw=ÐÂËÎÌå:h14:cGB2312
     endif
         if has("gui_gtk2")
-            set guifont=Monospace\ 14,Fixed\ 14
+            set guifont=Dejavu\ Sans\ Mono\ 14,Monospace\ 14,Fixed\ 14
             set gfw=Wenquanyi\ Micro\ Hei\ Mono\ 14,WenQuanYi\ Zen\ Hei\ 14
     endif
 
-endif
+endif "}}}
 "Call After Colorscheme And Sourcecmd "{{{
 
-fun! Color_Modify()
+fun! Color_Modify() "{{{
     "all
     " hi Search           guifg=NONE guibg=NONE   gui=underline
     " hi IncSearch        guifg=fg   guibg=bg     gui=underline,reverse
@@ -358,9 +363,10 @@ fun! Color_Modify()
 "         " au InsertLeave * hi cursor guifg=#111   guibg=#fc3 gui=bold,reverse
 "     endif
 " aug END "}}}
-endfun "}}}
+endfun "}}} 
+"}}}
 "colorscheme
-if has("gui_running") 
+if has("gui_running") "{{{
     "let $colorscheme_n="desert"
     "let $colorscheme_n="molokai"
     "let $colorscheme_n="pyte"
@@ -374,9 +380,9 @@ if has("gui_running")
 else
     let $colorscheme_n="desert"
     colorscheme $colorscheme_n
-endif
+endif "}}}
 map <silent><leader>cs :call Toggle_colorscheme()<cr>
-fun! Toggle_colorscheme()
+fun! Toggle_colorscheme() "{{{
 " DONE 110530  change the colorsheme with list in folder
 let cs_list=[
 \'aiseered       ', 'anotherdark    ', 'autumn         ', 'autumnleaf     ',
@@ -412,20 +418,20 @@ let cs_list=[
             return
         endif
     endfor
-endf
+endf "}}}
 "menu
-if has("gui_running")
+if has("gui_running") "{{{
     source $VIMRUNTIME/delmenu.vim
     source $VIMRUNTIME/menu.vim
      "Always show file types in menu
     let do_syntax_sel_menu=1
-endif
+endif "}}}
 "statusline
 set statusline=%2*%n.%*[%03l,%02c,%P]%<%F%1*%m%r%*\%=[b%b][%W%Y,%{&enc},%{&ff}]
 "hi User1 ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE gui=bold,underline
 "}}}
 "Term Color "{{{
-if has("gui_running")
+if has("gui_running") "{{{
 else
   set ambiwidth=single
   hi colorcolumn ctermbg=5 
@@ -440,6 +446,7 @@ else
       autocmd VimLeave * :!echo -ne "\e]12;green\007"
     endif
 endif "}}}
+"}}}
 
 " 1.2.Misc_Settin
 "{{{"Misc Editing Options
@@ -489,11 +496,11 @@ set switchbuf=useopen
 set spelllang=en
 set nospell
 
-if has('unnamedplus')
+if has('unnamedplus') "{{{
     set clipboard+=unnamedplus "All system
 else
     set clipboard+=unnamed "System clipboard
-endif
+endif "}}}
 
 "auto complete with omni
 "set ofu=syntaxcomplete#Complete
@@ -521,7 +528,7 @@ set cscopetag               " When using :tag, <C-]>, or "vim -t", try cscope:
 
 ""}}}
 "VIM73 "{{{
-if v:version >= 703
+if v:version >= 703 "{{{
     set colorcolumn=79
 
     if !isdirectory(expand('~/.vim_undo'))
@@ -532,15 +539,16 @@ if v:version >= 703
 
 
     " always SHOW conceal text
-    set conceallevel=3
+    set conceallevel=2
 
     " conceal text in the cursor line in the modes
     "n Normal v Visual i Insert c Command
-    set concealcursor=ncv
+    set concealcursor=c
     "syntax match Entity "\[" conceal cchar=[
     "syntax match Entity "\]" conceal cchar=]
-    hi Conceal guifg=fg guibg=black
+    hi Conceal guifg=bg guibg=bg
 endif "}}}
+"}}}
 
 " 2.AutoCmd_Group{{{1
 aug vimrc_GuiEnter "{{{
@@ -548,14 +556,14 @@ aug vimrc_GuiEnter "{{{
     au GuiEnter * set t_vb=
     au GuiEnter * winpos 331 0
     au GuiEnter * winsize 80 100
-aug END
+aug END "}}}
 
 aug vimrc_misc "{{{
     au! vimrc_misc
     au Swapexists * let v:swapchoice='e'
-aug END
+aug END "}}}
 
-aug vimrc_Buffer
+aug vimrc_Buffer "{{{
     au! vimrc_Buffer
 
     "will cause conflict with help files
@@ -918,6 +926,7 @@ fun! Start_terminal() "{{{
     endif
 endf "}}}
 "}}}
+nmap <F9> :options<CR>
 """session save /load "{{{
 nmap <s-F12> :call SaveSession()<CR>
 "nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
@@ -972,16 +981,18 @@ map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
 " map <silent><leader>vgv :call Split_if("v") \| e ~/Documents/git/.vimrc<CR>
 map <silent><leader>vdv :call DiffOrig("~/.vimrc","~/Documents/git/.vimrc")<cr>
 map <leader>vd :e ~/.vim/ <CR>
-if has("unix")
+if has("unix") "{{{
     map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
     map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
     map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
     map <silent><leader>va2 :call Split_if("") \| e ~/.aria2/aria2.conf<CR>
     map <silent><leader>vax :call Split_if("") \| e ~/.axelrc<CR>
     map <silent><leader>vsp :call Split_if("s",10) \|e ~/Documents/vimwiki/Ref/ShuangPin.vwk<CR>
+    map <silent><leader>vwv :call Split_if("") \|e /media/sda5/Documents/Variables/.vimrc<CR>
 else
     map <silent><leader>vsp :call Split_if("s",10) \|e d:/Documents/vimwiki/Ref/ShuangPin.vwk<CR>
-endif
+    map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
+endif "}}}
 "reloading of the .vimrc
 map <leader>vr :so ~/.vimrc<CR>
 "map <leader>RR :so ~/.vimrc<CR>
@@ -1025,7 +1036,7 @@ endfun
 map <silent> <leader>dd :call Toggle_diff()<CR>
 map <silent> <leader>DD :call Toggle_diff()<CR>
 "can't use it in the map due to some weird reason.
-fun! Toggle_diff()
+fun! Toggle_diff() "{{{
     if &diff
         diffoff
         set foldmethod=marker
@@ -1035,7 +1046,7 @@ fun! Toggle_diff()
         diffthis
         echohl WarningMsg | echo "diffmode On" | echohl None
     endif
-endfun
+endfun "}}}
 
 set diffopt=filler,vertical,foldcolumn:1
 nmap <leader>da :1,$+1diffget<cr>
@@ -1045,7 +1056,7 @@ map <silent> <leader>do :call DiffOrig()<CR>
 command! DiffOrig win 151 100 | vert new | setl bt=nofile | r # | 0d_
             \ | diffthis | setl noma
             \ | wincmd p | diffthis
-function! DiffOrig(...)
+function! DiffOrig(...) "{{{
     if exists("a:1") 
         exec "e ".a:1
     endif
@@ -1062,7 +1073,7 @@ function! DiffOrig(...)
     diffthis
     wincmd p | diffthis
 
-endfunction
+endfunction "}}}
 "}}}
 "Toggle Folding And Foldmethod  "{{{
 "NOTE: 'n_==' is useful to indent folded text
@@ -1104,11 +1115,11 @@ map <silent><leader>fm :if &foldmethod == 'marker'
             \\| endif <CR>
  "}}}
 "Misc Option Toggle "{{{
-if has("unix")
+if has("unix") "{{{
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
 else
 set listchars=tab:\|-,trail:-,extends:>,precedes:<
-endif
+endif "}}}
 map <Leader>li :set list! list?<CR>
 map <silent><leader>nn :if  &nu \| setl rnu \| elseif &rnu \| setl nornu
             \ \| else \| setl nu\| endif <CR>
@@ -1164,7 +1175,7 @@ nmap <leader>11 :filetype detect \| syntax enable \| call Color_Modify() <CR>
 nmap <leader>1me  :emenu Syntax.
 "nnoremap <silent> <leader>1 :nohl<CR>
 " DONE: 110519 clear all hlsearch without warningmsg
-nnoremap <silent> <C-L> :nohl<CR><C-l>:s/^^//e<cr>
+nnoremap <silent> <c-l> :let @/=''\|redraw<CR>
 "}}}
 " 4.2.Window_control_mapping
 "Window Mapping  <C-W> "{{{
@@ -1389,7 +1400,7 @@ vnoremap <leader>? "sy<c-c>/<c-r>s\(\)\@!<left><left><left><left><left>
 "nnoremap # n
 "nnoremap * n
 "mousewheel go around
-if v:version < 703
+if v:version < 703 "{{{
     nmap <silent> <m-MouseDown> zhzhzh
     nmap <silent> <m-MouseUp> zlzlzl 
     vmap <silent> <m-MouseDown> zhzhzh
@@ -1419,7 +1430,7 @@ else
     nnoremap <c-scrollwheelup> <<
     vnoremap <c-scrollwheeldown> >gv
     vnoremap <c-scrollwheelup> <gv
-endif
+endif "}}}
 
 "}}}
 " 4.4.Edit_and_formatting
@@ -1476,13 +1487,12 @@ nnoremap <leader>e! ciw<!-- <C-r>" --><ESC>
 vnoremap <Leader>e! c<!-- <C-r>" --><ESC>`[
 "}}}
 "TODOTHINS "{{{
-nnoremap <expr><leader>et (Is_whiteline() ? "A" : "o" ) ."\" TODO: "
-nnoremap <expr><leader>ef (Is_whiteline() ? "A" : "o" ) ."\"FIXME: "
-" nnoremap <expr><leader>ew (Is_whiteline() ? "A" : "o" ) ."\"WTFIX: "
-nnoremap <expr><leader>ex (Is_whiteline() ? "A" : "o" ) ."\"  XXX: "
-function! Is_whiteline()
+nnoremap <expr><leader>et (Is_WLine() ? "A" : "o" ) ."\" TODO: "
+nnoremap <expr><leader>ef (Is_WLine() ? "A" : "o" ) ."\"FIXME: "
+nnoremap <expr><leader>ex (Is_WLine() ? "A" : "o" ) ."\"  XXX: "
+function! Is_WLine() "{{{
     return getline('.')=~'^\s*$'
-endfunction
+endfunction "}}}
 
 "}}}
 "Formating "{{{
@@ -1492,10 +1502,15 @@ nmap <leader>lr :right<CR>
 nmap <leader>lc :center<CR>
 
 "make vimwiki list
-nm <leader>l1 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1* /e<CR>
-nm <leader>l2 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1# /e<CR>
-nm <leader>l3 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\1- /e<CR>
-nm <leader>l4 :s/^\(\s*\)\%([*#-]\s\)\=\ze.*/\11. /e<CR><c-l>
+nm <leader>l1 :call g:sub_list('*')<cr>
+nm <leader>l2 :call g:sub_list('#')<cr>
+nm <leader>l3 :call g:sub_list('-')<cr>
+nm <leader>l4 :call g:sub_list('1.')<cr>
+function! g:sub_list(sym)
+    let line=getline('.')
+    let m=substitute(line,'^\(\s*\)\%([*#-]\s\|\%(\d\.\)\+\s\)\=\ze.*','\1'.a:sym.' ','')
+    call setline(line('.'),m)
+endfunction
 
 nnoremap <leader>l=2 yyPVr=jyypVr=
 nnoremap <leader>l*2 yyPVr*jyypVr*
@@ -1638,20 +1653,20 @@ imap <expr><c-j>  pumvisible() ? neocomplcache#smart_close_popup() :
 smap <expr><c-j>  pumvisible() ? neocomplcache#smart_close_popup() :
             \ "\<Plug>(neocomplcache_snippets_jump)"
 
-inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-g> neocomplcache#undo_completion()
 
 inoremap <expr><CR> pumvisible() ?
             \ neocomplcache#smart_close_popup() : "\<CR>"
 
-inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr><s-TAB>  pumvisible() ? "\<C-p>" : "\<s-TAB>"
+inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><s-TAB> pumvisible() ? "\<C-p>" : "\<s-TAB>"
 "<C-h>, <BS>: close popup and delete backword char.
 inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
 inoremap <expr><BS> pumvisible() ? neocomplcache#smart_close_popup()."\<C-h>" : "\<C-h>"
-inoremap <expr><C-y>  neocomplcache#close_popup()
-inoremap <expr><C-e>  neocomplcache#cancel_popup()
+inoremap <expr><C-y> neocomplcache#close_popup()
+inoremap <expr><C-e> neocomplcache#cancel_popup()
 
-
+"{{{
 aug omni_compl "{{{
   au! omni_compl
     " Enable omni completion.
@@ -1660,17 +1675,17 @@ aug omni_compl "{{{
     autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
     autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
     autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-aug END
+aug END "}}}
 
-    " Enable heavy omni completion.
-    if !exists('g:neocomplcache_omni_patterns')
-            let g:neocomplcache_omni_patterns = {}
-    endif
-    let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-    "autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-    let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-    let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
-    let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
+" Enable heavy omni completion.
+if !exists('g:neocomplcache_omni_patterns')
+        let g:neocomplcache_omni_patterns = {}
+endif
+let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+let g:neocomplcache_omni_patterns.c = '\%(\.\|->\)\h\w*'
+let g:neocomplcache_omni_patterns.cpp = '\h\w*\%(\.\|->\)\h\w*\|\h\w*::'
 "}}}
 let g:neocomplcache_text_mode_filetypes = {"vimwiki":1,"vim":1}
 let g:neocomplcache_disable_caching_file_path_pattern="fuf"
@@ -1679,9 +1694,9 @@ let g:neocomplcache_disable_caching_file_path_pattern="fuf"
 map <Leader>ww <Plug>VimwikiIndex
 
 let wiki_1 = {}
-    let wiki_1.path = '~/Documents/vimwiki'
-    let wiki_1.ext = '.vwk'
-    let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
+let wiki_1.path = '~/Documents/vimwiki'
+let wiki_1.ext = '.vwk'
+let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
 let g:vimwiki_list = [wiki_1]
 
@@ -1693,8 +1708,8 @@ let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
                         \,py,sh
                         \,js,css,html,php
                         \,vim,vba'
-let g:vimwiki_conceallevel=3
-" let g:vimwiki_lower="a-z0-9\u0430-\u044f"
+let g:vimwiki_conceallevel=2
+let g:vimwiki_lower="a-z0-9\u0430-\u044f"
 
 let g:vimwiki_use_mouse =1
 let g:vimwiki_fold_lists=1
@@ -1808,12 +1823,12 @@ let g:user_zen_expandabbr_key = '<c-e>e'    "e
 let g:user_zen_expandword_key = '<C-E>E'    "e
     "'user_zen_balancetaginward_key'        "d
     "'user_zen_balancetagoutward_key'       "D
-let g:user_zen_next_key='<c-e>j'            "n
-let g:user_zen_prev_key='<c-e>k'            "p
+    let g:user_zen_next_key='<c-e>j'            "n
+    let g:user_zen_prev_key='<c-e>k'            "p
     "'user_zen_imagesize_key'               "i
     "'user_zen_togglecomment_key'           "/
     "'user_zen_splitjointag_key'            "j
-let g:user_zen_removetag_key='<c-e>d'       "k
+    let g:user_zen_removetag_key='<c-e>d'       "k
     "'user_zen_anchorizeurl_key'            "a
     "'user_zen_anchorizesummary_key'        "A
 map <leader>tt :CommandT<CR>
@@ -1858,7 +1873,6 @@ endfunction "}}}
 command! -nargs=* LastChangeUpdate call LastChangeUpdate() <args>
 "}}}
 "ACK "{{{
-command! -nargs=* -complete=file Ack call Ack(<q-args>)
 function! Ack(args) "{{{
     let grepprg_bak=&grepprg
     set grepprg=ack-grep\ -a\ -H\ --nocolor\ --nogroup
@@ -1866,4 +1880,5 @@ function! Ack(args) "{{{
     botright copen
     let &grepprg=grepprg_bak
 endfunction "}}}
+command! -nargs=* -complete=file Ack call Ack(<q-args>)
 "}}}
