@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-07-12
+"  Last Change: 2011-07-31
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -62,14 +62,14 @@ Bundle 'tomtom/tcomment_vim'
 "map cb :TCommentBlock<cr>
 " map ci :TCommentInline<cr>
 "map cr :TCommentRight<cr>
-
+Bundle 'scrooloose/nerdtree'
 "testing
 "Bundle 'ujihisa/quickrun'
 "Bundle 'tomtom/checksyntax_vim'
 "Bundle 'Lokaltog/vim-easymotion'
 "let g:EasyMotion_leader_key = 'f'
 
-
+" Bundle "mileszs/ack.vim"
 "" vim-scripts repos
 "Bundle 'rails.vim'
 "Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
@@ -102,6 +102,7 @@ Bundle 'godlygeek/tabular'
 Bundle 'scrooloose/syntastic'
 Bundle 'fs111/pydoc.vim'
 
+Bundle 'vim-scripts/sketch.vim'
 set rtp+=~/.vim/vimwiki/
 " my script
 " set rtp+=~/.vim/git/ColorV
@@ -147,6 +148,8 @@ set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
 else
 " set fileformat=dos
 set fileformats=unix,dos
+set termencoding=utf-8
+set fileencodings=utf-8,ucs-bom,shift-jis,gb18030,gbk,gb2312,cp936,latin-1
 endif
 
 if has("win32")
@@ -366,7 +369,7 @@ fun! Color_Modify() "{{{
 endfun "}}} 
 "}}}
 "colorscheme
-if has("gui_running") "{{{
+" if has("gui_running") "{{{
     "let $colorscheme_n="desert"
     "let $colorscheme_n="molokai"
     "let $colorscheme_n="pyte"
@@ -377,10 +380,10 @@ if has("gui_running") "{{{
     " let $colorscheme_n="buttercream"
     colorscheme $colorscheme_n
     call Color_Modify()
-else
-    let $colorscheme_n="desert"
-    colorscheme $colorscheme_n
-endif "}}}
+" else
+    " let $colorscheme_n="desert"
+    " colorscheme $colorscheme_n
+" endif "}}}
 map <silent><leader>cs :call Toggle_colorscheme()<cr>
 fun! Toggle_colorscheme() "{{{
 " DONE 110530  change the colorsheme with list in folder
@@ -429,16 +432,13 @@ endif "}}}
 "statusline
 set statusline=%2*%n.%*[%03l,%02c,%P]%<%F%1*%m%r%*\%=[b%b][%W%Y,%{&enc},%{&ff}]
 "hi User1 ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE gui=bold,underline
-"}}}
 "Term Color "{{{
-if has("gui_running") "{{{
-else
-  set ambiwidth=single
-  hi colorcolumn ctermbg=5 
-  " 防止退出时终端乱码
-  " 这里两者都需要。只前者标题会重复，只后者会乱码
-  set t_fs=(B
-  set t_IE=(B
+if !has("gui_running") "{{{
+    set ambiwidth=single
+    " 防止退出时终端乱码
+    " 这里两者都需要。只前者标题会重复，只后者会乱码
+    set t_fs=(B
+    set t_IE=(B
     if &term =~ "xterm"
       silent !echo -ne "\e]12;Grey\007"
       let &t_SI="\e]12;RoyalBlue1\007"
@@ -473,9 +473,11 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-set wrapscan
+" set wrapscan
+set nowrapscan
 
-set comments=n:>,fb:-,fb:*
+set comments=n://,fb:-
+" set comments=n:>,fb:-,fb:*
 set formatoptions+=1orn2mMq
 set formatlistpat="^\s*[(\d)*#-]\+[\]:.)}\t ]\s*"
 "set fo-=r         " Do not automatically insert a comment leader after an enter
@@ -499,7 +501,11 @@ set nospell
 if has('unnamedplus') "{{{
     set clipboard+=unnamedplus "All system
 else
-    set clipboard+=unnamed "System clipboard
+	if has("unix")
+	    set clipboard+=unnamed "System clipboard
+	else
+		set clipboard=
+	endif
 endif "}}}
 
 "auto complete with omni
@@ -549,7 +555,6 @@ if v:version >= 703 "{{{
     hi Conceal guifg=bg guibg=bg
 endif "}}}
 "}}}
-
 " 2.AutoCmd_Group{{{1
 aug vimrc_GuiEnter "{{{
     au! vimrc_GuiEnter
@@ -560,7 +565,7 @@ aug END "}}}
 
 aug vimrc_misc "{{{
     au! vimrc_misc
-    au Swapexists * let v:swapchoice='e'
+    " au Swapexists * let v:swapchoice='e'
 aug END "}}}
 
 aug vimrc_Buffer "{{{
@@ -589,7 +594,9 @@ aug END "}}}
 aug Filetypes "{{{
     au! Filetypes
     "au FileType text,vimwiki setlocal tw=76
+    au BufRead,BufNew,BufNewFile *.j set ft=jass
     au FileType snippet setlocal expandtab
+    au FileType jass set wrap
     "endif
 aug END "}}}
 aug htmls "{{{
@@ -765,12 +772,14 @@ iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 nmap <leader>hh :h <C-R>=expand("<cword>")<CR><CR>
 nmap <F1> :h <C-R>=expand("<cword>")<CR><CR>
 "map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
-nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
+if has("unix")
+    nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
+endif
 
 "Find "{{{
 "map <s-F2> :FufLine<CR>
-map <s-F2> :Ack <C-R>=expand("<cword>")<CR>
-vnoremap <s-F2> "sy<c-l>:Ack "<c-r>s"
+map <c-F2> :Ack <C-R>=expand("<cword>")<CR>
+vnoremap <c-F2> "sy<c-l>:Ack "<c-r>s"
 
 " replace word under cursor
 nmap <F2> :<C-\>eRead_visual("sw")<CR><Left><Left><Left>
@@ -800,16 +809,23 @@ map <F3> :Unite buffer<CR>
 
 "noremap <F4> :NERDTreeToggle "expand('%:p:h')"<CR>
 "nmap <F4> :FufFile<CR>
+if has("unix")
 nmap <F4> :CommandT<CR>
-map <s-F4> :Explore<CR>
+else
+nmap <F4> :NERDTree %:p:h<CR>
+endif
+map <S-F4> :Vexplore<CR>
 
-" ...3
+map <C-F4> :Unite file<cr>
 "it have errors ,many
 "nmap <silent> <F5> :QuickRun<CR>
 "map <silent> <s-F5> :VimShellPop<cr>
+if has("unix") && has("gui_running")
 nmap <s-F5> :SCCompileRun<cr>
-if has("unix")
 call SingleCompile#ChooseCompiler('html', 'firefox')
+endif
+if has("win32")
+nmap <c-F5> :! @d:\Dev\MSYS\bin\rxvt -tn msys -sl 3000 +sb -fn "Dejavu Sans Mono-18" -fg white -bg black  -sr -e d:\Dev\MSYS\bin\bash.exe --login -i<cr> 
 endif
 " call SingleCompile#ChooseCompiler('vim', 'source')
 " call SingleCompile#SetCompilerTemplate('vim', 'source', 'source', 'source', '', '')
@@ -828,26 +844,33 @@ function! Exe_cur_script(mode) "{{{
 if expand("%") == ""
     return -1
 endif
+
 "let priv=input("Sudo:s|Normal:n\n")
 "if priv=="s"
-    "let b_cmd="!sudo "
+    "let bang="!sudo "
 "elseif priv=="n" 
-    "let b_cmd="!"
+    "let bang="!"
 "else
     "echo   "no correct input"
     "return -1
 "endif
 
-let b_cmd="!"
-let browser = "firefox "
+let bang="!"
+if has("unix")
+    let browser = "firefox "
+    let runner="gnome-open "
+    let err_log=" 2>&1 | tee /tmp/.runtmp"
+else
+    "add to "~/shortcuts" and $PATH
+    let browser ="firefox.lnk "
+    let runner="start "
+    let err_log=" "
+endif
 let term = "gnome-terminal "
-let runner="gnome-open "
-let win_runner="start "
-let err_log=" 2>&1 | tee /tmp/.runtmp"
 
 if a:mode=="norm"
 	" FIXME: error of the file name wrapping ?
-    let file=" ".expand('%:p').""
+    let file=" \"".expand('%:p')."\""
 elsei a:mode=="visual"
     "let firstLine = line("'<")
     "let lastLine = line("'>")
@@ -855,21 +878,26 @@ elsei a:mode=="visual"
     "let rng=""
     let rng=getline('.')
 endif
+
 if !exists("b:current_syntax")
     if has("unix") 
-        exec b_cmd.runner.file
+        exec bang.runner.file
     else  
-        exec b_cmd.file 
+        exec bang.file 
     endif
     return 0
 endif
 if exists("b:current_syntax")
     let syn=b:current_syntax
     if syn=="python" 
-        exec b_cmd."python -d ".file.err_log
+        exec bang."python -d ".file.err_log
+    elseif syn=="ruby" 
+        exec bang."ruby -d ".file.err_log
+    elseif syn=="perl" 
+        exec bang."perl -D ".file.err_log
     elsei syn=~'^vim$'
         if a:mode=="norm"
-            exec "so ".file
+            exec "so .file
         elseif a:mode=="visual"
             "for item in rng_list
                 "let rng.= item." \| "
@@ -878,28 +906,25 @@ if exists("b:current_syntax")
             exec rng
         endif
     elsei syn=~'html'
-        exec b_cmd.browser.file
+        exec bang.browser.file
     elsei syn =~'^\(sh\|expect\|bash\)$'
         if a:mode=="norm"
-            exec b_cmd.term." -x bash ".file
+            exec bang.term." -x bash ".file
         else
             "for item in rng_list
                 "let rng.= item." && "
             "endfo
             "let rng.= "sleep 1"
-            exec b_cmd.term." -x bash -c ".rng
+            exec bang.term." -x bash -c ".rng
         endif
     elsei syn=~'^bat$'
-        exec b_cmd.win_runner."cmd -e".file 
+        exec bang.runner."cmd -e".file 
     endif
-
-elsei has("unix") 
-    exec b_cmd.runner.file
 else  
-    exec b_cmd.win_runner.file 
+    exec bang.runner.file 
 endif
 
-endf "}}}
+endfunction "}}}
 
 map <F6> :TagbarToggle<CR>
 
@@ -921,20 +946,38 @@ endf "}}}
 fun! Start_terminal() "{{{
     if has("win32")
         exec "!start cmd '%:p:h'"
+        " exec "! @d:\Dev\MSYS\bin\rxvt -tn msys -sl 3000 -fn Fixedsys -fg white -bg black -sr -e d:\Dev\MSYS\bin\bash.exe --login -i"
+        
     else
         exec "!gnome-terminal --working-directory='%:p:h'"
     endif
 endf "}}}
 "}}}
-nmap <F9> :options<CR>
+nmap <F9>  :options<CR>
+nmap <F10> :call ToggleSketch()<CR>
 """session save /load "{{{
-nmap <s-F12> :call SaveSession()<CR>
+nmap <s-F12> :call SaveSession("")<CR>
+nmap <c-F12> :call SaveSession("in")<CR>
 "nmap <s-F12> :1,$bd <bar> so ~/.vim/sessions/
 nmap <F12> :Unite session<cr>
+aug sessionload
+    au!
+    " au sessionloadpost * so ~/.vimrc 
+aug END
 set sessionoptions=buffers,curdir,help,tabpages,winsize,resize
-function! SaveSession() "{{{
+function! SaveSession(text) "{{{
   wall
-    let ses = strftime("%y%m%d_%H%M%S")
+    let time=strftime("%y%m%d_%H%M%S")
+    if exists("a:text") && a:text=="in"
+    	let ses=input("Please Input your session name:")
+    	if empty(ses)
+            echo "Invalid Input name. Stopped!" 
+            return
+        endif
+            let ses = time."_".ses
+    else
+        let ses = time
+    endif
     try
         exe "mksession! "."~/.vim/sessions/".ses
         echomsg "mks success! session file : ".ses
@@ -980,6 +1023,7 @@ nnoremap <m-x> <c-a>
 map <silent><leader>vv :call Split_if("") \| e ~/.vimrc<CR>
 " map <silent><leader>vgv :call Split_if("v") \| e ~/Documents/git/.vimrc<CR>
 map <silent><leader>vdv :call DiffOrig("~/.vimrc","~/Documents/git/.vimrc")<cr>
+map <silent><leader>vdw :call DiffOrig("~/.vimrc","/media/sda5/Documents/Variables/.vimrc")<cr>
 map <leader>vd :e ~/.vim/ <CR>
 if has("unix") "{{{
     map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
@@ -1011,12 +1055,20 @@ fun! Split_if(...) "{{{
     endif
     if a:0
         if a:1 =="v"
-            call ChkWin(0)
+            " call ChkWin(0)
             exe "vsplit"
+            if exists("a:2")
+                    "echoe a:2
+                        exe "vertical resize ".a:2
+            endif
         elseif a:1=="t"
             exe "tabnew"
         elseif a:1=="s"
             exe "to split"
+            if exists("a:2")
+                    "echoe a:2
+                    exe "resize ".a:2
+            endif
         elseif a:1==""
             return
         endif
@@ -1024,10 +1076,6 @@ fun! Split_if(...) "{{{
         return
     endif
 
-    if exists("a:2")
-            "echoe a:2
-    	exe "resize ".a:2
-    endif
 
 endfun
 "}}}
@@ -1061,6 +1109,7 @@ function! DiffOrig(...) "{{{
         exec "e ".a:1
     endif
     let syn=&syntax
+    call ChkWin(0)
     call Split_if("v")
     if !exists("a:2")
         enew | setl bt=nofile  | r # | 0d_ 
@@ -1115,11 +1164,15 @@ map <silent><leader>fm :if &foldmethod == 'marker'
             \\| endif <CR>
  "}}}
 "Misc Option Toggle "{{{
-if has("unix") "{{{
+if has("unix") && has("gui_running") "{{{
+    "Error with MSYS
+    " if &term==cygwin
+
 set listchars=tab:▸\ ,trail:·,extends:#,nbsp:·
 else
 set listchars=tab:\|-,trail:-,extends:>,precedes:<
 endif "}}}
+
 map <Leader>li :set list! list?<CR>
 map <silent><leader>nn :if  &nu \| setl rnu \| elseif &rnu \| setl nornu
             \ \| else \| setl nu\| endif <CR>
@@ -1457,6 +1510,8 @@ nmap <m-c><m-c> ~h
 "trim whitespace
 nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
 
+nnoremap <leader>scm :%s//\r/g<CR>
+
 nnoremap > >>
 nnoremap < <<
 vnoremap > >gv
@@ -1478,6 +1533,7 @@ nnoremap <Leader>e} ciw{{{<C-r>"}}}<ESC>
 vnoremap <Leader>e} c{{{<C-r>"}}}<ESC>`[
 nnoremap <Leader>e] ciw[[<C-r>"]]<ESC>
 vnoremap <Leader>e] c[[<C-r>"]]<ESC>`[
+nnoremap <Leader>el ^v$c[[<C-r>"]]<ESC>`[
 
 "php
 nnoremap <leader>ep ciw<?php <C-r>" ?><ESC>
@@ -1579,8 +1635,9 @@ let g:unite_source_directory_mru_time_format="(%m-%d %H:%M)"
 let g:unite_enable_split_vertically=0
 "let g:unite_winwidth=30
 "let g:unite_winheight=15
-
-"let g:unite_session_path="~/.vim_sessions/"
+" if has("win32") || has("win64")
+"     let g:unite_session_path = $HOME . "/.vim/sessions"
+" endif
 
 aug vimrc_Unite "{{{
   au! vimrc_Unite
@@ -1694,7 +1751,12 @@ let g:neocomplcache_disable_caching_file_path_pattern="fuf"
 map <Leader>ww <Plug>VimwikiIndex
 
 let wiki_1 = {}
+"error with gvim start in MSYS
+if &term=='cygwin'
+let wiki_1.path = '/d/Documents/vimwiki'
+else
 let wiki_1.path = '~/Documents/vimwiki'
+endif
 let wiki_1.ext = '.vwk'
 let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
@@ -1705,8 +1767,10 @@ let g:vimwiki_menu = ""
 let g:vimwiki_browsers=['firefox']
 "let g:vimwiki_html_header_numbering = 2
 let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
-                        \,py,sh
+                        \,py,sh,rb,pl,lua,go
+                        \,c,cpp,h
                         \,js,css,html,php
+                        \,j
                         \,vim,vba'
 let g:vimwiki_conceallevel=2
 let g:vimwiki_lower="a-z0-9\u0430-\u044f"
@@ -1843,7 +1907,7 @@ let g:gundo_right = 1
 nnoremap <leader>uu :GundoToggle<CR>
 noremap <leader>cc :TComment<cr>
 
-noremap <c-F5> :call so_that#show()<cr>
+" noremap <c-F5> :call so_that#show()<cr>
 "{{{
 let g:neocomplcache_snippets_dir="~/.vim/my_snips/snippets_complete/"
 map <leader>se :sp\|NeoComplCacheEditSnippets<cr>
@@ -1872,13 +1936,128 @@ function! LastChangeUpdate() "{{{
 endfunction "}}}
 command! -nargs=* LastChangeUpdate call LastChangeUpdate() <args>
 "}}}
-"ACK "{{{
+"ACK "{{{Searching:
+"   -i, --ignore-case     Ignore case distinctions in PATTERN
+"   --[no]smart-case      Ignore case distinctions in PATTERN,
+"                         only if PATTERN contains no upper case
+"                         Ignored if -i is specified
+"   -v, --invert-match    Invert match: select non-matching lines
+"   -w, --word-regexp     Force PATTERN to match only whole words
+"   -Q, --literal         Quote all metacharacters; PATTERN is literal
+" 
+" Search output:
+"   --line=NUM            Only print line(s) NUM of each file
+"   -l, --files-with-matches
+"                         Only print filenames containing matches
+"   -L, --files-without-matches
+"                         Only print filenames with no matches
+"   -o                    Show only the part of a line matching PATTERN
+"                         (turns off text highlighting)
+"   --passthru            Print all lines, whether matching or not
+"   --output=expr         Output the evaluation of expr for each line
+"                         (turns off text highlighting)
+"   --match PATTERN       Specify PATTERN explicitly.
+"   -m, --max-count=NUM   Stop searching in each file after NUM matches
+"   -1                    Stop searching after one match of any kind
+"   -H, --with-filename   Print the filename for each match
+"   -h, --no-filename     Suppress the prefixing filename on output
+"   -c, --count           Show number of lines matching per file
+"   --column              Show the column number of the first match
+" 
+"   -A NUM, --after-context=NUM
+"                         Print NUM lines of trailing context after matching
+"                         lines.
+"   -B NUM, --before-context=NUM
+"                         Print NUM lines of leading context before matching
+"                         lines.
+"   -C [NUM], --context[=NUM]
+"                         Print NUM lines (default 2) of output context.
+" 
+"   --print0              Print null byte as separator between filenames,
+"                         only works with -f, -g, -l, -L or -c.
+" 
+" File presentation:
+"   --pager=COMMAND       Pipes all ack output through COMMAND.  For example,
+"                         --pager="less -R".  Ignored if output is redirected.
+"   --nopager             Do not send output through a pager.  Cancels any
+"                         setting in ~/.ackrc, ACK_PAGER or ACK_PAGER_COLOR.
+"   --[no]heading         Print a filename heading above each file's results.
+"                         (default: on when used interactively)
+"   --[no]break           Print a break between results from different files.
+"                         (default: on when used interactively)
+"   --group               Same as --heading --break
+"   --nogroup             Same as --noheading --nobreak
+"   --[no]color           Highlight the matching text (default: on unless
+"                         output is redirected, or on Windows)
+"   --[no]colour          Same as --[no]color
+"   --color-filename=COLOR
+"   --color-match=COLOR
+"   --color-lineno=COLOR  Set the color for filenames, matches, and line numbers.
+"   --flush               Flush output immediately, even when ack is used
+"                         non-interactively (when output goes to a pipe or
+"                         file).
+" 
+" File finding:
+"   -f                    Only print the files found, without searching.
+"                         The PATTERN must not be specified.
+"   -g REGEX              Same as -f, but only print files matching REGEX.
+"   --sort-files          Sort the found files lexically.
+"   --invert-file-match   Print/search handle files that do not match -g/-G.
+"   --show-types          Show which types each file has.
+" 
+" File inclusion/exclusion:
+"   -a, --all-types       All file types searched;
+"                         Ignores CVS, .svn and other ignored directories
+"   -u, --unrestricted    All files and directories searched
+"   --[no]ignore-dir=name Add/Remove directory from the list of ignored dirs
+"   -r, -R, --recurse     Recurse into subdirectories (ack's default behavior)
+"   -n, --no-recurse      No descending into subdirectories
+"   -G REGEX              Only search files that match REGEX
+" 
+"   --perl                Include only Perl files.
+"   --type=perl           Include only Perl files.
+"   --noperl              Exclude Perl files.
+"   --type=noperl         Exclude Perl files.
+"                         See "ack --help type" for supported filetypes.
+" 
+"   --type-set TYPE=.EXTENSION[,.EXT2[,...]]
+"                         Files with the given EXTENSION(s) are recognized as
+"                         being of type TYPE. This replaces an existing
+"                         definition for type TYPE.
+"   --type-add TYPE=.EXTENSION[,.EXT2[,...]]
+"                         Files with the given EXTENSION(s) are recognized as
+"                         being of (the existing) type TYPE
+" 
+"   --[no]follow          Follow symlinks.  Default is off.
+" 
+"   Directories ignored by default:
+"     autom4te.cache, blib, _build, .bzr, .cdv, cover_db, CVS, _darcs, ~.dep,
+"     ~.dot, .git, .hg, _MTN, ~.nib, .pc, ~.plst, RCS, SCCS, _sgbak and .svn
+" 
+"   Files not checked for type:
+"     /~$/           - Unix backup files
+"     /#.+#$/        - Emacs swap files
+"     /[._].*\.swp$/ - Vi(m) swap files
+"     /core\.\d+$/   - core dumps
+" 
+" Miscellaneous:
+"   --noenv               Ignore environment variables and ~/.ackrc
+"   --help                This help
+"   --man                 Man page
+"   --version             Display version & copyright
+"   --thpppt              Bill the Cat
 function! Ack(args) "{{{
     let grepprg_bak=&grepprg
-    set grepprg=ack-grep\ -a\ -H\ --nocolor\ --nogroup
+    if has("unix")
+        set grepprg=ack-grep\ -a\ --nocolor\ --nogroup\ --column\ --break
+    else
+    	" exec "set grepprg=" . "ack// -a// -H// --nocolor// --column"
+        set grepprg=ack\ -a\ --nocolor\ --nogroup\ --column\ --break
+    endif
     execute "silent! grep " . a:args
     botright copen
     let &grepprg=grepprg_bak
+    redraw
 endfunction "}}}
 command! -nargs=* -complete=file Ack call Ack(<q-args>)
 "}}}
