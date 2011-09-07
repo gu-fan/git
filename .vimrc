@@ -22,13 +22,12 @@
 " 1.General_Settings{{{1
 "{{{ Vundle
 "load all bundles
-call pathogen#runtime_append_all_bundles()
 
 set nocompatible               " be iMproved
 filetype off                   " required!
-
-set rtp+=~/.vim/vundle.git/
+set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
+Bundle 'gmarik/vundle'
 " My Bundles here:
 " original repos on github
 Bundle 'tpope/vim-fugitive'
@@ -110,13 +109,10 @@ set rtp+=~/.vim/vimwiki/
 " my script
 " set rtp+=~/.vim/git/ColorV
 if has("unix")
-set rtp+=~/.vim/git/ColorV/
-set rtp+=~/.vim/git/vim-galaxy/
 set rtp+=~/.vim/git/so_that
-else
+endif
 Bundle 'Rykka/ColorV'
 Bundle 'Rykka/vim-galaxy'
-endif
 if v:version<700
     set rtp+=~/.vim/bundle/ColorV/
     set rtp+=~/.vim/bundle/vim-galaxy/
@@ -881,7 +877,7 @@ map <C-F4> :Unite file<cr>
 "map <silent> <s-F5> :VimShellPop<cr>
 if has("unix") && has("gui_running")
 nmap <c-F5> :SCCompileRun<cr>
-call SingleCompile#ChooseCompiler('html', 'firefox')
+" call SingleCompile#ChooseCompiler('html', 'firefox')
 endif
 if has("win32")
 nmap <c-F5> :! @d:\Dev\MSYS\bin\rxvt -tn msys -sl 3000 +sb -fn "Dejavu Sans Mono-18" -fg white -bg black  -sr -e d:\Dev\MSYS\bin\bash.exe --login -i<cr> 
