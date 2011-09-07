@@ -195,9 +195,9 @@ set scrolljump=1
 set nolz
 set display=lastline "show dialog not completely
 set guioptions=gt
-if !has("unix") 
+" if !has("unix") 
     set guioptions-=m
-endif
+" endif
 set guioptions-=T
 "set cuc	"cursorcolumn
 set nocursorline
