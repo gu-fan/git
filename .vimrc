@@ -34,6 +34,8 @@ call vundle#rc()
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
+" Bundle 'tpope/vim-commentary'
+
 Bundle 'Shougo/neocomplcache'
 Bundle 'Shougo/unite.vim'
 Bundle 'tungd/unite-session'
@@ -102,15 +104,22 @@ Bundle 'godlygeek/tabular'
 Bundle 'scrooloose/syntastic'
 Bundle 'fs111/pydoc.vim'
 
+Bundle 'kevinw/pyflakes-vim'
 Bundle 'vim-scripts/sketch.vim'
 set rtp+=~/.vim/vimwiki/
 " my script
 " set rtp+=~/.vim/git/ColorV
 if has("unix")
 set rtp+=~/.vim/git/ColorV/
+set rtp+=~/.vim/git/vim-galaxy/
 set rtp+=~/.vim/git/so_that
 else
-Bundle 'rykka/ColorV'
+Bundle 'Rykka/ColorV'
+Bundle 'Rykka/vim-galaxy'
+endif
+if v:version<700
+    set rtp+=~/.vim/bundle/ColorV/
+    set rtp+=~/.vim/bundle/vim-galaxy/
 endif
 filetype plugin indent on     " required!
 
@@ -129,7 +138,7 @@ filetype plugin indent on
 set browsedir=buffer
 set history=255
 " Tell vim to remember certain things when we exit
-set viminfo='100,\"30,:30,s10
+set viminfo='100,\"30,:30,s10,!
 "Set to auto read when a file is changed from the outside
 set autoread
 set autowrite
@@ -186,7 +195,9 @@ set scrolljump=1
 set nolz
 set display=lastline "show dialog not completely
 set guioptions=gt
-set guioptions-=m
+if !has("unix") 
+    set guioptions-=m
+endif
 set guioptions-=T
 "set cuc	"cursorcolumn
 set nocursorline
@@ -433,19 +444,25 @@ endif "}}}
 set statusline=%2*%n.%*[%03l,%02c,%P]%<%F%1*%m%r%*\%=[b%b][%W%Y,%{&enc},%{&ff}]
 "hi User1 ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE gui=bold,underline
 "Term Color "{{{
-if !has("gui_running") "{{{
-    set ambiwidth=single
-    " 防止退出时终端乱码
-    " 这里两者都需要。只前者标题会重复，只后者会乱码
-    set t_fs=(B
-    set t_IE=(B
-    if &term =~ "xterm"
-      silent !echo -ne "\e]12;Grey\007"
-      let &t_SI="\e]12;RoyalBlue1\007"
-      let &t_EI="\e]12;Grey\007"
-      autocmd VimLeave * :!echo -ne "\e]12;green\007"
-    endif
-endif "}}}
+" if !has("gui_running") "{{{
+"     set ambiwidth=single
+"     " 防止退出时终端乱码
+"     " 这里两者都需要。只前者标题会重复，只后者会乱码
+"     set t_fs=(B
+"     set t_IE=(B
+"     if &term =~ "xterm"
+"     	if &background=="light"
+"             silent !echo -ne "\e]12;Black\007"
+"             let &t_SI="\e]12;Sienna\007"
+"             let &t_EI="\e]12;Black\007"
+"         else
+"             silent !echo -ne "\e]12;Ivory\007"
+"             let &t_SI="\e]12;CornflowerBlue\007"
+"             let &t_EI="\e]12;Ivory\007"
+"         endif
+"       autocmd VimLeave * :!echo -ne "\e]12;green\007"
+"     endif
+" endif "}}}
 "}}}
 
 " 1.2.Misc_Settin
@@ -473,8 +490,8 @@ set hlsearch
 set incsearch
 set ignorecase
 set smartcase
-" set wrapscan
-set nowrapscan
+set wrapscan
+" set nowrapscan
 
 set comments=n://,fb:-
 " set comments=n:>,fb:-,fb:*
@@ -591,9 +608,15 @@ aug vimrc_edit "{{{
     autocmd! bufwritepost .vimrc source ~/.vimrc
     autocmd! bufwritepost $colorscheme_n source ~/.vimrc
 aug END "}}}
+function! s:set_with_vimwiki()
+    if empty(&ft)
+        set ft=vimwiki
+    endif
+endfunction
 aug Filetypes "{{{
     au! Filetypes
     "au FileType text,vimwiki setlocal tw=76
+    au BufWinEnter *.txt call s:set_with_vimwiki()
     au BufRead,BufNew,BufNewFile *.j set ft=jass
     au FileType snippet setlocal expandtab
     au FileType jass set wrap
@@ -727,8 +750,32 @@ command! -range=% Thtml <line1>,<line2>!tidy -utf8 -iq -f 'errs.txt' -m
 
 command! Ch7 !chmod 755 '%:p'
 command! Ch6 !chmod 644 '%:p'
-command! Gcc !gcc `pkg-config --cflags --libs gtk+-2.0` '%:p'
+command! Gcc !gcc '%:p' -o %:t:r.o -lm
+"library generator
+command! Gcoo !gcc  -c -fpic % -o %:t:r.o
+command! Gcso !gcc -shared -lc  -o %:t:r.so  %:t:r.o 
+command! Gcsa call Gcso()
+nmap <leader>lbb :call Libcall_this("str","","")
+nmap <leader>lnn :call Libcall_this("int","","")
+function! Libcall_this(type,func,para) "{{{
+    let file=expand('%:p:r').".so"
+    call Gcso()
+    if a:type=="str"
+        echo libcall(file,a:func,a:para)
+    else
+        echo libcallnr(file,a:func,a:para)
+    endif
+endfunction "}}}
+function! Gcso()
+    Gcoo
+    Gcso
+endfunction
+command! Gcld !gcc -o %:t:r % -ldl
+" command! Gcc !gcc `pkg-config --cflags --libs gtk+-2.0` '%:p' -o %:t.o
+command! Gpp !g++ %:p -o %:t.o
 
+" gcc  -c -fpic % -o %:t:r.o
+" gcc -shared -lc  -o %:t:r.so  %:t:r.o 
 " The K stroke
 set keywordprg=":help"
 cabbrev H h
@@ -771,6 +818,7 @@ iab ftime <C-R>=strftime("%y-%m-%d_%H.%M.%S.txt")<CR>
 "nmap <c-f1> :FufHelp<CR>
 nmap <leader>hh :h <C-R>=expand("<cword>")<CR><CR>
 nmap <F1> :h <C-R>=expand("<cword>")<CR><CR>
+map <c-F1> :Pydoc <C-R>=expand("<cword>")<CR><CR>
 "map <F1> :call Split_if("")<CR><Plug>VimwikiIndex
 if has("unix")
     nmap <s-F1> :!man <C-R>=expand("<cword>")<CR> <CR>
@@ -783,6 +831,8 @@ vnoremap <c-F2> "sy<c-l>:Ack "<c-r>s"
 
 " replace word under cursor
 nmap <F2> :<C-\>eRead_visual("sw")<CR><Left><Left><Left>
+nmap <s-F2> :<C-\>eRead_visual(".sw")<CR><Left><Left><Left>
+vnoremap <s-F2> :<C-\>eRead_visual(".s")<CR><Left><Left>
 " replace selection
 vnoremap <F2> "sy<esc><c-l>:<C-\>eRead_visual("s")<CR><Left><Left><Left>
 " vnoremap <F2> :echo Read_visual_and_change()<cr>
@@ -793,10 +843,18 @@ function! Read_visual(...) "{{{
         let x=escape(@s,ptn_1)
         let x1=escape(@s,ptn_2)
         return "%s/".x."/".x1."/gc"
+    elseif exists("a:1") && a:1== ".s"
+        let x=escape(expand('<cword>'),ptn_1)
+        let x1=escape(expand('<cword>'),ptn_2)
+        return ".,'>s/".x."/".x1."/g"
+    elseif exists("a:1") && a:1== ".sw"
+        let w=escape(expand('<cword>'),ptn_1)
+        let w1=escape(expand('<cword>'),ptn_2)
+        return ".s/\\<".w."\\>/".w1."/gc"
     elseif exists("a:1") && a:1== "sw"
         let w=escape(expand('<cword>'),ptn_1)
         let w1=escape(expand('<cword>'),ptn_2)
-        return "%s/".w."/".w1."/gc"
+        return "s/\\<".w."\\>/".w1."/gc"
     elseif exists("a:1") && a:1== "e"
         let x=escape(@s,ptn_1)
         return x
@@ -806,6 +864,7 @@ endfunction "}}}
 "}}}
 "map <silent> <F3> :FufBuffer<CR>
 map <F3> :Unite buffer<CR>
+map <c-F3> :next<CR>
 
 "noremap <F4> :NERDTreeToggle "expand('%:p:h')"<CR>
 "nmap <F4> :FufFile<CR>
@@ -821,7 +880,7 @@ map <C-F4> :Unite file<cr>
 "nmap <silent> <F5> :QuickRun<CR>
 "map <silent> <s-F5> :VimShellPop<cr>
 if has("unix") && has("gui_running")
-nmap <s-F5> :SCCompileRun<cr>
+nmap <c-F5> :SCCompileRun<cr>
 call SingleCompile#ChooseCompiler('html', 'firefox')
 endif
 if has("win32")
@@ -897,7 +956,8 @@ if exists("b:current_syntax")
         exec bang."perl -D ".file.err_log
     elsei syn=~'^vim$'
         if a:mode=="norm"
-            exec "so .file
+            exec "so %"
+            " so %
         elseif a:mode=="visual"
             "for item in rng_list
                 "let rng.= item." \| "
@@ -927,8 +987,7 @@ endif
 endfunction "}}}
 
 map <F6> :TagbarToggle<CR>
-
-map <F7> :GundoToggle<CR>
+map <c-F6> :cw<CR>
 
 "{{{ start from here
 map <silent><F8> :call Start_File_explore()<CR>  
@@ -953,8 +1012,9 @@ fun! Start_terminal() "{{{
     endif
 endf "}}}
 "}}}
-nmap <F9>  :options<CR>
-nmap <F10> :call ToggleSketch()<CR>
+map <F9> :GundoToggle<CR>
+nmap <F10>  :options<CR>
+nmap <F11> :call ToggleSketch()<CR>
 """session save /load "{{{
 nmap <s-F12> :call SaveSession("")<CR>
 nmap <c-F12> :call SaveSession("in")<CR>
@@ -999,7 +1059,7 @@ vnoremap ; <c-c>:
 vnoremap : <c-c>:
 
 nnoremap ' .
-"noremap q: <nop>
+" unmap q:
 "no ex mode
 noremap Q <nop>
 
@@ -1106,7 +1166,7 @@ command! DiffOrig win 151 100 | vert new | setl bt=nofile | r # | 0d_
             \ | wincmd p | diffthis
 function! DiffOrig(...) "{{{
     if exists("a:1") 
-        exec "e ".a:1
+        exec "sp ".a:1
     endif
     let syn=&syntax
     call ChkWin(0)
@@ -1197,6 +1257,7 @@ command! -nargs=1 -complete=var Cvar let @+=<args>
 map<silent> <Leader>ntd :TinyTodo<CR>
 command! TinyTodo call TinyTodo()
 fun! TinyTodo() "{{{
+	"TODO: open a tab in gvim
     if expand('%') != ""
         exec '!gvim "+winp 1400 150" "+win 37 25"
                     \"+se fdc=0" "+se stl=" "+se nosc"
@@ -1291,8 +1352,10 @@ nnoremap <silent> <C-W><c-g> gt
 "Window Width(Columns) Configure"{{{
 nnoremap <silent> <C-W><c-v> :call ChkWin(0)\|vs<cr>gf
 "nmap <silent> <C-W><c-s> :call ChkWin(-1)\|new<CR>
+nnoremap <silent> <C-W><c-g> :sp<CR>gf
 nnoremap <silent> <C-W><c-s> :sp<CR>gf
-nnoremap <silent> <C-W><c-t> :call ChkWin(-2)<CR><C-W>Tgf
+noremap <silent> <C-W><c-s> :sp<CR>gf
+nnoremap <silent> <C-W><c-t> :tab sp<CR>gf
 
 nmap <silent> <C-W><c-h> :call ChkWin(2)<CR><C-W>H
 nmap <silent> <C-W><c-l> :call ChkWin(2)<CR><C-W>L
@@ -1335,8 +1398,6 @@ noremap <silent> <m-e> e
 noremap <silent> <m-f> b
 noremap <silent> <m-b> b
 
-nnoremap f b
-nnoremap F B
 inoremap <c-f> <c-o>dw
 
 noremap <c-f> <c-u>
@@ -1494,18 +1555,18 @@ endif "}}}
 "as D
 nnoremap Y y$
 
-"change case <m-s>
-nnoremap <m-s>1 gUU
-nnoremap <m-s>2 guu
+"change case <m-c>
+nnoremap <m-c>1 gUU
+nnoremap <m-c>2 guu
 nmap gUu :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
 nmap <m-c>3 :s/\v<(.)(\w*)/\u\1\L\2/g\|nohl<CR>
 " Capitalize inner word
-nmap <m-c>c guiw~w
+nmap <m-c>w guiw~w
 " UPPERCASE inner word
-nmap <m-c>e gUiww
+nmap <m-c>U gUiww
 " lowercase inner word
-nmap <m-c>w guiww
-nmap <m-c><m-c> ~h
+nmap <m-c>u guiww
+nmap <m-c>c ~h
 
 "trim whitespace
 nnoremap <leader>sws :%s/\s\+$//<CR>:let @/=''<CR>
@@ -1534,6 +1595,8 @@ vnoremap <Leader>e} c{{{<C-r>"}}}<ESC>`[
 nnoremap <Leader>e] ciw[[<C-r>"]]<ESC>
 vnoremap <Leader>e] c[[<C-r>"]]<ESC>`[
 nnoremap <Leader>el ^v$c[[<C-r>"]]<ESC>`[
+nnoremap <Leader>eW BvEc[[<C-r>"]]<ESC>`[
+nnoremap <Leader>ew bvec[[<C-r>"]]<ESC>`[
 
 "php
 nnoremap <leader>ep ciw<?php <C-r>" ?><ESC>
@@ -1657,7 +1720,7 @@ endfunction "}}}
 
 "}}}
 "Neocomplcache Settings "{{{
-map <leader>nt :NeoComplCacheToggle<CR>
+map <leader>nt :tabnew<CR>
 " Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
@@ -1690,7 +1753,7 @@ endif
 
 " TODO add Always Quick Match Option
 "let g:neco_always_quick_match=1
-let g:neocomplcache_enable_quick_match=1
+" let g:neocomplcache_enable_quick_match=1
 let g:neocomplcache_quick_match_patterns={'default':'`'}
 "let g:neocomplcache_quick_match_patterns={'default':''}
 "inoremap <expr><space> pumvisible() ? neocomplcache#smart_close_popup() : "\<space>"
@@ -1830,6 +1893,7 @@ fun! s:vimwiki_my_settings() "{{{
                 \ vimwiki#tbl#kbd_shift_tab()
     "tab with 2 space sts sw
     setl shiftwidth=4 softtabstop=4
+    setl cms=%%%%%s
 endfun "}}}
 
 aug vimwiki_myset "{{{
@@ -1866,16 +1930,21 @@ let g:vimsyn_noerror = 1
 "let g:NERDTreeChDirMode=2
 "noremap <m-w><m-w> :NERDTreeToggle "expand('%:p:h')"<CR>
 
-let g:ColorV_dynamic_hue=0
-let g:ColorV_show_tips=0
-" let g:ColorV_show_quit=1
-let g:ColorV_name_approx=4
-let g:ColorV_echo_tips=1
-
-let g:ColorV_dynamic_hue=1
-let g:ColorV_dynamic_hue_step=9
-
-let g:ColorV_win_pos="bot"
+" let g:ColorV_leader_maps = '<Leader>f'
+let g:galaxy_term_check=0
+let g:galaxy_term_color=256
+" set t_Co=16
+" let g:ColorV_no_python=1
+" let g:ColoV_debug=0
+" let g:ColorV_win_pos="bot"
+" let g:ColorV_win_space="hls"
+"remap the ColorVchange command 
+    " aug preview_css_auto
+    "     au!
+    "     au! BufWinEnter *.css call colorv#preview("S")
+    "     au! bufwritepost *.css call colorv#preview("S")
+    " aug END
+" nmap <silent> <leader>ce :ColorVchange<CR>
 
 let g:user_zen_leader_key = '<c-e>'
 "let g:use_zen_complete_tag = 1
@@ -1906,6 +1975,7 @@ let  g:gundo_width=30
 let g:gundo_right = 1
 nnoremap <leader>uu :GundoToggle<CR>
 noremap <leader>cc :TComment<cr>
+noremap \\ :TComment<cr>
 
 " noremap <c-F5> :call so_that#show()<cr>
 "{{{
@@ -2061,3 +2131,15 @@ function! Ack(args) "{{{
 endfunction "}}}
 command! -nargs=* -complete=file Ack call Ack(<q-args>)
 "}}}
+"}}}
+fun! Ranger() "{{{seems only can be used under terminal
+  silent !ranger --choosefile=/tmp/chosen
+  if filereadable('/tmp/chosen')
+    exec 'edit ' . system('cat /tmp/chosen')
+    call system('rm /tmp/chosen')
+  endif
+  redraw!
+endfun
+map <leader>rg :call Ranger()<cr> "}}}
+
+
