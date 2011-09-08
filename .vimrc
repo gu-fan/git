@@ -28,6 +28,7 @@ filetype off                   " required!
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
+Bundle 'vim-scripts/vimwiki'
 " My Bundles here:
 " original repos on github
 Bundle 'tpope/vim-fugitive'
