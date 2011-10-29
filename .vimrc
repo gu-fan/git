@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-09-11
+"  Last Change: 2011-10-29
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -28,6 +28,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'vim-scripts/vimwiki'
+Bundle 'vim-scripts/fcitx.vim'
 " My Bundles here:
 " original repos on github
 Bundle 'tpope/vim-fugitive'
@@ -709,9 +710,10 @@ command! -range=% Thtml <line1>,<line2>!tidy -utf8 -iq -f 'errs.txt' -m
 
 command! Ch7 !chmod 755 '%:p'
 command! Ch6 !chmod 644 '%:p'
-command! Gcc !gcc '%:p' -o %:t:r.o -lm
+" command! Gcc !gcc '%:p' -o %:t:r.o -lm
+command! Gcc !gcc `pkg-config --cflags --libs gtk+-2.0` '%:p' -o %:t:r.o -lm
 "library generator
-command! Gcoo !gcc  -c -fpic % -o %:t:r.o
+command! Gcoo !gcc `pkg-config --cflags --libs gtk+-2.0`  -c -fpic % -o %:t:r.o
 command! Gcso !gcc -shared -lc  -o %:t:r.so  %:t:r.o 
 command! Gcsa call Gcso()
 nmap <leader>lbb :call Libcall_this("str","","")
@@ -731,7 +733,10 @@ function! Gcso()
 endfunction
 command! Gcld !gcc -o %:t:r % -ldl
 " command! Gcc !gcc `pkg-config --cflags --libs gtk+-2.0` '%:p' -o %:t.o
-command! Gpp !g++ %:p -o %:t.o
+" command! Gpp !g++ %:p -o %:t.o
+
+command! Gpp !g++ `pkg-config --cflags --libs gtk+-2.0` -c -fPIC % -o %:t:r.o
+command! Gpso !g++ -shared -Wl,-soname,%:t:r.so -o  %:t:r.so  %:t:r.o
 
 " gcc  -c -fpic % -o %:t:r.o
 " gcc -shared -lc  -o %:t:r.so  %:t:r.o 
@@ -908,8 +913,15 @@ function! Exe_cur_script(mode) "{{{
     endif
     if exists("b:current_syntax")
         let syn=b:current_syntax
-        if syn=="python" 
-            exec bang."python -d ".file.err_log
+        if syn=="python"
+            let v=exists("w:python_version") ?  w:python_version : 2
+            if v==2
+                exec bang."python -d ".file.err_log
+            elseif v==3
+                exec bang."python3 -d ".file.err_log
+            elseif v==1
+                exec bang."pypy -d ".file.err_log
+            endif
         elseif syn=="ruby" 
             exec bang."ruby -d ".file.err_log
         elseif syn=="perl" 
@@ -968,7 +980,7 @@ fun! Start_terminal() "{{{
         " exec "! @d:\Dev\MSYS\bin\rxvt -tn msys -sl 3000 -fn Fixedsys -fg white -bg black -sr -e d:\Dev\MSYS\bin\bash.exe --login -i"
 
     else
-        exec "!gnome-terminal --working-directory='%:p:h'"
+        exec "!xterm -hold -e 'cd %:p:h && /bin/bash' &"
     endif
 endf "}}}
 "}}}
@@ -1049,6 +1061,7 @@ map <silent><leader>vdw :call DiffOrig("~/.vimrc","/media/sda5/Documents/Variabl
 map <leader>vd :e ~/.vim/ <CR>
 if has("unix") "{{{
     map <silent><leader>vb :call Split_if("") \| e ~/.bashrc<CR>
+    map <silent><leader>vt :call Split_if("") \| e ~/.tmux.conf<CR>
     map <silent><leader>vp :call Split_if("") \| e ~/.pentadactylrc<CR>
     map <silent><leader>vc :call Split_if("") \| e ~/.conkyrc<CR>
     map <silent><leader>va2 :call Split_if("") \| e ~/.aria2/aria2.conf<CR>
@@ -1253,10 +1266,11 @@ no <silent><m-2> :if &go=~#'r'\|se go-=r\|
             \else\|se go+=r\|
             \endif<CR>
 
+
 " copy filename
-map <silent> <leader>pl :let @+=expand('%').':'.line('.')<CR>
-map <silent> <leader>pf :let @+=expand('%:p')<CR>
-map <silent> <leader>ph :let @+=expand('%:p:h')<CR>
+map <silent> <leader>cpl :let @+=expand('%').':'.line('.')<CR>
+map <silent> <leader>cpf :let @+=expand('%:p')<CR>
+map <silent> <leader>cph :let @+=expand('%:p:h')<CR>
 "map <silent> <leader>cp :let @+=g:<CR>
 "Copy current variables
 command! -nargs=1 -complete=var Cvar let @+=<args>
@@ -1288,7 +1302,11 @@ nmap <leader>1js :set ft=javascript<CR>
 nmap <leader>1ph :set ft=php.html<CR>
 
 nmap <leader>1cp :set ft=cpp<CR>
-nmap <leader>1py :set ft=python<CR>
+nmap <leader>1p1 :set ft=python\|let w:python_version=1\|echo "PYPY1.X"<CR>
+nmap <leader>1p2 :set ft=python\|let w:python_version=2\|echo "PYTHON2.X"<CR>
+nmap <leader>1p3 :set ft=python\|let w:python_version=3\|echo "PYTHON3.X"<CR>
+
+
 
 nmap <leader>11 :filetype detect \| syntax enable \| call Color_Modify() <CR>
 "nmap <leader>`` :filetype detect \| syntax enable \| so $MYVIMRC<CR>
@@ -1851,6 +1869,7 @@ if &term=='cygwin'
 else
     let wiki_1.path = '~/Documents/vimwiki'
 endif
+let wiki_1.maxhi=0
 let wiki_1.ext = '.vwk'
 let wiki_1.nested_syntaxes = {'python': 'python', 'c++': 'cpp','sh':'sh'}
 
@@ -1864,7 +1883,7 @@ let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
             \,py,sh,rb,pl,lua,go
             \,c,cpp,h
             \,js,css,html,php
-            \,j
+            \,j,java,xml
             \,vim,vba'
 let g:vimwiki_conceallevel=2
 let g:vimwiki_lower="a-z0-9\u0430-\u044f"
@@ -1872,7 +1891,6 @@ let g:vimwiki_lower="a-z0-9\u0430-\u044f"
 let g:vimwiki_use_mouse =1
 let g:vimwiki_fold_lists=1
 let g:vimwiki_folding=0
-
 let g:vimwiki_hl_cb_checked = 1
 let g:vimwiki_rxListBullet = '^\s*\%(\*\|-\|#\)\s'
 let rx_prio='\%([+-]\d\|\[[+-]\d\]\)'
@@ -2045,7 +2063,7 @@ function! Last_update() "{{{
         endif
     endfor
 endfunction "}}}
-command! -nargs=* LastChangeUpdate call LastChangeUpdate() <args>
+command! -nargs=0 Lastupdate call Last_update() 
 "}}}
 "ACK "{{{Searching:
 "   -i, --ignore-case     Ignore case distinctions in PATTERN
@@ -2188,8 +2206,3 @@ endfun
 map <leader>rg :call Ranger()<cr> "}}}
 "}}}
 
-" let au_cmd="au VIMENTER * echo 'eeeee'"
-" aug test
-"     au!
-"     exec au_cmd
-" aug END
