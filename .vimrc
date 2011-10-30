@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-10-29
+"  Last Change: 2011-10-30
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -28,7 +28,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'vim-scripts/vimwiki'
-Bundle 'vim-scripts/fcitx.vim'
+" Bundle 'vim-scripts/fcitx.vim'
 " My Bundles here:
 " original repos on github
 Bundle 'tpope/vim-fugitive'
@@ -224,7 +224,7 @@ endif
 if has('arabic')
     set noarabicshape
 endif
-
+" efe
 " }}}
 "folding "{{{
     set foldenable
@@ -1867,7 +1867,9 @@ let wiki_1 = {}
 if &term=='cygwin'
     let wiki_1.path = '/d/Documents/vimwiki'
 else
-    let wiki_1.path = '~/Documents/vimwiki'
+    " let wiki_1.path = '~/Documents/vimwiki'
+    let wiki_1.path = '~/Dropbox/Vimwiki'
+    let wiki_1.path_html = '~/Documents/vimwiki_html'
 endif
 let wiki_1.maxhi=0
 let wiki_1.ext = '.vwk'
