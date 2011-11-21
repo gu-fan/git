@@ -16,7 +16,7 @@
 "6.Function_And_Key_Mapping
 "7.Other_Stuffs 
 "  By: Rykka.Krin <Rykka10@gmail.com>
-"  Last Change: 2011-10-30
+"  Last Change: 2011-11-21
 "  "Tough time Goes , Tough People Stay." "}}}
 """""""""""""""""""""""""""""""""""""""""""""""""
 " 1.General_Settings{{{1
@@ -28,6 +28,7 @@ set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'vim-scripts/vimwiki'
+Bundle 'vim-scripts/sudo.vim'
 " Bundle 'vim-scripts/fcitx.vim'
 " My Bundles here:
 " original repos on github
@@ -117,6 +118,8 @@ if v:version<700
     set rtp+=~/.vim/bundle/ColorV/
     set rtp+=~/.vim/bundle/vim-galaxy/
 endif
+set rtp+=~/.vim/bundle/conque/
+
 filetype plugin indent on     " required!
 
 "Bundle 'rykka/colorizer'
@@ -439,6 +442,7 @@ if has("gui_running") "{{{
 endif "}}}
 "statusline
 set statusline=%2*%n.%*[%03l,%02c,%P]%<%F%1*%m%r%*\%=[b%b][%W%Y,%{&enc},%{&ff}]
+" set statusline=%{strftime('%Y-%b-%d-%H:%M')}
 "hi User1 ctermbg=NONE ctermfg=NONE guibg=NONE guifg=NONE gui=bold,underline
 "Term Color "{{{
 " if !has("gui_running") "{{{
@@ -470,7 +474,7 @@ endfunction "}}}
 " 1.2.Misc_Settin
 "{{{"Misc Editing Options
 "use space to perform tab
-set expandtab tabstop=8  smarttab
+set expandtab tabstop=4  smarttab
 set softtabstop=4 shiftwidth=4
 set shiftround              " rounds indent to a multiple of shiftwidth
 
@@ -544,7 +548,11 @@ if !isdirectory(expand('~/.vim_backups'))
 endif
 set backup
 set backupdir=~/.vim_backups/
-set directory=.,~/.vim_backups/
+" set directory=.,~/.vim_backups/
+if !isdirectory(expand('~/.vim_swaps'))
+    call mkdir(expand('~/.vim_swaps'))
+endif
+set directory=~/.vim_swaps/,~/.vim_backups/
 
 "set tags=./tags;$HOME
 "set showfulltag             " Show more information while completing tags.
@@ -579,7 +587,7 @@ aug vimrc_GuiEnter "{{{
     au! vimrc_GuiEnter
     au GuiEnter * set t_vb=
     au GuiEnter * winpos 331 0
-    au GuiEnter * winsize 80 100
+    au GuiEnter * winsize 80 45
 aug END "}}}
 
 aug vimrc_misc "{{{
@@ -912,7 +920,8 @@ function! Exe_cur_script(mode) "{{{
         return 0
     endif
     if exists("b:current_syntax")
-        let syn=b:current_syntax
+        " let syn=b:current_syntax
+        let syn=&syn
         if syn=="python"
             let v=exists("w:python_version") ?  w:python_version : 2
             if v==2
@@ -951,6 +960,8 @@ function! Exe_cur_script(mode) "{{{
             endif
         elsei syn=~'^bat$'
             exec bang.runner."cmd -e".file 
+        elsei syn=~'^coffee$'
+            exec "CoffeeRun" 
         endif
     else  
         exec bang.runner.file 
@@ -1280,14 +1291,15 @@ map<silent> <Leader>ntd :TinyTodo<CR>
 command! TinyTodo call TinyTodo()
 fun! TinyTodo() "{{{
     "TODO: open a tab in gvim
-    if expand('%') != ""
-        exec '!gvim "+winp 1400 150" "+win 37 25"
-                    \"+se fdc=0" "+se stl=" "+se nosc"
-                    \"~/Documents/vimwiki/Todo/TodoTiny.vwk"'
-    else
-        exec "winp 1400 150 \| win 37 25 \| se nosc fdc=0 stl= "
-        exec "e ~/Documents/vimwiki/Todo/TodoTiny.vwk"
-    endif
+    " if expand('%') != ""
+    "     exec '!gvim "+winp 1400 150" "+win 37 25"
+    "                 \ "+se fdc=0" "+se stl=" "+se nosc"
+    "                 \ " ~/Dropbox/Vimwiki/Todo/TodoTiny.vwk"'
+    " else
+    "     exec "winp 1400 150 \| win 37 25 \| se nosc fdc=0 stl= "
+    "     exec "e ~/Dropbox/Vimwiki/Todo/TodoTiny.vwk"
+    " endif
+    silent exec "!gvim -remote-tab-silent ~/Dropbox/Vimwiki/Todo/TodoTiny.vwk"
 endfun "}}}
 "}}}
 "Syntax Quick Set "{{{
@@ -1382,7 +1394,9 @@ nnoremap <silent> <C-W><c-v> :call ChkWin(0)\|vs<cr>gf
 "nmap <silent> <C-W><c-s> :call ChkWin(-1)\|new<CR>
 nnoremap <silent> <C-W><c-g> :sp<CR>gf
 nnoremap <silent> <C-W><c-s> :sp<CR>gf
+nnoremap <silent> <C-W><c-h> :sp<CR>gf
 noremap <silent> <C-W><c-s> :sp<CR>gf
+noremap <silent> <C-W><c-h> :sp<CR>gf
 nnoremap <silent> <C-W><c-t> :tab sp<CR>gf
 
 nmap <silent> <C-W><c-h> :call ChkWin(2)<CR><C-W>H
@@ -1702,6 +1716,9 @@ if has('gui_running')
     source $VIMRUNTIME/mswin.vim
 endif "}}}
 "{{{ Win_behav Mapping modify
+noremap <c-h> :update<CR>
+vnoremap <c-h> :update<CR>
+inoremap <c-h> :update<CR>
 vnoremap <c-d> "+x
 "vnoremap <C-X> "+x
 vnoremap <C-m-X> "+x  " often no cut contentat all
@@ -1884,7 +1901,7 @@ let g:vimwiki_browsers=['firefox']
 let g:vimwiki_file_exts='pdf,txt,doc,rtf,xls,zip,rar,7z,gz
             \,py,sh,rb,pl,lua,go
             \,c,cpp,h
-            \,js,css,html,php
+            \,js,css,html,php,coffee
             \,j,java,xml
             \,vim,vba'
 let g:vimwiki_conceallevel=2
